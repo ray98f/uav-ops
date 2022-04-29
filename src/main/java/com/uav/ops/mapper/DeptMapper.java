@@ -2,7 +2,6 @@ package com.uav.ops.mapper;
 
 import com.uav.ops.dto.res.DeptTreeResDTO;
 import com.uav.ops.dto.res.UserResDTO;
-import com.uav.ops.dto.res.VxDeptResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @Repository
 public interface DeptMapper {
 
-    void syncOrg(List<VxDeptResDTO> list, String userId);
+    void syncOrg(List<DeptTreeResDTO> list, String userId);
 
     List<DeptTreeResDTO> getBody();
 

@@ -47,15 +47,6 @@ public class MenuReqDTO {
     @ApiModelProperty(value = "是否显示 0 否 1是")
     private Integer isShow;
 
-    @ApiModelProperty(value = "底色")
-    private String backgroundColor;
-
-    @ApiModelProperty(value = "底部图片")
-    private String backgroundPic;
-
-    @ApiModelProperty(value = "字体颜色")
-    private String titleColor;
-
     @ApiModelProperty(value = "创建人id")
     private String createBy;
 }

@@ -32,8 +32,8 @@ public class DeptController {
 
     @GetMapping("/sync")
     @ApiOperation(value = "同步企业微信组织机构")
-    public DataResponse<T> syncDept(@RequestParam(required = false) String orgId) {
-        deptService.syncDept(orgId);
+    public DataResponse<T> syncDept() {
+        deptService.syncDept();
         return DataResponse.success();
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface DeptService {
 
-    void syncDept(String orgId);
+    void syncDept();
 
     List<DeptTreeResDTO> listTree();
 

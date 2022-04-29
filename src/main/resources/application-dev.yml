@@ -90,3 +90,10 @@ pro:
 redisson:
   address: redis://192.168.30.108:6379
   password: Zxwz123!@#
+
+open:
+  api:
+    eip-service:
+      url: /securityInfo/manage
+      host: 192.168.30.58
+      port: 9500

@@ -45,6 +45,12 @@ public class Constants {
 
     public static final String SUCCESS = "0";
 
+    public static final String CODE = "code";
+
+    public static final String MESSAGE = "message";
+
+    public static final String DATA = "data";
+
     public static final Pattern SMS_CONTENT_PATTERN_1 = Pattern.compile("\\{(.*?)}");
 
     public static final Pattern SMS_CONTENT_PATTERN_2 = Pattern.compile("#(.*?)#");

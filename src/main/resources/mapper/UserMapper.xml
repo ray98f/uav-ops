@@ -17,45 +17,25 @@
         where ar.user_id=#{userId} and ar.is_delete=0 and r.status=0
     </select>
 
-    <insert id="insertUser" parameterType="com.uav.ops.dto.res.VxUserResDTO">
-        <foreach collection="list" index="index" item="user" separator=";">
-            insert into sys_user(id, name, mobile, telephone, email, biz_mail, status,
-            open_userid, main_dept, avatar, thumb_avatar, qr_code, address, gender, create_by)
-            SELECT
-            #{user.userid}, #{user.name}, #{user.mobile}, #{user.telephone}, #{user.email}, #{user.biz_mail}, #{user.status},
-            #{user.open_userid}, #{user.main_department}, #{user.avatar}, #{user.thumb_avatar}, #{user.qr_code}, #{user.address},
-            #{user.gender}, #{doName}
-            FROM DUAL
-            WHERE not exists (SELECT id FROM sys_user WHERE id=#{user.userid} and is_delete=0);
-            insert into sys_user_ext(id, user_id, real_name, create_by)
-            SELECT replace(uuid(),"-",""), #{user.userid}, #{user.name}, #{doName}
-            FROM DUAL
-            WHERE not exists (SELECT id FROM sys_user_ext WHERE user_id=#{user.userid} and is_delete=0)
+    <insert id="syncUser">
+        TRUNCATE TABLE sys_user;
+        insert into sys_user(id, name, mobile, telephone, email, biz_mail, status,
+        open_userid, main_dept, avatar, thumb_avatar, qr_code, address, gender, create_by)
+        values
+        <foreach collection="list" index="index" item="user" separator=",">
+            (#{user.id}, #{user.name}, #{user.mobile}, #{user.telephone}, #{user.email}, #{user.bizMail}, #{user.status},
+            #{user.openUserid}, #{user.mainDept}, #{user.avatar}, #{user.thumbAvatar}, #{user.qrCode}, #{user.address},
+            #{user.gender}, #{userId})
         </foreach>
-    </insert>
-
-    <select id="selectUserIds" resultType="java.lang.String">
-        select id from sys_user where is_delete=0
-    </select>
-
-    <update id="deleteUser">
-        update sys_user set is_delete=1, update_by=#{doName} where id in (
-        <foreach collection="list" index="index" item="id" separator=",">
-            #{id}
+        ;
+        TRUNCATE TABLE sys_user_ext;
+        insert into sys_user_ext(id, real_name, user_id, user_name, password, user_no, age, status, create_by)
+        values
+        <foreach collection="list" index="index" item="user" separator=",">
+            (replace(uuid(),"-",""), #{user.realName}, #{user.id}, #{user.userName}, #{user.password}, #{user.userNo},
+            #{user.age}, #{user.userStatus}, #{userId})
         </foreach>
-        );
-        update sys_user_ext set is_delete=1, update_by=#{doName} where user_id in (
-        <foreach collection="list" index="index" item="id" separator=",">
-            #{id}
-        </foreach>
-        );
-    </update>
-
-    <insert id="insertUserRole">
-        insert into user_role(user_id,role_id,create_by,update_by) values
-        <foreach collection="roleIds" index="index" item="roleId" separator=",">
-            (#{userId},#{roleId},#{doName},#{doName})
-        </foreach>
+        ;
     </insert>
 
     <select id="selectOldPassword" resultType="java.lang.String">

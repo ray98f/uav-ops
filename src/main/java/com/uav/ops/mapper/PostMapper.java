@@ -1,12 +1,10 @@
 package com.uav.ops.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.PostReqDTO;
 import com.uav.ops.dto.req.PostUserReqDTO;
 import com.uav.ops.dto.res.PostResDTO;
 import com.uav.ops.dto.res.PostWarnResDTO;
-import com.uav.ops.dto.res.VxUserResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -30,10 +28,6 @@ public interface PostMapper {
     Integer deletePost(PostReqDTO postReqDTO);
 
     Integer bindingPost(PostUserReqDTO postUserReqDTO);
-
-    void insertPost(List<VxUserResDTO> list, String doName);
-
-    void insertUserPost(List<VxUserResDTO> list);
 
     Integer addPostChangeWarn(PostReqDTO postReqDTO);
 

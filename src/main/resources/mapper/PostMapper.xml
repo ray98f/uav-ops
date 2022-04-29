@@ -59,34 +59,6 @@
         ;
     </delete>
 
-    <insert id="insertPost" parameterType="com.uav.ops.dto.res.VxUserResDTO">
-        TRUNCATE TABLE sys_post;
-        <foreach collection="list" index="index" item="user" separator="">
-            <if test="user.department!=null and user.department.size()>0">
-                <foreach collection="user.department" index="index" item="dept" separator=";">
-                    INSERT INTO sys_post (id, org_id, post_name, create_by)
-                    SELECT replace(uuid(),"-",""), #{dept}, #{user.position}, #{doName}
-                    FROM DUAL
-                    WHERE not exists (SELECT id FROM sys_post WHERE org_id=#{dept} and post_name=#{user.position})
-                </foreach>
-            </if>
-        </foreach>
-        ;
-    </insert>
-
-    <insert id="insertUserPost" parameterType="com.uav.ops.dto.res.VxUserResDTO">
-        TRUNCATE TABLE sys_user_post;
-        INSERT INTO sys_user_post (id, user_id, post_id) values
-        <foreach collection="list" index="index" item="user" separator="">
-            <if test="user.department!=null and user.department.size()>0">
-                <foreach collection="user.department" index="index" item="dept" separator=",">
-                    (replace(uuid(),"-",""), #{user.userid}, (select id from sys_post where org_id=#{dept} and post_name=#{user.position} and is_delete=0 and status=0))
-                </foreach>
-            </if>
-        </foreach>
-        ;
-    </insert>
-
     <insert id="addPostChangeWarn">
         insert into t_post_change_warning(id, user_id, info, ring_time, files, old_post_id, new_post_id)
         value (replace(uuid(),"-",""), #{userId},

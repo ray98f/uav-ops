@@ -3,9 +3,7 @@ package com.uav.ops.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.uav.ops.dto.res.DeptTreeResDTO;
-import com.uav.ops.dto.VxAccessToken;
 import com.uav.ops.dto.res.UserResDTO;
-import com.uav.ops.dto.res.VxDeptResDTO;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
 import com.uav.ops.mapper.DeptMapper;
@@ -13,7 +11,6 @@ import com.uav.ops.service.DeptService;
 import com.uav.ops.utils.treeTool.DeptTreeToolUtils;
 import com.uav.ops.utils.Constants;
 import com.uav.ops.utils.TokenUtil;
-import com.uav.ops.utils.VxApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,43 +34,37 @@ public class DeptServiceImpl implements DeptService {
     @Autowired
     private DeptMapper deptMapper;
 
-    @Value("${vx-business.corpid}")
-    private String corpid;
+    @Value("${open.api.eip-service.host}")
+    private String securityInfoManageServiceHost;
 
-    @Value("${vx-business.corpsecret}")
-    private String corpsecret;
+    @Value("${open.api.eip-service.port}")
+    private String securityInfoManageServicePort;
+
+    @Value("${open.api.eip-service.url}")
+    private String securityInfoManageServiceUrl;
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncDept(String orgId) {
-        VxAccessToken accessToken = VxApiUtils.getAccessToken(corpid, corpsecret);
-        if (accessToken == null) {
-            throw new CommonException(ErrorCode.VX_ERROR, "accessToken返回为空!");
-        }
-        String url = Constants.VX_GET_ORG_LIST + "?access_token=" + accessToken.getToken();
-        if (orgId != null) {
-            url = url + "&id=" + orgId;
-        }
+    public void syncDept() {
+        String url = "http://" + securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
+                + "/dept/sync/list";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
                 .build()
                 .expand()
                 .encode();
         URI uri = uriComponents.toUri();
         JSONObject res = restTemplate.getForEntity(uri, JSONObject.class).getBody();
-        if (!Constants.SUCCESS.equals(Objects.requireNonNull(res).getString(Constants.ERR_CODE))) {
-            throw new CommonException(ErrorCode.VX_ERROR, String.valueOf(res.get(Constants.ERR_MSG)));
+        if (!Constants.SUCCESS.equals(Objects.requireNonNull(res).getString(Constants.CODE))) {
+            throw new CommonException(ErrorCode.SYNC_ERROR);
         }
-        if (res.getJSONArray("department") == null) {
+        if (res.getJSONArray(Constants.DATA) == null) {
             return;
         }
-        List<VxDeptResDTO> list = JSONArray.parseArray(res.getJSONArray("department").toJSONString(), VxDeptResDTO.class);
+        List<DeptTreeResDTO> list = JSONArray.parseArray(res.getJSONArray(Constants.DATA).toJSONString(), DeptTreeResDTO.class);
         if (list != null && !list.isEmpty()) {
-            for (VxDeptResDTO vxDeptResDTO : list) {
-                vxDeptResDTO.setDepartment_leaders(String.join(",", vxDeptResDTO.getDepartment_leader()));
-            }
             deptMapper.syncOrg(list, TokenUtil.getCurrentPersonNo());
         }
     }

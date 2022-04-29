@@ -6,8 +6,6 @@ import com.uav.ops.dto.req.PostReqDTO;
 import com.uav.ops.dto.req.UserReqDTO;
 import com.uav.ops.dto.res.PostResDTO;
 import com.uav.ops.dto.res.UserResDTO;
-import com.uav.ops.dto.res.VxUserResDTO;
-import com.uav.ops.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -36,18 +34,7 @@ public interface UserMapper {
      */
     List<String> selectUserRoles(String userId);
 
-    /**
-     * 新增用户
-     *
-     * @param list
-     * @param doName
-     * @return
-     */
-    void insertUser(List<VxUserResDTO> list, String doName);
-
-    List<String> selectUserIds();
-
-    void deleteUser(List<String> list, String doName);
+    void syncUser(List<UserResDTO> list, String userId);
 
     String selectOldPassword(PasswordReqDTO passwordReqDTO);
 

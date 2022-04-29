@@ -5,16 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.dto.PageReqDTO;
-import com.uav.ops.dto.VxAccessToken;
 import com.uav.ops.dto.req.LoginReqDTO;
 import com.uav.ops.dto.req.PasswordReqDTO;
 import com.uav.ops.dto.req.PostReqDTO;
 import com.uav.ops.dto.req.UserReqDTO;
 import com.uav.ops.dto.res.PostResDTO;
 import com.uav.ops.dto.res.UserResDTO;
-import com.uav.ops.dto.res.VxDeptResDTO;
-import com.uav.ops.dto.res.VxUserResDTO;
-import com.uav.ops.entity.User;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
 import com.uav.ops.mapper.PostMapper;
@@ -31,9 +27,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,11 +37,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PostMapper postMapper;
 
-    @Value("${vx-business.corpid}")
-    private String corpid;
+    @Value("${open.api.eip-service.host}")
+    private String securityInfoManageServiceHost;
 
-    @Value("${vx-business.corpsecret}")
-    private String corpsecret;
+    @Value("${open.api.eip-service.port}")
+    private String securityInfoManageServicePort;
+
+    @Value("${open.api.eip-service.url}")
+    private String securityInfoManageServiceUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -61,60 +57,23 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncUser() {
-        VxAccessToken accessToken = VxApiUtils.getAccessToken(corpid, corpsecret);
-        if (accessToken == null) {
-            throw new CommonException(ErrorCode.VX_ERROR, "accessToken返回为空!");
-        }
-        String url = Constants.VX_GET_ORG_IDS + "?access_token=" + accessToken.getToken();
+        String url = "http://" + securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
+                + "/user/sync/list";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
                 .build()
                 .expand()
                 .encode();
         URI uri = uriComponents.toUri();
         JSONObject res = restTemplate.getForEntity(uri, JSONObject.class).getBody();
-        if (!Constants.SUCCESS.equals(Objects.requireNonNull(res).getString(Constants.ERR_CODE))) {
-            throw new CommonException(ErrorCode.VX_ERROR, String.valueOf(res.get(Constants.ERR_MSG)));
+        if (!Constants.SUCCESS.equals(Objects.requireNonNull(res).getString(Constants.CODE))) {
+            throw new CommonException(ErrorCode.SYNC_ERROR);
         }
-        if (res.getJSONArray("department_id") == null) {
+        if (res.getJSONArray(Constants.DATA) == null) {
             return;
         }
-        List<VxUserResDTO> userAllList = new ArrayList<>();
-        List<VxDeptResDTO> list = JSONArray.parseArray(res.getJSONArray("department_id").toJSONString(), VxDeptResDTO.class);
+        List<UserResDTO> list = JSONArray.parseArray(res.getJSONArray(Constants.DATA).toJSONString(), UserResDTO.class);
         if (list != null && !list.isEmpty()) {
-            for (VxDeptResDTO vxDeptResDTO : list) {
-                url = Constants.VX_GET_USER_LIST + "?access_token=" + accessToken.getToken()
-                        + "&department_id=" + vxDeptResDTO.getId() + "&fetch_child=0";
-                UriComponents userUriComponents = UriComponentsBuilder.fromUriString(url)
-                        .build()
-                        .expand()
-                        .encode();
-                URI userUri = userUriComponents.toUri();
-                JSONObject resUser = restTemplate.getForEntity(userUri, JSONObject.class).getBody();
-                if (!Constants.SUCCESS.equals(Objects.requireNonNull(resUser).getString(Constants.ERR_CODE))) {
-                    throw new CommonException(ErrorCode.VX_ERROR, String.valueOf(resUser.get(Constants.ERR_MSG)));
-                }
-                if (resUser.getJSONArray("userlist") == null) {
-                    continue;
-                }
-                List<VxUserResDTO> userList = JSONArray.parseArray(resUser.getJSONArray("userlist").toJSONString(), VxUserResDTO.class);
-                userAllList.addAll(userList);
-            }
-            if (!userAllList.isEmpty()) {
-                userAllList = userAllList.stream().collect(collectingAndThen(
-                        toCollection(() -> new TreeSet<>(Comparator.comparing(VxUserResDTO::getUserid))), ArrayList::new));
-                List<String> userIds = userMapper.selectUserIds();
-                if (userIds != null && !userIds.isEmpty()) {
-                    userIds.removeAll(userAllList.stream().map(VxUserResDTO::getUserid).collect(Collectors.toList()));
-                    if (userIds.size() > 0) {
-                        userMapper.deleteUser(userIds, TokenUtil.getCurrentPersonNo());
-                    }
-                }
-                if (userAllList.size() > 0) {
-                    userMapper.insertUser(userAllList, TokenUtil.getCurrentPersonNo());
-//                    postMapper.insertPost(userList, TokenUtil.getCurrentPersonNo());
-//                    postMapper.insertUserPost(userList);
-                }
-            }
+            userMapper.syncUser(list, TokenUtil.getCurrentPersonNo());
         }
     }
 
