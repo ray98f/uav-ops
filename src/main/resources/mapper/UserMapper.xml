@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uav.ops.mapper.UserMapper">
+    <select id="selectUserInfo" resultType="com.uav.ops.dto.req.UserReqDTO">
+        select su.id, su.name, su.mobile, su.telephone, su.email, su.biz_mail, su.status, su.open_userid, su.main_dept, su.avatar,
+        su.thumb_avatar, su.qr_code, su.address, su.gender, su.create_date, sue.user_name, sue.password, sue.user_no, sue.age
+        from sys_user as su
+        left join sys_user_ext as sue on sue.user_id=su.id and sue.is_delete=0
+        where su.user_name=#{userName} and su.is_delete=0
+        <if test="id!=null and id!=''">
+            and su.id!=#{id}
+        </if>
+    </select>
+
+    <select id="selectUserRoles" resultType="java.lang.String">
+        select ar.role_id from sys_user_role as ar left join sys_role as r on r.id=ar.role_id and r.is_delete=0
+        where ar.user_id=#{userId} and ar.is_delete=0 and r.status=0
+    </select>
+
+    <insert id="insertUser" parameterType="com.uav.ops.dto.res.VxUserResDTO">
+        <foreach collection="list" index="index" item="user" separator=";">
+            insert into sys_user(id, name, mobile, telephone, email, biz_mail, status,
+            open_userid, main_dept, avatar, thumb_avatar, qr_code, address, gender, create_by)
+            SELECT
+            #{user.userid}, #{user.name}, #{user.mobile}, #{user.telephone}, #{user.email}, #{user.biz_mail}, #{user.status},
+            #{user.open_userid}, #{user.main_department}, #{user.avatar}, #{user.thumb_avatar}, #{user.qr_code}, #{user.address},
+            #{user.gender}, #{doName}
+            FROM DUAL
+            WHERE not exists (SELECT id FROM sys_user WHERE id=#{user.userid} and is_delete=0);
+            insert into sys_user_ext(id, user_id, real_name, create_by)
+            SELECT replace(uuid(),"-",""), #{user.userid}, #{user.name}, #{doName}
+            FROM DUAL
+            WHERE not exists (SELECT id FROM sys_user_ext WHERE user_id=#{user.userid} and is_delete=0)
+        </foreach>
+    </insert>
+
+    <select id="selectUserIds" resultType="java.lang.String">
+        select id from sys_user where is_delete=0
+    </select>
+
+    <update id="deleteUser">
+        update sys_user set is_delete=1, update_by=#{doName} where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        );
+        update sys_user_ext set is_delete=1, update_by=#{doName} where user_id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        );
+    </update>
+
+    <insert id="insertUserRole">
+        insert into user_role(user_id,role_id,create_by,update_by) values
+        <foreach collection="roleIds" index="index" item="roleId" separator=",">
+            (#{userId},#{roleId},#{doName},#{doName})
+        </foreach>
+    </insert>
+
+    <select id="selectOldPassword" resultType="java.lang.String">
+        select password from sys_user_ext where user_name=#{userName}
+    </select>
+
+    <update id="changePwd" parameterType="com.uav.ops.dto.req.PasswordReqDTO">
+        update sys_user_ext set password=#{passwordReqDTO.newPwd}, update_by=#{updateBy}
+        where user_name=#{passwordReqDTO.userName} and password=#{passwordReqDTO.oldPwd}
+    </update>
+
+    <update id="editUser">
+        update sys_user_ext
+        <set>
+            <if test="userReqDTO.userName!=null">
+                user_name=#{userReqDTO.userName},
+            </if>
+            <if test="userReqDTO.password!=null">
+                password=#{userReqDTO.password},
+            </if>
+            <if test="userReqDTO.realName!=null">
+                real_name=#{userReqDTO.realName},
+            </if>
+            <if test="userReqDTO.userNo!=null">
+                user_no=#{userReqDTO.userNo},
+            </if>
+            <if test="userReqDTO.age!=null">
+                age=#{userReqDTO.age},
+            </if>
+            <if test="userReqDTO.status!=null">
+                status=#{userReqDTO.status},
+            </if>
+            update_by=#{updateBy}
+        </set>
+        where user_id=#{userReqDTO.id} and is_delete=0
+    </update>
+
+    <select id="listAllUser" resultType="com.uav.ops.dto.res.UserResDTO">
+        select u.*, ue.user_name, ue.password, ue.user_no, ue.age, ue.status as user_status, ue.real_name,
+        d.org_name as dept_name, GROUP_CONCAT(ur.role_id) as user_roles from sys_user as u
+        left join sys_user_role as ur on u.id=ur.user_id
+        left join sys_user_post as up on up.user_id=u.id
+        left join sys_post as p on p.id=up.post_id and p.is_delete=0 and p.status=0
+        left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
+        left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
+        where u.is_delete=0 and u.status=1
+        group by u.id
+    </select>
+
+    <select id="listUser" resultType="com.uav.ops.dto.res.UserResDTO">
+        select u.*, ue.user_name, ue.password, ue.user_no, ue.age, ue.status as user_status, ue.real_name,
+        d.org_name as dept_name, GROUP_CONCAT(ur.role_id) as user_roles from sys_user as u
+        left join sys_user_role as ur on u.id=ur.user_id
+        left join sys_user_post as up on up.user_id=u.id
+        left join sys_post as p on p.id=up.post_id and p.is_delete=0 and p.status=0
+        left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
+        left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
+        where u.is_delete=0
+        <if test="status!=null">
+            and u.status=#{status}
+        </if>
+        <if test="name!=null and name!=''">
+            and u.name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="deptIds!=null and deptIds.size()>0">
+            and d.id in (
+            <foreach collection="deptIds" index="index" item="deptId" separator=",">
+                #{deptId}
+            </foreach>
+            )
+        </if>
+        group by u.id
+    </select>
+
+    <select id="pageUser" resultType="com.uav.ops.dto.res.UserResDTO">
+        select u.*, ue.user_name, ue.password, ue.user_no, ue.age, ue.status as user_status, ue.real_name,
+        d.org_name as dept_name, GROUP_CONCAT(ur.role_id) as user_roles from sys_user as u
+        left join sys_user_role as ur on u.id=ur.user_id
+        left join sys_user_post as up on up.user_id=u.id
+        left join sys_post as p on p.id=up.post_id and p.is_delete=0 and p.status=0
+        left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
+        left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
+        where u.is_delete=0
+        <if test="status!=null">
+            and u.status=#{status}
+        </if>
+        <if test="name!=null and name!=''">
+            and u.name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="deptIds!=null and deptIds.size()>0">
+            and d.id in (
+            <foreach collection="deptIds" index="index" item="deptId" separator=",">
+                #{deptId}
+            </foreach>
+            )
+        </if>
+        group by u.id
+    </select>
+
+    <select id="selectUserId" resultType="java.lang.Long">
+        select u.id from sys_user as u left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
+        where ue.user_name=#{userName} and u.is_delete=0
+    </select>
+
+    <select id="selectUser" resultType="com.uav.ops.dto.res.UserResDTO">
+        select u.*, ue.user_name, ue.password, ue.user_no, ue.age, ue.status as user_status, ue.real_name,
+        d.org_name as dept_name, GROUP_CONCAT(ur.role_id) as user_roles from sys_user as u
+        left join sys_user_role as ur on u.id=ur.user_id
+        left join sys_user_post as up on up.user_id=u.id
+        left join sys_post as p on p.id=up.post_id and p.is_delete=0 and p.status=0
+        left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
+        left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
+        where u.is_delete=0 and u.id=#{id}
+    </select>
+
+    <select id="selectPostByUserId" resultType="com.uav.ops.dto.res.PostResDTO">
+        select sup.id, sup.user_id, sup.post_id, p.post_name
+        from sys_user_post as sup
+        left join sys_post as p on p.id=sup.post_id and p.status=0 and p.is_delete=0
+        where sup.user_id=#{userId}
+    </select>
+
+    <select id="selectUserPostIsExist" resultType="java.lang.Integer">
+        select count(1) from sys_user_post where user_id=#{userId} and post_id=#{postId} limit 1
+    </select>
+
+    <update id="modifyUserPost">
+        update sys_user_post set
+        post_id=#{postId}
+        where id=#{id} and user_id=#{userId}
+    </update>
+</mapper>

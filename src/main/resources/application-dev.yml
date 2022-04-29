@@ -1,0 +1,92 @@
+spring:
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/
+  jackson:
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: true
+  servlet:
+    session:
+      tracking-modes: cookie
+      cookie:
+        http-only: true
+  #静态文件资源
+  static:
+    template-page-path: classpath:/templates/
+    resources:
+      #访问静态资源规则，可配置多个以','或'，'隔离
+      - pathPatterns: /**
+        #静态资源文件位置，可配置多个以','或'，'隔离
+        resourceLocations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.30.110:3306/uav_ops?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: root
+    password: Zxwz123!@#
+    hikari:
+      read-only: false
+      connection-timeout: 60000
+      idle-timeout: 50000
+      validation-timeout: 3000
+      max-lifetime: 60000
+      login-timeout: 5
+      maximum-pool-size: 30
+      minimum-idle: 10
+  redis:
+    cluster:
+      nodes: 192.168.30.108:7001, 192.168.30.109:7003, 192.168.30.110:7005, 192.168.30.108:7002, 192.168.30.109:7004, 192.168.30.110:7006
+    jedis:
+      pool:
+        max-active: 50
+        min-idle: 0
+        max-idle: 50
+        max-wait: -1
+    key-prefix: dev-
+#    key-prefix: test-
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: com.uav.ops.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    multiple-result-sets-enabled: true
+#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    sql-parser-cache: true
+    db-config:
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+sign:
+  verify: true
+
+async:
+  push:
+   pool-size:
+     core: 100
+     max: 100
+logging:
+  file:
+    path: ./log
+
+excluded:
+  pages: /uav/ops/sys/login
+
+vx-business:
+  corpid: ww56aa612b390c11d2
+  corpsecret: B9L_KTNLvjUtrqnn6A1A0fAeN8PdDtlpMivmHZ1kd2Y
+
+minio:
+  url: http://zxgd.softether.net:9000
+  imgPath: http://zxgd.softether.net:9000
+  accessKey: minio
+  secretKey: minio123
+
+pro:
+  name: uav-ops
+
+redisson:
+  address: redis://192.168.30.108:6379
+  password: Zxwz123!@#
