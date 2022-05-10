@@ -1,4 +1,4 @@
-package com.uav.ops.service;
+package com.uav.ops.config.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

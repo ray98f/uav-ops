@@ -19,9 +19,9 @@
         from sys_user_role as ur
         left join sys_role_menu as rm on rm.role_id=ur.role_id
         left join sys_menu as m on m.id=rm.menu_id and m.is_delete=0 and m.status=0
-        where ur.user_id=#{userId} and m.parent_id='root' and m.menu_type=1
+        where ur.user_id=#{userId} and m.parent_id='root' and m.menu_type=2
         group by m.id
-        order by m.menu_sort asc
+        order by m.menu_sort asc, m.create_date asc
     </select>
 
     <select id="listUserBodyMenu" resultType="com.uav.ops.dto.res.MenuResDTO">
@@ -30,9 +30,9 @@
         from sys_user_role as ur
         left join sys_role_menu as rm on rm.role_id=ur.role_id
         left join sys_menu as m on m.id=rm.menu_id and m.is_delete=0 and m.status=0
-        where ur.user_id=#{userId} and m.parent_id!='root' and m.menu_type!=1
+        where ur.user_id=#{userId} and m.parent_id!='root' and m.menu_type in (3,4)
         group by m.id
-        order by m.menu_sort asc
+        order by m.menu_sort asc, m.create_date asc
     </select>
 
     <select id="listMenu" resultType="com.uav.ops.dto.res.MenuResDTO">
@@ -56,14 +56,14 @@
         select m.id, m.parent_id, m.parent_ids, m.menu_code, m.menu_name, m.menu_type, m.menu_sort, m.menu_path, m.status,
         m.menu_icon, m.menu_url, m.is_show
         from sys_menu as m
-        where m.is_delete=0 and m.parent_id='root' and m.status=0 and m.is_show=1
+        where m.is_delete=0 and m.parent_id='root' and m.status=0
     </select>
 
     <select id="getMenuBody" resultType="com.uav.ops.dto.res.MenuResDTO">
         select m.id, m.parent_id, m.parent_ids, m.menu_code, m.menu_name, m.menu_type, m.menu_sort, m.menu_path, m.status,
         m.menu_icon, m.menu_url, m.is_show
         from sys_menu as m
-        where m.is_delete=0 and m.parent_id!='root' and m.status=0 and m.is_show=1
+        where m.is_delete=0 and m.parent_id!='root' and m.status=0
     </select>
 
     <select id="selectIfMenuHadChild" resultType="java.lang.Integer">
@@ -106,15 +106,6 @@
         <if test="isShow!=null">
             is_show=#{isShow},
         </if>
-        <if test="backgroundColor!=null">
-            background_color=#{backgroundColor},
-        </if>
-        <if test="backgroundPic!=null">
-            background_pic=#{backgroundPic},
-        </if>
-        <if test="titleColor!=null">
-            title_color=#{titleColor},
-        </if>
         update_by=#{createBy}, update_date=now()
         where id=#{id} and is_delete=0
     </update>
@@ -124,12 +115,12 @@
         <if test="menuSort!=null">
             menu_sort,
         </if>
-        menu_path, status, menu_icon, menu_url, is_show, background_color, background_pic, title_color, create_by)
+        menu_path, status, menu_icon, menu_url, is_show, create_by)
         value (#{id}, #{parentId}, #{parentIds}, #{menuCode}, #{menuName}, #{menuType},
         <if test="menuSort!=null">
             #{menuSort},
         </if>
-        #{menuPath}, #{status}, #{menuIcon}, #{menuUrl}, #{isShow}, #{backgroundColor}, #{backgroundPic}, #{titleColor}, #{createBy})
+        #{menuPath}, #{status}, #{menuIcon}, #{menuUrl}, #{isShow}, #{createBy})
     </insert>
 
     <update id="deleteMenu">

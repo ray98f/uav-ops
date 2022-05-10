@@ -1,6 +1,6 @@
 package com.uav.ops.config;
 
-import com.uav.ops.service.RedisService;
+import com.uav.ops.config.component.RedisService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;

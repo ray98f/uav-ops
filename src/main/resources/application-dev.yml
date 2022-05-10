@@ -72,7 +72,7 @@ logging:
     path: ./log
 
 excluded:
-  pages: /uav/ops/sys/login
+  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage
 
 vx-business:
   corpid: ww56aa612b390c11d2
@@ -83,6 +83,10 @@ minio:
   imgPath: http://zxgd.softether.net:9000
   accessKey: minio
   secretKey: minio123
+
+es:
+  url: 192.168.30.110:9200
+  index: uav
 
 pro:
   name: uav-ops

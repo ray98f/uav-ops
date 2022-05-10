@@ -73,7 +73,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("安全管理信息系统 API")
+                .title("无人机智慧运维系统 API")
                 .description("后端 接口文档")
                 .version("1.0")
                 .build();
