@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author frp
@@ -34,6 +35,12 @@ public class DeviceController {
     public PageResponse<DeviceResDTO> listDevice(@RequestParam(required = false) String name,
                                                  @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(deviceService.listDevice(name, pageReqDTO));
+    }
+
+    @GetMapping("/listAll")
+    @ApiOperation(value = "获取设备列表")
+    public DataResponse<List<DeviceResDTO>> listAllDevice() {
+        return DataResponse.of(deviceService.listAllDevice());
     }
 
     @GetMapping("/detail")

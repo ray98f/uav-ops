@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
+import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
+import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,6 +35,11 @@ public class CruiseServiceImpl implements CruiseService {
     public Page<CruiseLineResDTO> listCruiseLine(String name, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
         return cruiseMapper.listCruiseLine(pageReqDTO.of(), name);
+    }
+
+    @Override
+    public List<CruiseLineResDTO> listAllCruiseLine() {
+        return cruiseMapper.listAllCruiseLine();
     }
 
     @Override
@@ -85,9 +93,8 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public Page<CruisePointResDTO> listCruisePoint(String lineId, String name, PageReqDTO pageReqDTO) {
-        PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return cruiseMapper.listCruisePoint(pageReqDTO.of(), lineId, name);
+    public List<CruisePointResDTO> listCruisePoint(String lineId, String name) {
+        return cruiseMapper.listCruisePoint(lineId, name);
     }
 
     @Override
@@ -138,5 +145,66 @@ public class CruiseServiceImpl implements CruiseService {
         if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
+    }
+
+    @Override
+    public Page<CruisePlanResDTO> listCruisePlan(String type, String name, PageReqDTO pageReqDTO) {
+        PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
+        return cruiseMapper.listCruisePlan(pageReqDTO.of(), type, name);
+    }
+
+    @Override
+    public CruisePlanResDTO getCruisePlanDetail(String id) {
+        return cruiseMapper.getCruisePlanDetail(id);
+    }
+
+    @Override
+    public void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) {
+        if (Objects.isNull(cruisePlanReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        Integer result = cruiseMapper.selectCruisePlanIsExist(cruisePlanReqDTO);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.DATA_EXIST);
+        }
+        cruisePlanReqDTO.setId(TokenUtil.getUuId());
+        cruisePlanReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = cruiseMapper.addCruisePlan(cruisePlanReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
+    }
+
+    @Override
+    public void modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) {
+        if (Objects.isNull(cruisePlanReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        Integer result = cruiseMapper.selectCruisePlanIsExist(cruisePlanReqDTO);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.DATA_EXIST);
+        }
+        cruisePlanReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = cruiseMapper.modifyCruisePlan(cruisePlanReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    public void deleteCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) {
+        if (Objects.isNull(cruisePlanReqDTO.getId())) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        cruisePlanReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = cruiseMapper.deleteCruisePlan(cruisePlanReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.DELETE_ERROR);
+        }
+    }
+
+    @Override
+    public void exeCruisePlan(String id) {
+        // todo 执行巡检计划
     }
 }

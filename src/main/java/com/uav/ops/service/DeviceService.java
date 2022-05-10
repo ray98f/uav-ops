@@ -16,6 +16,8 @@ public interface DeviceService {
 
     Page<DeviceResDTO> listDevice(String name, PageReqDTO pageReqDTO);
 
+    List<DeviceResDTO> listAllDevice();
+
     DeviceResDTO getDeviceDetail(String id);
 
     void addDevice(DeviceReqDTO deviceReqDTO);

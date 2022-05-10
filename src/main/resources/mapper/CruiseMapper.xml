@@ -5,7 +5,7 @@
     <select id="listCruiseLine" resultType="com.uav.ops.dto.res.CruiseLineResDTO">
         select cl.id, cl.line_name, cl.mileage, cl.fly_height, cl.fly_speed, cl.estimated_time, cl.status,
         cl.remark, cl.create_date, case when count(cp.id) is null then 0 else count(cp.id) end as point_count
-        from t_cruise_line as cl left join t_cruise_point as cp on cp.line_id=cl.id and cp.status=0 and cp.is_delete=0
+        from t_cruise_line as cl left join t_cruise_point as cp on cp.line_id=cl.id and cp.is_delete=0
         where cl.is_delete=0
         <if test="name!=null and name!=''">
             and cl.line_name like concat('%', #{name}, '%')
@@ -14,17 +14,26 @@
         order by cl.create_date desc
     </select>
 
+    <select id="listAllCruiseLine" resultType="com.uav.ops.dto.res.CruiseLineResDTO">
+        select cl.id, cl.line_name, cl.mileage, cl.fly_height, cl.fly_speed, cl.estimated_time, cl.status,
+        cl.remark, cl.create_date, case when count(cp.id) is null then 0 else count(cp.id) end as point_count
+        from t_cruise_line as cl left join t_cruise_point as cp on cp.line_id=cl.id and cp.is_delete=0
+        where cl.is_delete=0 and cl.status=0
+        group by cl.id
+        order by cl.create_date desc
+    </select>
+
     <select id="getCruiseLineDetail" resultType="com.uav.ops.dto.res.CruiseLineResDTO">
         select cl.id, cl.line_name, cl.mileage, cl.fly_height, cl.fly_speed, cl.estimated_time, cl.status,
         cl.remark, cl.create_date, case when count(cp.id) is null then 0 else count(cp.id) end as point_count
-        from t_cruise_line as cl left join t_cruise_point as cp on cp.line_id=cl.id and cp.status=0 and cp.is_delete=0
+        from t_cruise_line as cl left join t_cruise_point as cp on cp.line_id=cl.id and cp.is_delete=0
         where cl.is_delete=0 and cl.id=#{id}
         group by cl.id
     </select>
 
     <select id="selectCruiseLineIsExist" resultType="java.lang.Integer">
         select count(1) from t_cruise_line
-        where line_name=#{lineName}
+        where line_name=#{lineName} and is_delete=0
         <if test="id!=null and id!=''">
             and id!=#{id}
         </if>
@@ -73,24 +82,24 @@
     </update>
 
     <select id="listCruisePoint" resultType="com.uav.ops.dto.res.CruisePointResDTO">
-        select id, point_name, line_id, lng, lat, point_height, point_speed, sort, status, remark, action_type, create_date
+        select id, point_name, line_id, lng, lat, point_height, point_speed, sort, remark, action_type, create_date
         from t_cruise_point
         where is_delete=0 and line_id=#{lineId}
         <if test="name!=null and name!=''">
             and point_name like concat('%', #{name}, '%')
         </if>
-        order by create_date desc
+        order by sort desc
     </select>
 
     <select id="getCruisePointDetail" resultType="com.uav.ops.dto.res.CruisePointResDTO">
-        select id, point_name, line_id, lng, lat, point_height, point_speed, sort, status, remark, action_type, create_date
+        select id, point_name, line_id, lng, lat, point_height, point_speed, sort, remark, action_type, create_date
         from t_cruise_point
         where is_delete=0 and id=#{id}
     </select>
 
     <select id="selectCruisePointIsExist" resultType="java.lang.Integer">
         select count(1) from t_cruise_point
-        where point_name=#{pointName} and line_id=#{lineId}
+        where point_name=#{pointName} and line_id=#{lineId} and is_delete=0
         <if test="id!=null and id!=''">
             and id!=#{id}
         </if>
@@ -99,12 +108,12 @@
 
     <insert id="addCruisePoint">
         insert into t_cruise_point(id, point_name, line_id, lng, lat, point_height, point_speed,
-        sort, status, remark, action_type, create_by) value
+        sort, remark, action_type, create_by) value
         (#{id}, #{pointName}, #{lineId}, #{lng}, #{lat}, #{pointHeight}, #{pointSpeed},
-        #{sort}, #{status}, #{remark}, #{actionType}, #{userId})
+        #{sort}, #{remark}, #{actionType}, #{userId})
     </insert>
 
-    <update id="modifyCruiseLine">
+    <update id="modifyCruisePoint">
         update t_cruise_point set
         <if test="pointName!=null">
             point_name=#{pointName},
@@ -127,9 +136,6 @@
         <if test="sort!=null">
             sort=#{sort},
         </if>
-        <if test="status!=null">
-            status=#{status},
-        </if>
         <if test="remark!=null">
             remark=#{remark},
         </if>
@@ -140,8 +146,123 @@
         where id=#{id} and is_delete=0
     </update>
 
-    <update id="deleteCruiseLine">
+    <update id="deleteCruisePoint">
         update t_cruise_point set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <select id="listCruisePlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
+        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
+        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
+        from t_cruise_plan
+        where is_delete=0
+        <if test="type!=null">
+            and plan_type=#{type}
+        </if>
+        <if test="name!=null and name!=''">
+            and plan_name like concat('%', #{name}, '%')
+        </if>
+        order by create_date desc
+    </select>
+
+    <select id="getCruisePlanDetail" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
+        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
+        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
+        from t_cruise_plan
+        where is_delete=0 and id=#{id}
+    </select>
+
+    <select id="selectCruisePlanIsExist" resultType="java.lang.Integer">
+        select count(1) from t_cruise_plan
+        where plan_name=#{planName} and plan_type=#{planType} and is_delete=0
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="addCruisePlan">
+        insert into t_cruise_plan(id, plan_name, address, plan_type, start_day, end_day, specify_day, specify_time,
+        <if test="cruiseType!=null">
+            cruise_type,
+        </if>
+        <if test="opsType!=null">
+            ops_type,
+        </if>
+        line_id, device_id,
+        <if test="autoEndFlag!=null">
+            auto_end_flag,
+        </if>
+        <if test="endAction!=null">
+            end_action,
+        </if>
+        create_by)
+        value
+        (#{id}, #{planName}, #{address}, #{planType}, #{startDay}, #{endDay}, #{specifyDay}, #{specifyTime},
+        <if test="cruiseType!=null">
+            #{cruiseType},
+        </if>
+        <if test="opsType!=null">
+            #{opsType},
+        </if>
+        #{lineId}, #{deviceId},
+        <if test="autoEndFlag!=null">
+            #{autoEndFlag},
+        </if>
+        <if test="endAction!=null">
+            #{endAction},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="modifyCruisePlan">
+        update t_cruise_plan set
+        <if test="planName!=null">
+            plan_name=#{planName},
+        </if>
+        <if test="address!=null">
+            address=#{address},
+        </if>
+        <if test="planType!=null">
+            plan_type=#{planType},
+        </if>
+        <if test="startDay!=null">
+            start_day=#{startDay},
+        </if>
+        <if test="endDay!=null">
+            end_day=#{endDay},
+        </if>
+        <if test="specifyDay!=null">
+            specify_day=#{specifyDay},
+        </if>
+        <if test="specifyTime!=null">
+            specify_time=#{specifyTime},
+        </if>
+        <if test="cruiseType!=null">
+            cruise_type=#{cruiseType},
+        </if>
+        <if test="opsType!=null">
+            ops_type=#{opsType},
+        </if>
+        <if test="lineId!=null">
+            line_id=#{lineId},
+        </if>
+        <if test="deviceId!=null">
+            device_id=#{deviceId},
+        </if>
+        <if test="autoEndFlag!=null">
+            auto_end_flag=#{autoEndFlag},
+        </if>
+        <if test="endAction!=null">
+            end_action=#{endAction},
+        </if>
+        update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteCruisePlan">
+        update t_cruise_plan set
         is_delete=1, update_by=#{userId}
         where id=#{id} and is_delete=0
     </update>

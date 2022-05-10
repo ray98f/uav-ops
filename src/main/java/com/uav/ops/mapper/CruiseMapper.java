@@ -3,11 +3,15 @@ package com.uav.ops.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
+import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
+import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author frp
@@ -17,6 +21,8 @@ import org.springframework.stereotype.Repository;
 public interface CruiseMapper {
 
     Page<CruiseLineResDTO> listCruiseLine(Page<CruiseLineResDTO> page, String name);
+
+    List<CruiseLineResDTO> listAllCruiseLine();
 
     CruiseLineResDTO getCruiseLineDetail(String id);
 
@@ -28,7 +34,7 @@ public interface CruiseMapper {
 
     Integer deleteCruiseLine(CruiseLineReqDTO cruiseLineReqDTO);
 
-    Page<CruisePointResDTO> listCruisePoint(Page<CruisePointResDTO> page, String lineId, String name);
+    List<CruisePointResDTO> listCruisePoint(String lineId, String name);
 
     CruisePointResDTO getCruisePointDetail(String id);
 
@@ -39,4 +45,16 @@ public interface CruiseMapper {
     Integer modifyCruisePoint(CruisePointReqDTO cruisePointReqDTO);
 
     Integer deleteCruisePoint(CruisePointReqDTO cruisePointReqDTO);
+
+    Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, String type, String name);
+
+    CruisePlanResDTO getCruisePlanDetail(String id);
+
+    Integer selectCruisePlanIsExist(CruisePlanReqDTO cruisePlanReqDTO);
+
+    Integer addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
+
+    Integer modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
+
+    Integer deleteCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
 }

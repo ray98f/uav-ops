@@ -4,8 +4,10 @@ import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
+import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
+import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.service.CruiseService;
 import io.swagger.annotations.Api;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author frp
@@ -36,6 +39,12 @@ public class CruiseController {
     public PageResponse<CruiseLineResDTO> listCruiseLine(@RequestParam(required = false) String name,
                                                          @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(deviceService.listCruiseLine(name, pageReqDTO));
+    }
+
+    @GetMapping("/line/listAll")
+    @ApiOperation(value = "获取全部巡航路线列表")
+    public DataResponse<List<CruiseLineResDTO>> listAllCruiseLine() {
+        return DataResponse.of(deviceService.listAllCruiseLine());
     }
 
     @GetMapping("/line/detail")
@@ -67,10 +76,9 @@ public class CruiseController {
 
     @GetMapping("/point/list")
     @ApiOperation(value = "获取巡航点列表")
-    public PageResponse<CruisePointResDTO> listCruisePoint(@RequestParam String lineId,
-                                                           @RequestParam(required = false) String name,
-                                                           @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(deviceService.listCruisePoint(lineId, name, pageReqDTO));
+    public DataResponse<List<CruisePointResDTO>> listCruisePoint(@RequestParam String lineId,
+                                                                @RequestParam(required = false) String name) {
+        return DataResponse.of(deviceService.listCruisePoint(lineId, name));
     }
 
     @GetMapping("/point/detail")
@@ -97,6 +105,48 @@ public class CruiseController {
     @ApiOperation(value = "删除巡航点")
     public DataResponse<T> deleteCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         deviceService.deleteCruisePoint(cruisePointReqDTO);
+        return DataResponse.success();
+    }
+
+    @GetMapping("/plan/list")
+    @ApiOperation(value = "获取巡检计划列表")
+    public PageResponse<CruisePlanResDTO> listCruisePlan(@RequestParam(required = false) String type,
+                                                         @RequestParam(required = false) String name,
+                                                         @Valid PageReqDTO pageReqDTO) {
+        return PageResponse.of(deviceService.listCruisePlan(type, name, pageReqDTO));
+    }
+
+    @GetMapping("/plan/detail")
+    @ApiOperation(value = "巡检计划详情获取")
+    public DataResponse<CruisePlanResDTO> getCruisePlanDetail(@RequestParam String id) {
+        return DataResponse.of(deviceService.getCruisePlanDetail(id));
+    }
+
+    @PostMapping("/plan/add")
+    @ApiOperation(value = "新增巡检计划")
+    public DataResponse<T> addCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
+        deviceService.addCruisePlan(cruisePlanReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/plan/modify")
+    @ApiOperation(value = "修改巡检计划")
+    public DataResponse<T> modifyCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
+        deviceService.modifyCruisePlan(cruisePlanReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/plan/delete")
+    @ApiOperation(value = "删除巡检计划")
+    public DataResponse<T> deleteCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
+        deviceService.deleteCruisePlan(cruisePlanReqDTO);
+        return DataResponse.success();
+    }
+
+    @GetMapping("/plan/exe")
+    @ApiOperation(value = "执行巡检计划")
+    public DataResponse<T> exeCruisePlan(@RequestParam String id) {
+        deviceService.exeCruisePlan(id);
         return DataResponse.success();
     }
 }

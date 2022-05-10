@@ -42,6 +42,17 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    public List<DeviceResDTO> listAllDevice() {
+        List<DeviceResDTO> list = deviceMapper.listAllDevice();
+        if (list != null && !list.isEmpty()) {
+            for (DeviceResDTO resDTO : list) {
+                resDTO.setFault(deviceMapper.selectDeviceFault(resDTO.getId()));
+            }
+        }
+        return list;
+    }
+
+    @Override
     public DeviceResDTO getDeviceDetail(String id) {
         DeviceResDTO dto = deviceMapper.getDeviceDetail(id);
         if (!Objects.isNull(dto)) {

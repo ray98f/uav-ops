@@ -20,6 +20,8 @@ public interface DeviceMapper {
 
     Page<DeviceResDTO> listDevice(Page<DeviceResDTO> page, String name);
 
+    List<DeviceResDTO> listAllDevice();
+
     DeviceResDTO getDeviceDetail(String id);
 
     List<DeviceResDTO.DeviceFault> selectDeviceFault(String id);

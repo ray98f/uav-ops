@@ -33,9 +33,6 @@ public class CruisePointReqDTO {
     @ApiModelProperty(value = "航点序号")
     private Integer sort;
 
-    @ApiModelProperty(value = "状态:0正常,9停用")
-    private Integer status;
-
     @ApiModelProperty(value = "备注")
     private String remark;
 
