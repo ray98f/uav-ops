@@ -26,6 +26,8 @@ public interface DeviceMapper {
 
     List<DeviceResDTO.DeviceFault> selectDeviceFault(String id);
 
+    DeviceResDTO.DeviceFault getDeviceFaultDetail(String id);
+
     Integer selectDeviceIsExist(DeviceReqDTO deviceReqDTO);
 
     Integer addDevice(DeviceReqDTO deviceReqDTO);
@@ -33,4 +35,6 @@ public interface DeviceMapper {
     Integer modifyDevice(DeviceReqDTO deviceReqDTO);
 
     Integer deleteDevice(DeviceReqDTO deviceReqDTO);
+
+    Integer addDeviceFault(DeviceResDTO.DeviceFault deviceFault, String userId);
 }

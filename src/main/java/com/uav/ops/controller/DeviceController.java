@@ -69,4 +69,11 @@ public class DeviceController {
         deviceService.deleteDevice(deviceReqDTO);
         return DataResponse.success();
     }
+
+    @PostMapping("/fault/add")
+    @ApiOperation(value = "新增设备故障信息")
+    public DataResponse<T> addDeviceFault(@RequestBody DeviceResDTO.DeviceFault deviceFault) {
+        deviceService.addDeviceFault(deviceFault);
+        return DataResponse.success();
+    }
 }

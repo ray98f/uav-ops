@@ -105,4 +105,16 @@ public class DeviceServiceImpl implements DeviceService {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
+
+    @Override
+    public void addDeviceFault(DeviceResDTO.DeviceFault deviceFault) {
+        if (Objects.isNull(deviceFault.getId())) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        deviceFault.setId(TokenUtil.getUuId());
+        Integer result = deviceMapper.addDeviceFault(deviceFault, TokenUtil.getCurrentPersonNo());
+        if (result < 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
+    }
 }

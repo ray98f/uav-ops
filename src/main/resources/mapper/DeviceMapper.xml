@@ -23,8 +23,12 @@
     </select>
 
     <select id="selectDeviceFault" resultType="com.uav.ops.dto.res.DeviceResDTO$DeviceFault">
-        select id, device_id, info, status from t_device_fault where device_id=#{id} and is_delete=0
+        select id, device_id, info from t_device_fault where device_id=#{id} and is_delete=0
         order by create_date desc
+    </select>
+
+    <select id="getDeviceFaultDetail" resultType="com.uav.ops.dto.res.DeviceResDTO$DeviceFault">
+        select id, device_id, info from t_device_fault where id=#{id} and is_delete=0
     </select>
 
     <select id="selectDeviceIsExist" resultType="java.lang.Integer">
@@ -90,4 +94,9 @@
         is_delete=1, update_by=#{userId}
         where id=#{id} and is_delete=0
     </update>
+
+    <insert id="addDeviceFault">
+        insert into t_device_fault(id, device_id, info, create_by)
+        value (#{deviceFault.id}, #{deviceFault.deviceId}, #{deviceFault.info}, #{userId})
+    </insert>
 </mapper>

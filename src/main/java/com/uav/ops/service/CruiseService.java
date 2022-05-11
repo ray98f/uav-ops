@@ -5,9 +5,11 @@ import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
+import com.uav.ops.dto.req.CruiseWarnReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
+import com.uav.ops.dto.res.CruiseWarnResDTO;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public interface CruiseService {
 
     void deleteCruisePoint(CruisePointReqDTO cruisePointReqDTO);
 
-    Page<CruisePlanResDTO> listCruisePlan(String type, String name, PageReqDTO pageReqDTO);
+    Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, PageReqDTO pageReqDTO);
 
     CruisePlanResDTO getCruisePlanDetail(String id);
 
@@ -49,5 +51,15 @@ public interface CruiseService {
     void deleteCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
 
     void exeCruisePlan(String id);
+
+    Page<CruiseWarnResDTO> listCruiseWarn(Integer type, PageReqDTO pageReqDTO);
+
+    CruiseWarnResDTO getCruiseWarnDetail(String id);
+
+    void addCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
+
+    void handleCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
+
+    void deleteCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
 
 }

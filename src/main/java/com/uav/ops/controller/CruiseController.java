@@ -6,9 +6,11 @@ import com.uav.ops.dto.PageResponse;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
+import com.uav.ops.dto.req.CruiseWarnReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
+import com.uav.ops.dto.res.CruiseWarnResDTO;
 import com.uav.ops.service.CruiseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -110,7 +112,7 @@ public class CruiseController {
 
     @GetMapping("/plan/list")
     @ApiOperation(value = "获取巡检计划列表")
-    public PageResponse<CruisePlanResDTO> listCruisePlan(@RequestParam(required = false) String type,
+    public PageResponse<CruisePlanResDTO> listCruisePlan(@RequestParam(required = false) Integer type,
                                                          @RequestParam(required = false) String name,
                                                          @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(deviceService.listCruisePlan(type, name, pageReqDTO));
@@ -147,6 +149,40 @@ public class CruiseController {
     @ApiOperation(value = "执行巡检计划")
     public DataResponse<T> exeCruisePlan(@RequestParam String id) {
         deviceService.exeCruisePlan(id);
+        return DataResponse.success();
+    }
+
+    @GetMapping("/warn/list")
+    @ApiOperation(value = "获取巡检预警列表")
+    public PageResponse<CruiseWarnResDTO> listCruiseWarn(@RequestParam(required = false) Integer type,
+                                                         @Valid PageReqDTO pageReqDTO) {
+        return PageResponse.of(deviceService.listCruiseWarn(type, pageReqDTO));
+    }
+
+    @GetMapping("/warn/detail")
+    @ApiOperation(value = "巡检预警详情获取")
+    public DataResponse<CruiseWarnResDTO> getCruiseWarnDetail(@RequestParam String id) {
+        return DataResponse.of(deviceService.getCruiseWarnDetail(id));
+    }
+
+    @PostMapping("/warn/add")
+    @ApiOperation(value = "新增巡检预警")
+    public DataResponse<T> addCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
+        deviceService.addCruiseWarn(cruiseWarnReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/warn/modify")
+    @ApiOperation(value = "处理巡检预警")
+    public DataResponse<T> handleCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
+        deviceService.handleCruiseWarn(cruiseWarnReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/warn/delete")
+    @ApiOperation(value = "删除巡检预警")
+    public DataResponse<T> deleteCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
+        deviceService.deleteCruiseWarn(cruiseWarnReqDTO);
         return DataResponse.success();
     }
 }

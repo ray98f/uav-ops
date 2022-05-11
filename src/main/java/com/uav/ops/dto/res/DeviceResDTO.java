@@ -63,8 +63,5 @@ public class DeviceResDTO {
 
         @ApiModelProperty(value = "故障信息")
         private String info;
-
-        @ApiModelProperty(value = "状态 0未解决 1已解决 9关闭")
-        private Integer status;
     }
 }

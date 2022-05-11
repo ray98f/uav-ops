@@ -266,4 +266,49 @@
         is_delete=1, update_by=#{userId}
         where id=#{id} and is_delete=0
     </update>
+
+    <select id="listCruiseWarn" resultType="com.uav.ops.dto.res.CruiseWarnResDTO">
+        select id, warning_type, warning_info, plan_id, fault_id, status, create_date
+        from t_cruise_warning
+        where is_delete=0
+        <if test="type!=null">
+            and warning_type=#{type}
+        </if>
+        order by create_date desc
+    </select>
+
+    <select id="getCruiseWarnDetail" resultType="com.uav.ops.dto.res.CruiseWarnResDTO">
+        select id, warning_type, warning_info, plan_id, fault_id, status, create_date
+        from t_cruise_warning
+        where is_delete=0 and id=#{id}
+    </select>
+
+    <insert id="addCruiseWarn">
+        insert into t_cruise_warning(id, warning_type, warning_info, plan_id, fault_id,
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value
+        (#{id}, #{warningType}, #{warningInfo}, #{planId}, #{faultId},
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="handleCruiseWarn">
+        update t_cruise_warning set
+        status=#{status}, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteCruiseWarn">
+        update t_cruise_warning set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0;
+        update t_device_fault set
+        is_delete=1, update_by=#{userId}
+        where id=(select fault_id from t_cruise_warning where id=#{id} and is_delete=0) and is_delete=0;
+    </update>
 </mapper>

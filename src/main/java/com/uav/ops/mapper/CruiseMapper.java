@@ -5,9 +5,11 @@ import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
+import com.uav.ops.dto.req.CruiseWarnReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
+import com.uav.ops.dto.res.CruiseWarnResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -46,7 +48,7 @@ public interface CruiseMapper {
 
     Integer deleteCruisePoint(CruisePointReqDTO cruisePointReqDTO);
 
-    Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, String type, String name);
+    Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, Integer type, String name);
 
     CruisePlanResDTO getCruisePlanDetail(String id);
 
@@ -57,4 +59,14 @@ public interface CruiseMapper {
     Integer modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
 
     Integer deleteCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
+
+    Page<CruiseWarnResDTO> listCruiseWarn(Page<CruiseWarnResDTO> page, Integer type);
+
+    CruiseWarnResDTO getCruiseWarnDetail(String id);
+
+    Integer addCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
+
+    Integer handleCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
+
+    Integer deleteCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
 }

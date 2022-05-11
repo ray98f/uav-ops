@@ -6,15 +6,20 @@ import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePlanReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
+import com.uav.ops.dto.req.CruiseWarnReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
+import com.uav.ops.dto.res.CruiseWarnResDTO;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
 import com.uav.ops.mapper.CruiseMapper;
+import com.uav.ops.mapper.DeviceMapper;
 import com.uav.ops.service.CruiseService;
+import com.uav.ops.service.DeviceService;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +35,9 @@ public class CruiseServiceImpl implements CruiseService {
 
     @Autowired
     private CruiseMapper cruiseMapper;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
 
     @Override
     public Page<CruiseLineResDTO> listCruiseLine(String name, PageReqDTO pageReqDTO) {
@@ -148,7 +156,7 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public Page<CruisePlanResDTO> listCruisePlan(String type, String name, PageReqDTO pageReqDTO) {
+    public Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
         return cruiseMapper.listCruisePlan(pageReqDTO.of(), type, name);
     }
@@ -206,5 +214,75 @@ public class CruiseServiceImpl implements CruiseService {
     @Override
     public void exeCruisePlan(String id) {
         // todo 执行巡检计划
+    }
+
+    @Override
+    public Page<CruiseWarnResDTO> listCruiseWarn(Integer type, PageReqDTO pageReqDTO) {
+        PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
+        Page<CruiseWarnResDTO> page = cruiseMapper.listCruiseWarn(pageReqDTO.of(), type);
+        List<CruiseWarnResDTO> list = page.getRecords();
+        if (list != null && !list.isEmpty()) {
+            for (CruiseWarnResDTO resDTO : list) {
+                resDTO.setPlanInfo(cruiseMapper.getCruisePlanDetail(resDTO.getPlanId()));
+                resDTO.setFaultInfo(deviceMapper.getDeviceFaultDetail(resDTO.getFaultId()));
+            }
+        }
+        page.setRecords(list);
+        return page;
+    }
+
+    @Override
+    public CruiseWarnResDTO getCruiseWarnDetail(String id) {
+        CruiseWarnResDTO resDTO = cruiseMapper.getCruiseWarnDetail(id);
+        if (!Objects.isNull(resDTO)) {
+            resDTO.setPlanInfo(cruiseMapper.getCruisePlanDetail(resDTO.getPlanId()));
+            resDTO.setFaultInfo(deviceMapper.getDeviceFaultDetail(resDTO.getFaultId()));
+        }
+        return resDTO;
+    }
+
+    @Override
+    public void addCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO) {
+        if (Objects.isNull(cruiseWarnReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        if (!Objects.isNull(cruiseWarnReqDTO.getFaultInfo())) {
+            cruiseWarnReqDTO.getFaultInfo().setId(TokenUtil.getUuId());
+            Integer result = deviceMapper.addDeviceFault(cruiseWarnReqDTO.getFaultInfo(), TokenUtil.getCurrentPersonNo());
+            if (result < 0) {
+                throw new CommonException(ErrorCode.INSERT_ERROR);
+            }
+        }
+        cruiseWarnReqDTO.setFaultId(cruiseWarnReqDTO.getFaultInfo().getId());
+        cruiseWarnReqDTO.setId(TokenUtil.getUuId());
+        cruiseWarnReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = cruiseMapper.addCruiseWarn(cruiseWarnReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
+    }
+
+    @Override
+    public void handleCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO) {
+        if (Objects.isNull(cruiseWarnReqDTO.getId())) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        cruiseWarnReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = cruiseMapper.handleCruiseWarn(cruiseWarnReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    public void deleteCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO) {
+        if (Objects.isNull(cruiseWarnReqDTO.getId())) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        cruiseWarnReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = cruiseMapper.deleteCruiseWarn(cruiseWarnReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.DELETE_ERROR);
+        }
     }
 }

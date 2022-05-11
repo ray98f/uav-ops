@@ -26,4 +26,6 @@ public interface DeviceService {
 
     void deleteDevice(DeviceReqDTO deviceReqDTO);
 
+    void addDeviceFault(DeviceResDTO.DeviceFault deviceFault);
+
 }
