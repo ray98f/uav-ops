@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uav.ops.mapper.ProblemMapper">
+
+    <select id="listProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select id, type_name, type_code, status, create_date from t_problem_type
+        where is_delete=0
+        <if test="name!=null and name!=''">
+            and type_name like concat('%', #{name}, '%')
+        </if>
+        order by create_date desc
+    </select>
+
+    <select id="listAllProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select id, type_name, type_code, status, create_date from t_problem_type
+        where is_delete=0 and status=0
+        order by create_date desc
+    </select>
+
+    <select id="getProblemTypeDetail" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select id, type_name, type_code, status, create_date from t_problem_type
+        where is_delete=0 and id=#{id}
+    </select>
+
+    <select id="selectProblemTypeIsExist" resultType="java.lang.Integer">
+        select count(1) from t_problem_type
+        where type_name=#{typeName} and is_delete=0
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="addProblemType">
+        insert into t_problem_type(id, type_name, type_code,
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value (#{id}, #{typeName}, #{typeCode},
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="modifyProblemType">
+        update t_problem_type set
+        <if test="typeName!=null">
+            type_name=#{typeName},
+        </if>
+        <if test="typeCode!=null">
+            type_code=#{typeCode},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+        update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteProblemType">
+        update t_problem_type set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <select id="listProblemIdentify" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
+        select id, lng, lat, address, info, image_url, is_checked, status, create_date from t_problem_check
+        where is_delete=0
+        <if test="name!=null and name!=''">
+            and info like concat('%', #{name}, '%')
+        </if>
+        order by create_date desc
+    </select>
+
+    <select id="listNotBindProblemIdentify" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
+        select id, lng, lat, address, info, image_url, is_checked, status, create_date from t_problem_check
+        where is_delete=0 and is_checked=0
+        <if test="name!=null and name!=''">
+            and info like concat('%', #{name}, '%')
+        </if>
+        order by create_date desc
+    </select>
+
+    <select id="getProblemIdentifyDetail" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
+        select id, lng, lat, address, info, image_url, is_checked, status, create_date from t_problem_check
+        where is_delete=0 and id=#{id}
+    </select>
+
+    <insert id="addProblemIdentify">
+        insert into t_problem_check(id, lng, lat, address, info, image_url,
+        <if test="isCheck!=null">
+            is_checked,
+        </if>
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value (#{id}, #{lng}, #{lat}, #{address}, #{info}, #{imageUrl},
+        <if test="isCheck!=null">
+            #{isCheck},
+        </if>
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="modifyProblemIdentify">
+        update t_problem_check set
+        <if test="lng!=null">
+            lng=#{lng},
+        </if>
+        <if test="lat!=null">
+            lat=#{lat},
+        </if>
+        <if test="address!=null">
+            address=#{address},
+        </if>
+        <if test="info!=null">
+            info=#{info},
+        </if>
+        <if test="imageUrl!=null">
+            image_url=#{imageUrl},
+        </if>
+        <if test="isCheck!=null">
+            is_checked=#{isCheck},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+        update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteProblemIdentify">
+        update t_problem_check set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0;
+        delete from t_problem_re where problem_check_id=#{id};
+    </update>
+
+    <select id="listProblem" resultType="com.uav.ops.dto.res.ProblemResDTO">
+        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status,
+        p.solve_time, p.solve_duration, p.create_date
+        from t_problem as p
+        left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
+        where p.is_delete=0
+        <if test="name!=null and name!=''">
+            and p.title like concat('%', #{name}, '%')
+        </if>
+        order by p.create_date desc
+    </select>
+
+    <select id="getProblemDetail" resultType="com.uav.ops.dto.res.ProblemDetailResDTO">
+        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status,
+        p.solve_time, p.solve_duration, p.create_date
+        from t_problem as p
+        left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
+        where p.is_delete=0 and p.id=#{id}
+    </select>
+
+    <select id="getProblemIdentifyByProblemId" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
+        select pc.id, pc.lng, pc.lat, pc.address, pc.info, pc.image_url, pc.is_checked, pc.status, pc.create_date
+        from t_problem_re as pr
+        left join t_problem_check as pc on pr.problem_check_id=pc.id and pc.is_delete=0 and pc.status=0
+        where pr.problem_id=#{id}
+        order by pc.create_date desc
+    </select>
+
+    <select id="selectProblemIsExist" resultType="java.lang.Integer">
+        select count(1) from t_problem
+        where title=#{title} and type_id=#{typeId} and is_delete=0
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="addProblem">
+        insert into t_problem(id, title, type_id, problem_level, solve_time, solve_duration,
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value (#{id}, #{title}, #{typeId}, #{problemLevel}, #{solveTime}, #{solveDuration},
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="modifyProblem">
+        update t_problem set
+        <if test="title!=null">
+            title=#{title},
+        </if>
+        <if test="typeId!=null">
+            type_id=#{typeId},
+        </if>
+        <if test="problemLevel!=null">
+            problem_level=#{problemLevel},
+        </if>
+        <if test="solveTime!=null">
+            solve_time=#{solveTime},
+        </if>
+        <if test="solveDuration!=null">
+            solve_duration=#{solveDuration},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+        update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteProblem">
+        update t_problem set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0;
+        delete from t_problem_re where problem_id=#{id};
+    </update>
+
+    <insert id="insertProblemRe">
+        insert into t_problem_re(id, problem_id, problem_check_id)
+        values
+        <foreach collection="identifyIds" index="index" item="identifyId" separator=",">
+            (REPLACE(UUID(), '-', ''), #{problemId}, #{identifyId})
+        </foreach>
+        ;
+        update t_problem_check set
+        is_checked=1, update_by=#{userId}
+        where id in (
+        <foreach collection="identifyIds" index="index" item="identifyId" separator=",">
+            #{identifyId}
+        </foreach>
+        );
+    </insert>
+
+    <delete id="deleteProblemRe">
+        delete from t_problem_re where problem_id=#{problemId} and problem_check_id in (
+        <foreach collection="identifyIds" index="index" item="identifyId" separator=",">
+            #{identifyId}
+        </foreach>
+        );
+        update t_problem_check set
+        is_checked=0, update_by=#{userId}
+        where id in (
+        <foreach collection="identifyIds" index="index" item="identifyId" separator=",">
+            #{identifyId}
+        </foreach>
+        );
+    </delete>
+
+    <select id="listProblemWarning" resultType="com.uav.ops.dto.res.ProblemWarningResDTO">
+        select pw.id, pw.warning_info, pw.problem_id, pw.status, pw.create_date, p.title as problem_title
+        from t_problem_warning as pw
+        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0 and p.status=0
+        where pw.is_delete=0
+        order by pw.create_date desc
+    </select>
+
+    <select id="getProblemWarningDetail" resultType="com.uav.ops.dto.res.ProblemWarningResDTO">
+        select pw.id, pw.warning_info, pw.problem_id, pw.status, pw.create_date, p.title as problem_title
+        from t_problem_warning as pw
+        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0 and p.status=0
+        where pw.is_delete=0 and pw.id=#{id}
+    </select>
+
+    <insert id="addProblemWarning">
+        insert into t_problem_warning(id, warning_info, problem_id,
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value (#{id}, #{warningInfo}, #{problemId},
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="closeProblemWarning">
+        update t_problem_warning set
+        status=#{status}, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteProblemWarning">
+        update t_problem_warning set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <select id="monthlyProblemNum" resultType="com.uav.ops.dto.res.MonthlyProblemNumResDTO">
+        select a.* from (
+        SELECT DATE_FORMAT(CURDATE(), '%m月') AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT(CURDATE(), '%m月') and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') and is_delete=0 and status!=9) as a
+    </select>
+
+    <select id="solveProblemNum" resultType="java.lang.Integer">
+        select count(id) from t_problem where status=1 and is_delete=0
+    </select>
+
+    <select id="notSolveProblemNum" resultType="java.lang.Integer">
+        select count(id) from t_problem where status=0 and is_delete=0
+    </select>
+
+    <select id="typeProblemNum" resultType="com.uav.ops.dto.res.MonthlyProblemNumResDTO">
+        select a.* from (
+        SELECT DATE_FORMAT(CURDATE(), '%m月') AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT(CURDATE(), '%m月')
+        and type_id=#{typeId} and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月')
+        and type_id=#{typeId} and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月')
+        and type_id=#{typeId} and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月')
+        and type_id=#{typeId} and is_delete=0 and status!=9
+        UNION
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月')
+        and type_id=#{typeId} and is_delete=0 and status!=9) as a
+    </select>
+</mapper>

@@ -219,26 +219,12 @@ public class CruiseServiceImpl implements CruiseService {
     @Override
     public Page<CruiseWarnResDTO> listCruiseWarn(Integer type, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        Page<CruiseWarnResDTO> page = cruiseMapper.listCruiseWarn(pageReqDTO.of(), type);
-        List<CruiseWarnResDTO> list = page.getRecords();
-        if (list != null && !list.isEmpty()) {
-            for (CruiseWarnResDTO resDTO : list) {
-                resDTO.setPlanInfo(cruiseMapper.getCruisePlanDetail(resDTO.getPlanId()));
-                resDTO.setFaultInfo(deviceMapper.getDeviceFaultDetail(resDTO.getFaultId()));
-            }
-        }
-        page.setRecords(list);
-        return page;
+        return cruiseMapper.listCruiseWarn(pageReqDTO.of(), type);
     }
 
     @Override
     public CruiseWarnResDTO getCruiseWarnDetail(String id) {
-        CruiseWarnResDTO resDTO = cruiseMapper.getCruiseWarnDetail(id);
-        if (!Objects.isNull(resDTO)) {
-            resDTO.setPlanInfo(cruiseMapper.getCruisePlanDetail(resDTO.getPlanId()));
-            resDTO.setFaultInfo(deviceMapper.getDeviceFaultDetail(resDTO.getFaultId()));
-        }
-        return resDTO;
+        return cruiseMapper.getCruiseWarnDetail(id);
     }
 
     @Override

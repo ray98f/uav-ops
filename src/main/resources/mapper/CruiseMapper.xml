@@ -268,19 +268,25 @@
     </update>
 
     <select id="listCruiseWarn" resultType="com.uav.ops.dto.res.CruiseWarnResDTO">
-        select id, warning_type, warning_info, plan_id, fault_id, status, create_date
-        from t_cruise_warning
-        where is_delete=0
+        select cw.id, cw.warning_type, cw.warning_info, cw.plan_id, cp.plan_name, cw.fault_id, df.info as fault_info,
+        cw.status, cw.create_date
+        from t_cruise_warning as cw
+        left join t_cruise_plan as cp on cp.id=cw.plan_id and cp.is_delete=0
+        left join t_device_fault as df on df.id=cw.fault_id and df.is_delete=0
+        where cw.is_delete=0
         <if test="type!=null">
-            and warning_type=#{type}
+            and cw.warning_type=#{type}
         </if>
-        order by create_date desc
+        order by cw.create_date desc
     </select>
 
     <select id="getCruiseWarnDetail" resultType="com.uav.ops.dto.res.CruiseWarnResDTO">
-        select id, warning_type, warning_info, plan_id, fault_id, status, create_date
-        from t_cruise_warning
-        where is_delete=0 and id=#{id}
+        select cw.id, cw.warning_type, cw.warning_info, cw.plan_id, cp.plan_name, cw.fault_id, df.info as fault_info,
+        cw.status, cw.create_date
+        from t_cruise_warning as cw
+        left join t_cruise_plan as cp on cp.id=cw.plan_id and cp.is_delete=0
+        left join t_device_fault as df on df.id=cw.fault_id and df.is_delete=0
+        where cw.is_delete=0 and cw.id=#{id}
     </select>
 
     <insert id="addCruiseWarn">

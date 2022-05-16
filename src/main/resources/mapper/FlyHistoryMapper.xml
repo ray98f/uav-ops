@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uav.ops.mapper.FlyHistoryMapper">
+
+    <select id="listFlyHistory" resultType="com.uav.ops.dto.res.FlyHistoryResDTO">
+        select fh.id, fh.device_id, fh.fly_type, fh.fly_start, fh.fly_end, fh.takeoff_time, fh.land_time, fh.line_id,
+        fh.mileage, fh.fly_time, fh.fly_video, fh.create_date, d.device_name, cl.line_name
+        from t_fly_history as fh
+        left join t_cruise_line as cl on cl.id=fh.line_id and cl.status=0 and cl.is_delete=0
+        left join t_device as d on d.id=fh.device_id and d.status=0 and d.is_delete=0
+        where fh.is_delete=0
+        <if test="name!=null and name!=''">
+            and d.device_name like concat('%', #{name}, '%')
+        </if>
+        order by fh.create_date desc
+    </select>
+
+    <select id="getFlyHistoryDetail" resultType="com.uav.ops.dto.res.FlyHistoryResDTO">
+        select fh.id, fh.device_id, fh.fly_type, fh.fly_start, fh.fly_end, fh.takeoff_time, fh.land_time, fh.line_id,
+        fh.mileage, fh.fly_time, fh.fly_video, fh.create_date, d.device_name, cl.line_name
+        from t_fly_history as fh
+        left join t_cruise_line as cl on cl.id=fh.line_id and cl.status=0 and cl.is_delete=0
+        left join t_device as d on d.id=fh.device_id and d.status=0 and d.is_delete=0
+        where fh.is_delete=0 and fh.id=#{id}
+    </select>
+
+    <update id="deleteFlyHistory">
+        update t_fly_history set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+</mapper>

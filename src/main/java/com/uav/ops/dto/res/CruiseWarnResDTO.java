@@ -25,14 +25,14 @@ public class CruiseWarnResDTO {
     @ApiModelProperty(value = "关联计划id")
     private String planId;
 
-    @ApiModelProperty(value = "关联计划信息")
-    private CruisePlanResDTO planInfo;
+    @ApiModelProperty(value = "关联计划名称")
+    private String planName;
 
     @ApiModelProperty(value = "关联故障id")
     private String faultId;
 
     @ApiModelProperty(value = "关联故障信息")
-    private DeviceResDTO.DeviceFault faultInfo;
+    private String faultInfo;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
