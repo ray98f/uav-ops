@@ -1,7 +1,9 @@
 package com.uav.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
+import com.uav.ops.config.component.WebSocketServer;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.DeviceReqDTO;
 import com.uav.ops.dto.res.DeviceResDTO;
@@ -26,6 +28,9 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     @Override
     public Page<DeviceResDTO> listDevice(String name, PageReqDTO pageReqDTO) {
@@ -116,5 +121,10 @@ public class DeviceServiceImpl implements DeviceService {
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
+    }
+
+    @Override
+    public void operateDrone(String id, String operate) {
+//        webSocketServer.sendMessage("无人机控制:" + operate, "app:" + id);
     }
 }

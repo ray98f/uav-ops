@@ -8,6 +8,7 @@ import com.uav.ops.dto.res.DeviceResDTO;
 import com.uav.ops.service.DeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.validation.annotation.Validated;
@@ -74,6 +75,14 @@ public class DeviceController {
     @ApiOperation(value = "新增设备故障信息")
     public DataResponse<T> addDeviceFault(@RequestBody DeviceResDTO.DeviceFault deviceFault) {
         deviceService.addDeviceFault(deviceFault);
+        return DataResponse.success();
+    }
+
+    @GetMapping("/operate")
+    @ApiOperation(value = "无人机控制")
+    public DataResponse<T> operateDrone(@RequestParam @ApiParam(value = "无人机设备id") String id,
+                                        @RequestParam @ApiParam(value = "无人机操作") String operate) {
+        deviceService.operateDrone(id, operate);
         return DataResponse.success();
     }
 }

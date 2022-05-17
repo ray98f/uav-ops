@@ -1,11 +1,16 @@
 package com.uav.ops.config.component;
 
+import com.alibaba.fastjson.JSONObject;
+import com.uav.ops.config.repository.UavEsRepository;
+import com.uav.ops.entity.Uav;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,9 +21,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint("/webSocket/{type}/{deviceId}")
 @Slf4j
 public class WebSocketServer {
+
     private Session session;
+
     private String deviceId;
+
     private String type;
+
+    private String clientId = "";
     /**
      * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
      */
@@ -35,6 +45,14 @@ public class WebSocketServer {
      */
     private final static List<Session> SESSIONS = Collections.synchronizedList(new ArrayList<>());
 
+    private static UavEsRepository repository;
+
+    @Autowired
+    public void setService(UavEsRepository repository){
+        WebSocketServer.repository = repository;
+    }
+
+
     /**
      * 建立连接
      *
@@ -42,20 +60,20 @@ public class WebSocketServer {
      * @param deviceId
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("deviceId") String deviceId, @PathParam("type") String type) {
+    public void onOpen(Session session, @PathParam("type") String type, @PathParam("deviceId") String deviceId) {
         this.session = session;
-        this.deviceId = deviceId;
         this.type = type;
+        this.deviceId = deviceId;
+        this.clientId = type + ":" + deviceId;
         webSocketSet.add(this);
         SESSIONS.add(session);
-        if (webSocketMap.containsKey(type + "-" + deviceId)) {
-            webSocketMap.remove(type + "-" + deviceId);
-            webSocketMap.put(type + "-" + deviceId, this);
+        if (webSocketMap.containsKey(this.clientId)) {
+            sendMessage("[" + this.clientId + "连接] 建立连接失败,已建立连接", this.clientId);
         } else {
-            webSocketMap.put(type + "-" + deviceId, this);
+            webSocketMap.put(this.clientId, this);
             addOnlineCount();
+            log.info("[{}连接] 建立连接, 当前连接数:{}", this.clientId, webSocketMap.size());
         }
-        log.info("[{}连接ID:{}] 建立连接, 当前连接数:{}", this.type, this.deviceId, webSocketMap.size());
     }
 
     /**
@@ -64,11 +82,11 @@ public class WebSocketServer {
     @OnClose
     public void onClose() {
         webSocketSet.remove(this);
-        if (webSocketMap.containsKey(type + "-" + deviceId)) {
-            webSocketMap.remove(type + "-" + deviceId);
+        if (webSocketMap.containsKey(this.clientId)) {
+            webSocketMap.remove(this.clientId);
             subOnlineCount();
         }
-        log.info("[{}连接ID:{}] 断开连接, 当前连接数:{}", type, deviceId, webSocketMap.size());
+        log.info("[{}连接] 断开连接, 当前连接数:{}", this.clientId, webSocketMap.size());
     }
 
     /**
@@ -79,7 +97,7 @@ public class WebSocketServer {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        log.info("[{}连接ID:{}] 错误原因:{}", this.type, this.deviceId, error.getMessage());
+        log.info("[{}连接] 错误原因:{}", this.clientId, error.getMessage());
         error.printStackTrace();
     }
 
@@ -90,23 +108,33 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message) {
-        log.info("[{}连接ID:{}] 收到消息:{}", this.type, this.deviceId, message);
+        log.info("[{}连接] 收到消息:{}", this.clientId, message);
+        sendMassMessage(message);
+        repository.save(JSONObject.parseObject(message, Uav.class));
+    }
+
+    public void send(Session session, String message) throws IOException {
+        if(session != null){
+            synchronized (session) {
+                session.getBasicRemote().sendText(message);
+            }
+        }
     }
 
     /**
      * 发送消息
      *
      * @param message
-     * @param deviceId
+     * @param clientId
      */
-    public void sendMessage(String message, String deviceId, String type) {
-        WebSocketServer webSocketServer = webSocketMap.get(type + "-" + deviceId);
+    public void sendMessage(String message, String clientId) {
+        WebSocketServer webSocketServer = webSocketMap.get(clientId);
         if (webSocketServer != null) {
             try {
-                webSocketServer.session.getBasicRemote().sendText(message);
+                send(webSocketServer.session, message);
             } catch (Exception e) {
                 e.printStackTrace();
-                log.error("[{}连接ID:{}] 发送消息失败, 消息:{}", this.type, this.deviceId, message, e);
+                log.error("[{}连接] 发送消息失败，消息:{}", this.clientId, message);
             }
         }
     }
@@ -118,10 +146,10 @@ public class WebSocketServer {
      */
     public void sendMassMessage(String message) {
         try {
-            for (Session session : SESSIONS) {
-                if (session.isOpen()) {
-                    session.getBasicRemote().sendText(message);
-                    log.info("[{}连接ID:{}] 发送消息:{}", this.type, session.getRequestParameterMap().get("deviceId"), message);
+            for (WebSocketServer item : webSocketSet) {
+                if (item.session.isOpen() && item.clientId.equals(("app".equals(this.type) ? "pc" : "app")
+                        + ":" + this.deviceId)) {
+                    send(item.session, message);
                 }
             }
         } catch (Exception e) {

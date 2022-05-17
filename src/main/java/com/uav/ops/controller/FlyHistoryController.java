@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -60,7 +61,7 @@ public class FlyHistoryController {
     @ApiOperation(value = "获取飞行记录飞行数据列表")
     public DataResponse<List<FlyHistoryDataResDTO>> listFlyHistoryDataList(@RequestParam String startTime,
                                                                            @RequestParam String endTime,
-                                                                           @RequestParam String deviceId) {
+                                                                           @RequestParam String deviceId) throws ParseException {
         return DataResponse.of(flyHistoryService.listFlyHistoryDataList(startTime, endTime, deviceId));
     }
 }

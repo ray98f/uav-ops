@@ -6,6 +6,7 @@ import com.uav.ops.dto.req.DeviceReqDTO;
 import com.uav.ops.dto.res.DeptTreeResDTO;
 import com.uav.ops.dto.res.DeviceResDTO;
 import com.uav.ops.dto.res.UserResDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -27,5 +28,7 @@ public interface DeviceService {
     void deleteDevice(DeviceReqDTO deviceReqDTO);
 
     void addDeviceFault(DeviceResDTO.DeviceFault deviceFault);
+
+    void operateDrone(String id, String operate);
 
 }

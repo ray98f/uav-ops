@@ -12,6 +12,7 @@ import com.uav.ops.dto.res.FlyHistoryResDTO;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -25,6 +26,6 @@ public interface FlyHistoryService {
 
     void deleteFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
-    List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId);
+    List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException;
 
 }

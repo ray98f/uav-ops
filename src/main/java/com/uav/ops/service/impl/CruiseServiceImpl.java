@@ -1,7 +1,9 @@
 package com.uav.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
+import com.uav.ops.config.component.WebSocketServer;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePlanReqDTO;
@@ -38,6 +40,9 @@ public class CruiseServiceImpl implements CruiseService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     @Override
     public Page<CruiseLineResDTO> listCruiseLine(String name, PageReqDTO pageReqDTO) {
@@ -214,6 +219,10 @@ public class CruiseServiceImpl implements CruiseService {
     @Override
     public void exeCruisePlan(String id) {
         // todo 执行巡检计划
+//        CruisePlanResDTO res = cruiseMapper.getCruisePlanDetail(id);
+//        if (!Objects.isNull(res)) {
+//            webSocketServer.sendMessage("执行巡检计划:" + JSON.toJSONString(res), "app:" + res.getDeviceId());
+//        }
     }
 
     @Override

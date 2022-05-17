@@ -26,6 +26,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -67,7 +69,7 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     }
 
     @Override
-    public List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) {
+    public List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException {
         // todo es搜索时间段内无人机飞行数据
         List<FlyHistoryDataResDTO> list = new ArrayList<>();
 //        Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
@@ -78,14 +80,15 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
         return list;
     }
 
-    public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) {
+    public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
         queryBuilders.must(QueryBuilders.existsQuery("deviceId"));
         queryBuilders.must(QueryBuilders.existsQuery("createTime"));
         queryBuilders.must(QueryBuilders.matchQuery("deviceId", deviceId));
         queryBuilders.must(QueryBuilders.rangeQuery("createTime")
-                .from(startTime)
-                .to(endTime)
+                .from(sdf.parse(startTime).getTime())
+                .to(sdf.parse(endTime).getTime())
                 .includeLower(true)
                 .includeUpper(true)
                 .format("yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSS"));

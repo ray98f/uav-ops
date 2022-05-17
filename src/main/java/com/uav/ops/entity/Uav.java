@@ -25,7 +25,7 @@ public class Uav {
     @ApiModelProperty(value = "无人机id")
     private String id;
 
-    @ApiModelProperty(value = "文件名")
+    @ApiModelProperty(value = "设备名称")
     @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
     private String deviceName;
 
