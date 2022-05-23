@@ -3,10 +3,7 @@ package com.uav.ops.controller;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
-import com.uav.ops.dto.req.ProblemIdentifyReqDTO;
-import com.uav.ops.dto.req.ProblemReqDTO;
-import com.uav.ops.dto.req.ProblemTypeReqDTO;
-import com.uav.ops.dto.req.ProblemWarningReqDTO;
+import com.uav.ops.dto.req.*;
 import com.uav.ops.dto.res.*;
 import com.uav.ops.service.ProblemService;
 import io.swagger.annotations.Api;
@@ -150,12 +147,10 @@ public class ProblemController {
         return DataResponse.success();
     }
 
-    @GetMapping("/bind")
+    @PostMapping("/bind")
     @ApiOperation(value = "问题 绑定/解绑 问题识别记录")
-    public DataResponse<T> bindProblem(@RequestParam @ApiParam(value = "问题id") String problemId,
-                                       @RequestParam @ApiParam(value = "问题识别记录ids") List<String> identifyIds,
-                                       @RequestParam @ApiParam(value = "类型 1 绑定 2 解绑") Integer type) {
-        problemService.bindProblem(problemId, identifyIds, type);
+    public DataResponse<T> bindProblem(@RequestBody ProblemBindReqDTO problemBindReqDTO) {
+        problemService.bindProblem(problemBindReqDTO);
         return DataResponse.success();
     }
 

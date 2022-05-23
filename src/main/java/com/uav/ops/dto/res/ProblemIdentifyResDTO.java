@@ -31,7 +31,7 @@ public class ProblemIdentifyResDTO {
     @ApiModelProperty(value = "问题照片")
     private String imageUrl;
 
-    @ApiModelProperty(value = "已识别标识 0未识别，1已识别")
+    @ApiModelProperty(value = "已识别标识 0未绑定，1已绑定")
     private Integer isChecked;
 
     @ApiModelProperty(value = "状态 0正常9停用")

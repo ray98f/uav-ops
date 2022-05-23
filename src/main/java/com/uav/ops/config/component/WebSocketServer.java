@@ -109,8 +109,10 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(String message) {
         log.info("[{}连接] 收到消息:{}", this.clientId, message);
-        sendMassMessage(message);
-        repository.save(JSONObject.parseObject(message, Uav.class));
+        if ("app".equals(this.type)) {
+            sendMassMessage(message);
+            repository.save(JSONObject.parseObject(message, Uav.class));
+        }
     }
 
     public void send(Session session, String message) throws IOException {

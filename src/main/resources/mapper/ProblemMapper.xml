@@ -90,7 +90,7 @@
 
     <insert id="addProblemIdentify">
         insert into t_problem_check(id, lng, lat, address, info, image_url,
-        <if test="isCheck!=null">
+        <if test="isChecked!=null">
             is_checked,
         </if>
         <if test="status!=null">
@@ -98,8 +98,8 @@
         </if>
         create_by)
         value (#{id}, #{lng}, #{lat}, #{address}, #{info}, #{imageUrl},
-        <if test="isCheck!=null">
-            #{isCheck},
+        <if test="isChecked!=null">
+            #{isChecked},
         </if>
         <if test="status!=null">
             #{status},
@@ -124,8 +124,8 @@
         <if test="imageUrl!=null">
             image_url=#{imageUrl},
         </if>
-        <if test="isCheck!=null">
-            is_checked=#{isCheck},
+        <if test="isChecked!=null">
+            is_checked=#{isChecked},
         </if>
         <if test="status!=null">
             status=#{status},
@@ -179,12 +179,18 @@
     </select>
 
     <insert id="addProblem">
-        insert into t_problem(id, title, type_id, problem_level, solve_time, solve_duration,
+        insert into t_problem(id, title, type_id, problem_level, solve_time,
+        <if test="solveDuration!=null">
+            solve_duration,
+        </if>
         <if test="status!=null">
             status,
         </if>
         create_by)
-        value (#{id}, #{title}, #{typeId}, #{problemLevel}, #{solveTime}, #{solveDuration},
+        value (#{id}, #{title}, #{typeId}, #{problemLevel}, #{solveTime},
+        <if test="solveDuration!=null">
+            #{solveDuration},
+        </if>
         <if test="status!=null">
             #{status},
         </if>

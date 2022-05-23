@@ -2,10 +2,7 @@ package com.uav.ops.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uav.ops.dto.PageReqDTO;
-import com.uav.ops.dto.req.ProblemIdentifyReqDTO;
-import com.uav.ops.dto.req.ProblemReqDTO;
-import com.uav.ops.dto.req.ProblemTypeReqDTO;
-import com.uav.ops.dto.req.ProblemWarningReqDTO;
+import com.uav.ops.dto.req.*;
 import com.uav.ops.dto.res.*;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,7 +49,7 @@ public interface ProblemService {
 
     void deleteProblem(ProblemReqDTO problemReqDTO);
 
-    void bindProblem(String problemId, List<String> identifyIds, Integer type);
+    void bindProblem(ProblemBindReqDTO problemBindReqDTO);
 
     Page<ProblemWarningResDTO> listProblemWarning(PageReqDTO pageReqDTO);
 

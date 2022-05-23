@@ -3,10 +3,7 @@ package com.uav.ops.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.dto.PageReqDTO;
-import com.uav.ops.dto.req.ProblemIdentifyReqDTO;
-import com.uav.ops.dto.req.ProblemReqDTO;
-import com.uav.ops.dto.req.ProblemTypeReqDTO;
-import com.uav.ops.dto.req.ProblemWarningReqDTO;
+import com.uav.ops.dto.req.*;
 import com.uav.ops.dto.res.*;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
@@ -223,14 +220,14 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public void bindProblem(String problemId, List<String> identifyIds, Integer type) {
-        if (type == 1 && !identifyIds.isEmpty()) {
-            Integer result = problemMapper.insertProblemRe(problemId, identifyIds, TokenUtil.getCurrentPersonNo());
+    public void bindProblem(ProblemBindReqDTO problemBindReqDTO) {
+        if (problemBindReqDTO.getType() == 1 && !problemBindReqDTO.getIdentifyIds().isEmpty()) {
+            Integer result = problemMapper.insertProblemRe(problemBindReqDTO.getProblemId(), problemBindReqDTO.getIdentifyIds(), TokenUtil.getCurrentPersonNo());
             if (result < 0) {
                 throw new CommonException(ErrorCode.INSERT_ERROR);
             }
-        } else if (type == 2 && !identifyIds.isEmpty()) {
-            Integer result = problemMapper.deleteProblemRe(problemId, identifyIds, TokenUtil.getCurrentPersonNo());
+        } else if (problemBindReqDTO.getType() == 2 && !problemBindReqDTO.getIdentifyIds().isEmpty()) {
+            Integer result = problemMapper.deleteProblemRe(problemBindReqDTO.getProblemId(), problemBindReqDTO.getIdentifyIds(), TokenUtil.getCurrentPersonNo());
             if (result < 0) {
                 throw new CommonException(ErrorCode.DELETE_ERROR);
             }
