@@ -166,6 +166,13 @@
         order by create_date desc
     </select>
 
+    <select id="listDeviceCruisePlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
+        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
+        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
+        from t_cruise_plan where is_delete=0 and device_id=#{deviceId}
+        order by create_date desc
+    </select>
+
     <select id="getCruisePlanDetail" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
         select id, plan_name, address, plan_type, start_day, end_day, specify_day,
         specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date

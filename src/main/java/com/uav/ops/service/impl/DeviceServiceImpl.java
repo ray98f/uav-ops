@@ -58,6 +58,11 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    public List<DeviceResDTO> listAllUav(Integer status) {
+        return deviceMapper.listAllUav(status);
+    }
+
+    @Override
     public DeviceResDTO getDeviceDetail(String id) {
         DeviceResDTO dto = deviceMapper.getDeviceDetail(id);
         if (!Objects.isNull(dto)) {

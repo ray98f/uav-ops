@@ -19,6 +19,8 @@ public interface DeviceService {
 
     List<DeviceResDTO> listAllDevice();
 
+    List<DeviceResDTO> listAllUav(Integer status);
+
     DeviceResDTO getDeviceDetail(String id);
 
     void addDevice(DeviceReqDTO deviceReqDTO);

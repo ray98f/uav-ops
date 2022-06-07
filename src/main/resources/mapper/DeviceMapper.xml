@@ -17,6 +17,15 @@
         order by create_date desc
     </select>
 
+    <select id="listAllUav" resultType="com.uav.ops.dto.res.DeviceResDTO">
+        select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
+        from t_device where is_delete=0 and type=1
+        <if test="status!=null">
+            and status=#{status}
+        </if>
+        order by create_date desc
+    </select>
+
     <select id="getDeviceDetail" resultType="com.uav.ops.dto.res.DeviceResDTO">
         select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
         from t_device where is_delete=0 and id=#{id}

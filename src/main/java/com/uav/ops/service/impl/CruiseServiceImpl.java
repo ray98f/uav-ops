@@ -167,8 +167,18 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
+    public List<CruisePlanResDTO> listDeviceCruisePlan(String deviceId) {
+        return cruiseMapper.listDeviceCruisePlan(deviceId);
+    }
+
+    @Override
     public CruisePlanResDTO getCruisePlanDetail(String id) {
-        return cruiseMapper.getCruisePlanDetail(id);
+        CruisePlanResDTO resDTO = cruiseMapper.getCruisePlanDetail(id);
+        if (!Objects.isNull(resDTO)) {
+            resDTO.setLineInfo(cruiseMapper.getCruiseLineDetail(resDTO.getLineId()));
+            resDTO.setDeviceInfo(deviceMapper.getDeviceDetail(resDTO.getDeviceId()));
+        }
+        return resDTO;
     }
 
     @Override

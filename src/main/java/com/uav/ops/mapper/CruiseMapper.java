@@ -50,6 +50,8 @@ public interface CruiseMapper {
 
     Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, Integer type, String name);
 
+    List<CruisePlanResDTO> listDeviceCruisePlan(String deviceId);
+
     CruisePlanResDTO getCruisePlanDetail(String id);
 
     Integer selectCruisePlanIsExist(CruisePlanReqDTO cruisePlanReqDTO);

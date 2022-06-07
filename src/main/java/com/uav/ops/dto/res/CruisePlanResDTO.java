@@ -66,8 +66,14 @@ public class CruisePlanResDTO {
     @ApiModelProperty(value = "巡检路线ID")
     private String lineId;
 
+    @ApiModelProperty(value = "巡检路线详情")
+    private CruiseLineResDTO lineInfo;
+
     @ApiModelProperty(value = "无人机ID")
     private String deviceId;
+
+    @ApiModelProperty(value = "无人机详情")
+    private DeviceResDTO deviceInfo;
 
     @ApiModelProperty(value = "无信号自动退出任务标记 0否,1是")
     private Integer autoEndFlag;
@@ -82,4 +88,6 @@ public class CruisePlanResDTO {
             timezone = "GMT+8"
     )
     private Date createDate;
+
+
 }

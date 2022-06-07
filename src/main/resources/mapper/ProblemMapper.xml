@@ -262,7 +262,7 @@
     <select id="listProblemWarning" resultType="com.uav.ops.dto.res.ProblemWarningResDTO">
         select pw.id, pw.warning_info, pw.problem_id, pw.status, pw.create_date, p.title as problem_title
         from t_problem_warning as pw
-        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0 and p.status=0
+        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0
         where pw.is_delete=0
         order by pw.create_date desc
     </select>
@@ -270,7 +270,7 @@
     <select id="getProblemWarningDetail" resultType="com.uav.ops.dto.res.ProblemWarningResDTO">
         select pw.id, pw.warning_info, pw.problem_id, pw.status, pw.create_date, p.title as problem_title
         from t_problem_warning as pw
-        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0 and p.status=0
+        left join t_problem as p on p.id=pw.problem_id and p.is_delete=0
         where pw.is_delete=0 and pw.id=#{id}
     </select>
 

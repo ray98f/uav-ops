@@ -296,8 +296,8 @@ public class ProblemServiceImpl implements ProblemService {
             data.put("solveNum", 0);
             data.put("notSolveNum", 0);
         } else {
-            data.put("solveNum", solve / (solve + notSolve) * 100);
-            data.put("notSolveNum", notSolve / (solve + notSolve) * 100);
+            data.put("solveNum", solve);
+            data.put("notSolveNum", notSolve);
         }
         return data;
     }

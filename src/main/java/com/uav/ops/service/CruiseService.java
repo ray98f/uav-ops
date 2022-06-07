@@ -42,6 +42,8 @@ public interface CruiseService {
 
     Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, PageReqDTO pageReqDTO);
 
+    List<CruisePlanResDTO> listDeviceCruisePlan(String deviceId);
+
     CruisePlanResDTO getCruisePlanDetail(String id);
 
     void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
