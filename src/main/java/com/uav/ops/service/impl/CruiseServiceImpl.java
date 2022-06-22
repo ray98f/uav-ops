@@ -229,10 +229,10 @@ public class CruiseServiceImpl implements CruiseService {
     @Override
     public void exeCruisePlan(String id) {
         // todo 执行巡检计划
-//        CruisePlanResDTO res = cruiseMapper.getCruisePlanDetail(id);
-//        if (!Objects.isNull(res)) {
-//            webSocketServer.sendMessage("执行巡检计划:" + JSON.toJSONString(res), "app:" + res.getDeviceId());
-//        }
+        CruisePlanResDTO res = cruiseMapper.getCruisePlanDetail(id);
+        if (!Objects.isNull(res)) {
+            webSocketServer.sendMessage("执行巡检计划:" + JSON.toJSONString(res), "app:" + res.getDeviceId());
+        }
     }
 
     @Override

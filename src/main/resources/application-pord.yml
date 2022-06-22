@@ -21,9 +21,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.30.110:3306/uav_ops?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/uav_ops?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
     username: root
-    password: Zxwz123!@#
+    password: Ztt123#@!
     hikari:
       read-only: false
       connection-timeout: 60000
@@ -34,16 +34,15 @@ spring:
       maximum-pool-size: 30
       minimum-idle: 10
   redis:
-    cluster:
-      nodes: 192.168.30.108:7001, 192.168.30.109:7003, 192.168.30.110:7005, 192.168.30.108:7002, 192.168.30.109:7004, 192.168.30.110:7006
+    host: 127.0.0.1
+    port: 6379
     jedis:
       pool:
         max-active: 50
         min-idle: 0
         max-idle: 50
         max-wait: -1
-    key-prefix: dev-
-#    key-prefix: test-
+    key-prefix: pord-
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
@@ -79,13 +78,13 @@ vx-business:
   corpsecret: B9L_KTNLvjUtrqnn6A1A0fAeN8PdDtlpMivmHZ1kd2Y
 
 minio:
-  url: http://zxgd.softether.net:9000
-  imgPath: http://zxgd.softether.net:9000
-  accessKey: minio
-  secretKey: minio123
+  url: http://127.0.0.1:9000
+  imgPath: https://security.zttgs.com:3443
+  accessKey: zttadmin
+  secretKey: ztt_123#@!
 
 es:
-  url: 192.168.30.110:9200
+  url: 127.0.0.1:9200
   index: uav
 
 pro:
@@ -95,5 +94,5 @@ open:
   api:
     eip-service:
       url: /securityInfo/manage
-      host: http://192.168.30.58
-      port: 9500
+      host: https://security.zttgs.com
+      port: 3443

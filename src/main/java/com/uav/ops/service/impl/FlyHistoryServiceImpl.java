@@ -72,11 +72,11 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     public List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException {
         // todo es搜索时间段内无人机飞行数据
         List<FlyHistoryDataResDTO> list = new ArrayList<>();
-//        Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
-//        for (Uav item : items) {
-//            FlyHistoryDataResDTO res = JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.class);
-//            list.add(res);
-//        }
+        Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
+        for (Uav item : items) {
+            FlyHistoryDataResDTO res = JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.class);
+            list.add(res);
+        }
         return list;
     }
 

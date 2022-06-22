@@ -55,7 +55,6 @@ public class FileController {
         if (!minioUtils.bucketExists(bizCode)) {
             minioUtils.makeBucket(bizCode);
         }
-        String oldName = file.getOriginalFilename();
         String fileName = FileUploadUtils.extractFilename(file);
         PutObjectArgs args = PutObjectArgs.builder()
                 .bucket(bizCode)
@@ -64,6 +63,6 @@ public class FileController {
                 .contentType(file.getContentType())
                 .build();
         client.putObject(args);
-        return minioConfig.getUrl() + "/" + bizCode + "/" + fileName;
+        return minioConfig.getImgPath() + "/" + bizCode + "/" + fileName;
     }
 }

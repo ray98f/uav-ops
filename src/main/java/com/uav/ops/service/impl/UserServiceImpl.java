@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncUser() {
-        String url = "http://" + securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
+        String url = securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
                 + "/user/sync/list";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
                 .build()

@@ -1,6 +1,5 @@
 package com.uav.ops.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.config.component.WebSocketServer;
@@ -130,6 +129,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void operateDrone(String id, String operate) {
-//        webSocketServer.sendMessage("无人机控制:" + operate, "app:" + id);
+        webSocketServer.sendMessage("无人机控制:" + operate, "app:" + id);
     }
 }

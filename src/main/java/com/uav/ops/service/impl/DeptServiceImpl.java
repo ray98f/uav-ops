@@ -49,7 +49,7 @@ public class DeptServiceImpl implements DeptService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncDept() {
-        String url = "http://" + securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
+        String url = securityInfoManageServiceHost + ":" + securityInfoManageServicePort + securityInfoManageServiceUrl
                 + "/dept/sync/list";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
                 .build()
