@@ -108,8 +108,13 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message) {
-        log.info("[{}连接] 收到消息:{}", this.clientId, message);
+        // 心跳检测
+        if ("poling".equals(message)) {
+            sendMessage("poling", this.clientId);
+            return;
+        }
         if ("app".equals(this.type)) {
+            log.info("[{}连接] 收到消息:{}", this.clientId, message);
             sendMassMessage(message);
             repository.save(JSONObject.parseObject(message, Uav.class));
         }
