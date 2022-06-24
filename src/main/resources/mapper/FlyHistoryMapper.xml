@@ -47,6 +47,10 @@
 
     <update id="updateFlyVideo">
         update t_fly_history set
+        <if test="flyEnd !=null and flyEnd != ''">
+            fly_end = #{flyEnd},
+        </if>
+        land_time = #{landTime},
         fly_video = #{flyVideo}
         where id=#{id}
     </update>

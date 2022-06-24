@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,7 +121,8 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
                     FileUtils.moveFileToDirectory(fileList[0],
                             targetFile,false);
                     flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(fileList[0].getName()));
-                    flyHistoryMapper.addFlyHistory(flyHistoryReqDTO);
+                    flyHistoryReqDTO.setLandTime(new Date());
+                    flyHistoryMapper.updateFlyVideo(flyHistoryReqDTO);
                 }catch (Exception e){
                     throw new CommonException(ErrorCode.UPDATE_ERROR);
                 }
