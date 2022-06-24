@@ -96,3 +96,7 @@ open:
       url: /securityInfo/manage
       host: https://security.zttgs.com
       port: 3443
+
+video:
+  srs-path: /data/srs_video/live/uav001/
+  minio-path: /data/minio_data/fly_video/

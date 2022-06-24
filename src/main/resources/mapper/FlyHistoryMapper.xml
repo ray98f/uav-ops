@@ -24,6 +24,21 @@
         where fh.is_delete=0 and fh.id=#{id}
     </select>
 
+    <insert id="addFlyHistory">
+        insert into t_fly_history(
+        id, device_id, fly_type,
+        <if test="flyStart !=null and flyStart != ''">
+        fly_start,
+        </if>
+        is_delete)
+        value (#{id}, #{deviceId}, #{flyType},
+        <if test="flyStart !=null and flyStart != ''">
+            #{flyStart},
+        </if>
+        0
+        )
+    </insert>
+
     <update id="deleteFlyHistory">
         update t_fly_history set
         is_delete=1, update_by=#{userId}

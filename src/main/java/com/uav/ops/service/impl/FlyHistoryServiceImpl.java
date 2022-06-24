@@ -94,7 +94,17 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
 
     @Override
     public void startFly(FlyHistoryReqDTO flyHistoryReqDTO) {
-
+        if (Objects.isNull(flyHistoryReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        FlyHistoryResDTO res = flyHistoryMapper.getFlyHistoryDetail(flyHistoryReqDTO.getId());
+        if (res != null && res.getId() != null) {
+            throw new CommonException(ErrorCode.DATA_EXIST);
+        }
+        Integer result = flyHistoryMapper.addFlyHistory(flyHistoryReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
     }
 
     @Override
@@ -110,12 +120,10 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
                     FileUtils.moveFileToDirectory(fileList[0],
                             targetFile,false);
                     flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(fileList[0].getName()));
-                    flyHistoryMapper.updateFlyVideo(flyHistoryReqDTO);
+                    flyHistoryMapper.addFlyHistory(flyHistoryReqDTO);
                 }catch (Exception e){
                     throw new CommonException(ErrorCode.UPDATE_ERROR);
                 }
-
-
             }
 
         }

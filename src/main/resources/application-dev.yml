@@ -72,7 +72,7 @@ logging:
     path: ./log
 
 excluded:
-  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/close
+  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/start,/uav/ops/fly/history/close
 
 vx-business:
   corpid: ww56aa612b390c11d2

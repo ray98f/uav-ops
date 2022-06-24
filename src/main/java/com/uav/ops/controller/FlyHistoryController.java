@@ -68,7 +68,6 @@ public class FlyHistoryController {
     @PostMapping("/start")
     @ApiOperation(value = "创建飞行记录")
     public DataResponse<T> startFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
-        // TODO
         flyHistoryService.startFly(flyHistoryReqDTO);
         return DataResponse.success();
     }
@@ -76,7 +75,6 @@ public class FlyHistoryController {
     @PostMapping("/close")
     @ApiOperation(value = "飞行结束")
     public DataResponse<T> closeFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
-        // TODO
         flyHistoryService.closeFly(flyHistoryReqDTO);
         return DataResponse.success();
     }

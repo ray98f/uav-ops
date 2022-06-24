@@ -23,5 +23,9 @@ public interface FlyHistoryMapper {
 
     Integer deleteFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
+    Integer addFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
+
     Integer updateFlyVideo(FlyHistoryReqDTO flyHistoryReqDTO);
+
+
 }
