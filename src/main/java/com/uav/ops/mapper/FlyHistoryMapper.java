@@ -22,4 +22,6 @@ public interface FlyHistoryMapper {
     FlyHistoryResDTO getFlyHistoryDetail(String id);
 
     Integer deleteFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
+
+    Integer updateFlyVideo(FlyHistoryReqDTO flyHistoryReqDTO);
 }

@@ -64,4 +64,20 @@ public class FlyHistoryController {
                                                                            @RequestParam String deviceId) throws ParseException {
         return DataResponse.of(flyHistoryService.listFlyHistoryDataList(startTime, endTime, deviceId));
     }
+
+    @PostMapping("/start")
+    @ApiOperation(value = "创建飞行记录")
+    public DataResponse<T> startFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
+        // TODO
+        flyHistoryService.startFly(flyHistoryReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/close")
+    @ApiOperation(value = "飞行结束")
+    public DataResponse<T> closeFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
+        // TODO
+        flyHistoryService.closeFly(flyHistoryReqDTO);
+        return DataResponse.success();
+    }
 }

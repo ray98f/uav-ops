@@ -28,4 +28,8 @@ public interface FlyHistoryService {
 
     List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException;
 
+    void startFly(FlyHistoryReqDTO flyHistoryReqDTO);
+
+    void closeFly(FlyHistoryReqDTO flyHistoryReqDTO);
+
 }

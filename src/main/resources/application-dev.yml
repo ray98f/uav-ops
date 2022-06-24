@@ -72,7 +72,7 @@ logging:
     path: ./log
 
 excluded:
-  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage
+  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/close
 
 vx-business:
   corpid: ww56aa612b390c11d2
@@ -97,3 +97,7 @@ open:
       url: /securityInfo/manage
       host: http://192.168.30.58
       port: 9500
+
+video:
+  srs-path: C:\All\workspace\ztt-pro\srs-path\uav001\
+  minio-path: C:\All\workspace\ztt-pro\minio-path\fly_video\

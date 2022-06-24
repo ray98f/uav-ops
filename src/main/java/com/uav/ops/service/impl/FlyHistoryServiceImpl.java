@@ -21,11 +21,17 @@ import com.uav.ops.service.CruiseService;
 import com.uav.ops.service.FlyHistoryService;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +44,12 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class FlyHistoryServiceImpl implements FlyHistoryService {
+
+    @Value("${video.srs-path}")
+    private String srsPath;
+
+    @Value("${video.minio-path}")
+    private String minioPath;
 
     @Autowired
     private FlyHistoryMapper flyHistoryMapper;
@@ -78,6 +90,36 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
             list.add(res);
         }
         return list;
+    }
+
+    @Override
+    public void startFly(FlyHistoryReqDTO flyHistoryReqDTO) {
+
+    }
+
+    @Override
+    public void closeFly(FlyHistoryReqDTO flyHistoryReqDTO) {
+        String flyId = flyHistoryReqDTO.getId();
+        File file = new File(srsPath);
+        File targetFile = new File(minioPath);
+        File[] fileList = file.listFiles();
+
+        if(fileList != null && fileList.length > 0){
+            if(fileList[0].isFile()){
+                try{
+                    FileUtils.moveFileToDirectory(fileList[0],
+                            targetFile,false);
+                    flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(fileList[0].getName()));
+                    flyHistoryMapper.updateFlyVideo(flyHistoryReqDTO);
+                }catch (Exception e){
+                    throw new CommonException(ErrorCode.UPDATE_ERROR);
+                }
+
+
+            }
+
+        }
+
     }
 
     public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) throws ParseException {

@@ -30,4 +30,10 @@
         where id=#{id} and is_delete=0
     </update>
 
+    <update id="updateFlyVideo">
+        update t_fly_history set
+        fly_video = #{flyVideo}
+        where id=#{id}
+    </update>
+
 </mapper>
