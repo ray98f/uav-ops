@@ -50,6 +50,7 @@
         <if test="flyEnd !=null and flyEnd != ''">
             fly_end = #{flyEnd},
         </if>
+        fly_time = #{flyTime},
         land_time = #{landTime},
         fly_video = #{flyVideo}
         where id=#{id}
