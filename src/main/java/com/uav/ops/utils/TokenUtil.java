@@ -1,6 +1,7 @@
 package com.uav.ops.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.uav.ops.config.RequestHeaderContext;
 import com.uav.ops.dto.res.UserResDTO;
 import com.uav.ops.enums.ErrorCode;
@@ -100,13 +101,11 @@ public class TokenUtil {
      * @throws Exception Token校验失败
      */
     public static String createSimpleToken(UserResDTO item) {
-        //默认token有效时间为2小时
         return createSimpleToken(item, 60 * 60 * 2 * 1000);
     }
 
     public static String createLongTermToken(UserResDTO item) {
-        //默认token有效时间为2小时
-        return createSimpleToken(item, 60 * 60 * 24 * 7 * 1000);
+        return createSimpleToken(item, 60 * 60 * 24 * 15 * 1000);
     }
 
     /**
@@ -217,5 +216,9 @@ public class TokenUtil {
             result = TokenStatus.INVALID;
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(JSONObject.toJSONString(verifySimpleToken("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ6aG91d2Vucm91Iiwic3ViIjoi5ZGo5rip5p-UIiwiaWF0IjoxNjU2MzE5MjE1LCJDVVJSRU5UX1VTRVJfSU5GTyI6IntcImFkZHJlc3NcIjpcIlwiLFwiYXZhdGFyXCI6XCJodHRwczovL3dld29yay5xcGljLmNuL3d3cGljLzMwNjUyMl94ODFnczJtTVJLU2JlVmlfMTY0OTczMDg5MC8wXCIsXCJkZXB0TmFtZVwiOlwi5Lit5YW05byA5Y-RXCIsXCJlbWFpbFwiOlwiXCIsXCJnZW5kZXJcIjpcIjJcIixcImlkXCI6XCJ6aG91d2Vucm91XCIsXCJtYWluRGVwdFwiOlwiMTY4N1wiLFwibW9iaWxlXCI6XCIxNzg1ODk3NDQ1N1wiLFwibmFtZVwiOlwi5ZGo5rip5p-UXCIsXCJwYXNzd29yZFwiOlwiSTkxTHBkNzJFY3VvK2FhWjVFazVNUT09XCIsXCJxckNvZGVcIjpcImh0dHBzOi8vb3Blbi53b3JrLndlaXhpbi5xcS5jb20vd3dvcGVuL3VzZXJRUkNvZGU_dmNvZGU9dmM5NjY5N2M5MTg3OTZmNzE5XCIsXCJyZWFsTmFtZVwiOlwi5ZGo5rip5p-UXCIsXCJzdGF0dXNcIjoxLFwidGVsZXBob25lXCI6XCJcIixcInRodW1iQXZhdGFyXCI6XCJodHRwczovL3dld29yay5xcGljLmNuL3d3cGljLzMwNjUyMl94ODFnczJtTVJLU2JlVmlfMTY0OTczMDg5MC8wXCIsXCJ1c2VyTmFtZVwiOlwiYWRtaW5cIixcInVzZXJTdGF0dXNcIjowfSIsImV4cCI6MTY1NjMyNjQxNX0.Kl5rnKbbQQBpXEkeKnS1S1dbiw7zj51sBKQh-UDAf10")));
     }
 }

@@ -94,8 +94,8 @@ open:
   api:
     eip-service:
       url: /securityInfo/manage
-      host: https://security.zttgs.com
-      port: 3443
+      host: http://127.0.0.1
+      port: 9500
 
 video:
   srs-path: /data/srs_video/live/uav001/
