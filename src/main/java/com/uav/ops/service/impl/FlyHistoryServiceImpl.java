@@ -113,6 +113,7 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
         if (res != null && res.getId() != null) {
             throw new CommonException(ErrorCode.DATA_EXIST);
         }
+        flyHistoryReqDTO.setTakeoffTime(new Date());
         Integer result = flyHistoryMapper.addFlyHistory(flyHistoryReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);

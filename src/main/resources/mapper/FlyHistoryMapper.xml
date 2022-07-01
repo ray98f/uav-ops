@@ -29,15 +29,19 @@
 
     <insert id="addFlyHistory">
         insert into t_fly_history(
-        id, device_id, fly_type,
-        <if test="flyStart !=null and flyStart != ''">
-            fly_start,
-        </if>
-        is_delete)
-        value (#{id}, #{deviceId}, #{flyType},
-        <if test="flyStart !=null and flyStart != ''">
-            #{flyStart},
-        </if>
+        id,
+        device_id,
+        fly_type,
+        fly_start,
+        takeoff_time,
+        is_delete
+        )
+        value (
+        #{id},
+        #{deviceId},
+        #{flyType},
+        #{flyStart},
+        #{takeoffTime},
         0
         )
     </insert>
