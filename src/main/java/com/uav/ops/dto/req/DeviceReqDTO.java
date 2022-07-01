@@ -24,6 +24,9 @@ public class DeviceReqDTO {
     @ApiModelProperty(value = "设备为无人机时填")
     private String pushUrl;
 
+    @ApiModelProperty(value = "设备为无人机时填")
+    private String pullUrl;
+
     @ApiModelProperty(value = "状态:0正常,1故障,9停用")
     private Integer status;
 

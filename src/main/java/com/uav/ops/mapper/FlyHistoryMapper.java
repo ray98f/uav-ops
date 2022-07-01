@@ -7,8 +7,11 @@ import com.uav.ops.dto.req.FlyHistoryReqDTO;
 import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.dto.res.FlyHistoryResDTO;
+import com.uav.ops.entity.TFlyVideo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author frp
@@ -25,7 +28,9 @@ public interface FlyHistoryMapper {
 
     Integer addFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
-    Integer updateFlyVideo(FlyHistoryReqDTO flyHistoryReqDTO);
+    Integer addFlyVideo(List<TFlyVideo> list);
+
+    Integer closeFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
 
 }

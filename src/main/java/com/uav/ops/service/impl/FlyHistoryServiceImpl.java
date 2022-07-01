@@ -1,5 +1,6 @@
 package com.uav.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
@@ -12,6 +13,7 @@ import com.uav.ops.dto.res.CruiseLineResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.dto.res.FlyHistoryDataResDTO;
 import com.uav.ops.dto.res.FlyHistoryResDTO;
+import com.uav.ops.entity.TFlyVideo;
 import com.uav.ops.entity.Uav;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
@@ -28,6 +30,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,11 +49,18 @@ import java.util.Objects;
 @Slf4j
 public class FlyHistoryServiceImpl implements FlyHistoryService {
 
+    private final String VIDEO_EXT = "mp4";
+
     @Value("${video.srs-path}")
     private String srsPath;
 
     @Value("${video.minio-path}")
     private String minioPath;
+
+    @Value("${minio.imgPath}")
+    private String imgPath;
+
+    private final String VIDEO_PATH = "/fly_video/";
 
     @Autowired
     private FlyHistoryMapper flyHistoryMapper;
@@ -87,6 +97,7 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
         List<FlyHistoryDataResDTO> list = new ArrayList<>();
         Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
         for (Uav item : items) {
+            System.out.println(item.getInfo());
             FlyHistoryDataResDTO res = JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.class);
             list.add(res);
         }
@@ -109,25 +120,40 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     }
 
     @Override
+    @Transactional
     public void closeFly(FlyHistoryReqDTO flyHistoryReqDTO) {
         String flyId = flyHistoryReqDTO.getId();
         File file = new File(srsPath);
         File targetFile = new File(minioPath);
         File[] fileList = file.listFiles();
 
+        List<TFlyVideo> videoList = new ArrayList<>();
         if(fileList != null && fileList.length > 0){
-            if(fileList[0].isFile()){
-                try{
-                    FileUtils.moveFileToDirectory(fileList[0],
-                            targetFile,false);
-                    flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(fileList[0].getName()));
-                    flyHistoryReqDTO.setLandTime(new Date());
-                    flyHistoryMapper.updateFlyVideo(flyHistoryReqDTO);
-                }catch (Exception e){
-                    throw new CommonException(ErrorCode.UPDATE_ERROR);
+            for(File f:fileList){
+                if(f.isFile() && VIDEO_EXT.equals(FilenameUtils.getExtension(f.getName()))){
+                    try{
+                        FileUtils.moveFileToDirectory(f,
+                                targetFile,false);
+
+                        TFlyVideo flyVideo = new TFlyVideo();
+                        flyVideo.setId(TokenUtil.getUuId());
+                        flyVideo.setFlyHistoryId(flyHistoryReqDTO.getId());
+
+                        flyVideo.setVideoUrl(imgPath + VIDEO_PATH + FilenameUtils.getName(f.getName()));
+                        //flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(f.getName()));
+
+                        videoList.add(flyVideo);
+                    }catch (Exception e){
+                        throw new CommonException(ErrorCode.UPDATE_ERROR);
+                    }
                 }
             }
+            if(videoList.size() > 0){
+                flyHistoryMapper.addFlyVideo(videoList);
+            }
 
+            flyHistoryReqDTO.setLandTime(new Date()); //TODO
+            flyHistoryMapper.closeFlyHistory(flyHistoryReqDTO);
         }
 
     }
@@ -135,15 +161,15 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
-        queryBuilders.must(QueryBuilders.existsQuery("deviceId"));
+        queryBuilders.must(QueryBuilders.existsQuery("id"));
         queryBuilders.must(QueryBuilders.existsQuery("createTime"));
-        queryBuilders.must(QueryBuilders.matchQuery("deviceId", deviceId));
+        queryBuilders.must(QueryBuilders.matchQuery("id", deviceId));
         queryBuilders.must(QueryBuilders.rangeQuery("createTime")
                 .from(sdf.parse(startTime).getTime())
                 .to(sdf.parse(endTime).getTime())
                 .includeLower(true)
                 .includeUpper(true)
-                .format("yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSS"));
+                .format("yyyy-MM-dd HH:mm:ss"));
         System.out.println(queryBuilders.toString());
         return queryBuilders;
     }

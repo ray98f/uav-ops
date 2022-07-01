@@ -9,24 +9,51 @@ import lombok.Data;
 @Data
 public class FlyHistoryDataResDTO {
 
-    @ApiModelProperty(value = "巡航点ID")
-    private String id;
+    private BatteryState batteryState;
 
-    @ApiModelProperty(value = "时间")
-    private String time;
+    private FlightControllerState flightControllerState;
 
-    @ApiModelProperty(value = "飞行高度")
-    private Integer height;
+    @Data
+    public static class BatteryState {
 
-    @ApiModelProperty(value = "飞行速度 m/s")
-    private Integer speed;
+        @ApiModelProperty(value = "电流")
+        private Double current;
 
-    @ApiModelProperty(value = "经度")
-    private Double lng;
+        @ApiModelProperty(value = "电压")
+        private Double voltage;
 
-    @ApiModelProperty(value = "纬度")
-    private Double lat;
+        @ApiModelProperty(value = "电压等级")
+        private Double cellVoltageLevel;
 
-    @ApiModelProperty(value = "电量")
-    private Integer electricity;
+        @ApiModelProperty(value = "剩余电量")
+        private Double chargeRemaining;
+
+        @ApiModelProperty(value = "剩余电量百分比")
+        private Double chargeRemainingInPercent;
+    }
+
+    @Data
+    public static class FlightControllerState {
+
+        @ApiModelProperty(value = "经度")
+        private Double lng;
+
+        @ApiModelProperty(value = "纬度")
+        private Double lat;
+
+        @ApiModelProperty(value = "X方向速度, 左右速度")
+        private Double velocityX;
+
+        @ApiModelProperty(value = "y方向速度, 前后速度")
+        private Double velocityY;
+
+        @ApiModelProperty(value = "Z方向速度, 垂直速度")
+        private Double velocityZ;
+
+        @ApiModelProperty(value = "无人机高度")
+        private Double altitude;
+
+        @ApiModelProperty(value = "飞行模式")
+        private String flightModeString;
+    }
 }

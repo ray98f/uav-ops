@@ -3,7 +3,7 @@
 <mapper namespace="com.uav.ops.mapper.DeviceMapper">
 
     <select id="listDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
         from t_device where is_delete=0
         <if test="name!=null and name!=''">
             and device_name like concat('%', #{name}, '%')
@@ -12,13 +12,13 @@
     </select>
 
     <select id="listAllDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
         from t_device where is_delete=0 and status=0
         order by create_date desc
     </select>
 
     <select id="listAllUav" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
         from t_device where is_delete=0 and type=1
         <if test="status!=null">
             and status=#{status}
@@ -27,7 +27,7 @@
     </select>
 
     <select id="getDeviceDetail" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
         from t_device where is_delete=0 and id=#{id}
     </select>
 
@@ -50,7 +50,7 @@
     </select>
 
     <insert id="addDevice">
-        insert into t_device(id, device_name, type, device_code, push_url, status,
+        insert into t_device(id, device_name, type, device_code, push_url, pull_url, status,
         <if test="isConn!=null">
             is_conn,
         </if>
@@ -58,7 +58,7 @@
             is_live,
         </if>
         remark, create_by)
-        value (#{id}, #{deviceName}, #{type}, #{deviceCode}, #{pushUrl}, #{status},
+        value (#{id}, #{deviceName}, #{type}, #{deviceCode}, #{pushUrl}, #{pullUrl}, #{status},
         <if test="isConn!=null">
             #{isConn},
         </if>
@@ -81,6 +81,9 @@
         </if>
         <if test="pushUrl!=null">
             push_url=#{pushUrl},
+        </if>
+        <if test="pushUrl!=null">
+            pull_url=#{pullUrl},
         </if>
         <if test="status!=null">
             status=#{status},
