@@ -3,6 +3,7 @@ package com.uav.ops.config.component;
 import com.alibaba.fastjson.JSONObject;
 import com.uav.ops.config.repository.UavEsRepository;
 import com.uav.ops.entity.Uav;
+import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -116,7 +117,9 @@ public class WebSocketServer {
         if ("app".equals(this.type)) {
             log.info("[{}连接] 收到消息:{}", this.clientId, message);
             sendMassMessage(message);
-            repository.save(JSONObject.parseObject(message, Uav.class));
+            Uav uav = JSONObject.parseObject(message, Uav.class);
+            uav.setId(TokenUtil.getUuId());
+            repository.save(uav);
         }
     }
 

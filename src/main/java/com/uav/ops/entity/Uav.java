@@ -22,8 +22,10 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class Uav {
 
     @Id
-    @ApiModelProperty(value = "无人机id")
     private String id;
+
+    @ApiModelProperty(value = "无人机id")
+    private String deviceId;
 
     @ApiModelProperty(value = "设备名称")
     @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart")

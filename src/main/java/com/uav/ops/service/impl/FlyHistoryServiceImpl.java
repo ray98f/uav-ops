@@ -97,8 +97,8 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
         List<FlyHistoryDataResDTO> list = new ArrayList<>();
         Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
         for (Uav item : items) {
-            System.out.println(item.getInfo());
             FlyHistoryDataResDTO res = JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.class);
+            res.setTime(new Date(item.getCreateTime()));
             list.add(res);
         }
         return list;
@@ -162,9 +162,9 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
-        queryBuilders.must(QueryBuilders.existsQuery("id"));
+        queryBuilders.must(QueryBuilders.existsQuery("deviceId"));
         queryBuilders.must(QueryBuilders.existsQuery("createTime"));
-        queryBuilders.must(QueryBuilders.matchQuery("id", deviceId));
+        queryBuilders.must(QueryBuilders.matchQuery("deviceId", deviceId));
         queryBuilders.must(QueryBuilders.rangeQuery("createTime")
                 .from(sdf.parse(startTime).getTime())
                 .to(sdf.parse(endTime).getTime())
