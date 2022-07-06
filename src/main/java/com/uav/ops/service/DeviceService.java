@@ -32,6 +32,6 @@ public interface DeviceService {
 
     void addDeviceFault(DeviceResDTO.DeviceFault deviceFault);
 
-    void operateDrone(String id, String operate, String planId, String lineId, String time) throws ParseException;
+    void operateDrone(String id, String operate, Boolean isLandingConfirmationNeeded, String planId, String lineId, String time) throws ParseException;
 
 }

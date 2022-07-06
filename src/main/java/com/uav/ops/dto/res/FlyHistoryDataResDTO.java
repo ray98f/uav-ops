@@ -65,6 +65,9 @@ public class FlyHistoryDataResDTO {
         @ApiModelProperty(value = "无人机高度")
         private Double altitude;
 
+        @ApiModelProperty(value = "降落是否需要确认")
+        private Boolean isLandingConfirmationNeeded;
+
         @ApiModelProperty(value = "飞行模式")
         private String flightModeString;
     }

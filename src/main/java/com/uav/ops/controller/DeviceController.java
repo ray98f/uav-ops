@@ -83,10 +83,11 @@ public class DeviceController {
     @ApiOperation(value = "无人机控制")
     public DataResponse<T> operateDrone(@RequestParam @ApiParam(value = "无人机设备id") String id,
                                         @RequestParam @ApiParam(value = "无人机操作") String operate,
+                                        @RequestParam(required = false) @ApiParam(value = "降落是否需要确认") Boolean isLandingConfirmationNeeded,
                                         @RequestParam(required = false) @ApiParam(value = "计划id") String planId,
                                         @RequestParam(required = false) @ApiParam(value = "线路id") String lineId,
                                         @RequestParam(required = false) @ApiParam(value = "计划时间") String time) throws ParseException {
-        deviceService.operateDrone(id, operate, planId, lineId, time);
+        deviceService.operateDrone(id, operate, isLandingConfirmationNeeded, planId, lineId, time);
         return DataResponse.success();
     }
 }

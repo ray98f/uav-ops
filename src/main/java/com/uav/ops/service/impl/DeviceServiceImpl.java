@@ -139,7 +139,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public void operateDrone(String id, String operate, String planId, String lineId, String time) throws ParseException {
+    public void operateDrone(String id, String operate, Boolean isLandingConfirmationNeeded, String planId, String lineId, String time) throws ParseException {
         String message = "";
         if ("startPlanLine".equals(operate)) {
             if (Objects.isNull(lineId) || Objects.isNull(planId) || Objects.isNull(time)) {
@@ -155,6 +155,8 @@ public class DeviceServiceImpl implements DeviceService {
             } else {
                 throw new CommonException(ErrorCode.PLAN_TIME_ERROR);
             }
+        } else if ("landing".equals(operate)) {
+            message = "{\"event\":\"command\",\"data\":{\"command\":\"" + operate + "\",\"isLandingConfirmationNeeded\":" + isLandingConfirmationNeeded + "}}";
         } else {
             message = "{\"event\":\"command\",\"data\":{\"command\":\"" + operate + "\"}}";
         }
