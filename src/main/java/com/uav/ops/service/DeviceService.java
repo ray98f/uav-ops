@@ -8,6 +8,7 @@ import com.uav.ops.dto.res.DeviceResDTO;
 import com.uav.ops.dto.res.UserResDTO;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -31,6 +32,6 @@ public interface DeviceService {
 
     void addDeviceFault(DeviceResDTO.DeviceFault deviceFault);
 
-    void operateDrone(String id, String operate);
+    void operateDrone(String id, String operate, String planId, String lineId, String time) throws ParseException;
 
 }

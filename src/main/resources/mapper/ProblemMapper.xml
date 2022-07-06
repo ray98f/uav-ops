@@ -164,8 +164,8 @@
     <select id="getProblemIdentifyByProblemId" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
         select pc.id, pc.lng, pc.lat, pc.address, pc.info, pc.image_url, pc.is_checked, pc.status, pc.create_date
         from t_problem_re as pr
-        left join t_problem_check as pc on pr.problem_check_id=pc.id and pc.is_delete=0 and pc.status=0
-        where pr.problem_id=#{id}
+        left join t_problem_check as pc on pr.problem_check_id=pc.id
+        where pr.problem_id=#{id} and pc.is_delete=0 and pc.status=0
         order by pc.create_date desc
     </select>
 

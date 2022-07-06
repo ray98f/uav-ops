@@ -3,6 +3,7 @@ package com.uav.ops.controller;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
+import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
 import com.uav.ops.dto.req.ProblemIdentifyReqDTO;
 import com.uav.ops.dto.res.*;
@@ -67,6 +68,27 @@ public class AndroidAppController {
     @ApiOperation(value = "获取巡航路线详情")
     public DataResponse<CruiseLineResDTO> getCruiseLineDetail(@RequestParam String id) {
         return DataResponse.of(cruiseService.getCruiseLineDetail(id));
+    }
+
+    @PostMapping("/line/add")
+    @ApiOperation(value = "新增巡航路线")
+    public DataResponse<T> addCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
+        cruiseService.addCruiseLine(cruiseLineReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/line/modify")
+    @ApiOperation(value = "修改巡航路线")
+    public DataResponse<T> modifyCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
+        cruiseService.modifyCruiseLine(cruiseLineReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/line/delete")
+    @ApiOperation(value = "删除巡航路线")
+    public DataResponse<T> deleteCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
+        cruiseService.deleteCruiseLine(cruiseLineReqDTO);
+        return DataResponse.success();
     }
 
     @GetMapping("/point/list")

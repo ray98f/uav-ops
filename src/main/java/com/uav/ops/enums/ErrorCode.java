@@ -187,7 +187,8 @@ public enum ErrorCode {
     CANT_DELETE_HAD_CHILD(32000012, "cant.delete.had.child"),
     CANT_UPDATE_HAD_CHILD(32000012, "cant.update.had.child"),
     PREVIEW_ERROR(31000004, "preview.error"),
-    CACHE_ERROR(3222222, "cache.error");
+    CACHE_ERROR(3222222, "cache.error"),
+    PLAN_TIME_ERROR(3222222, "plan.time.error");
 
     private Integer code;
 

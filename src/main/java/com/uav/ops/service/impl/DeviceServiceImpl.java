@@ -1,13 +1,17 @@
 package com.uav.ops.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.config.component.WebSocketServer;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.DeviceReqDTO;
+import com.uav.ops.dto.res.CruisePlanResDTO;
+import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.dto.res.DeviceResDTO;
 import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
+import com.uav.ops.mapper.CruiseMapper;
 import com.uav.ops.mapper.DeviceMapper;
 import com.uav.ops.service.DeviceService;
 import com.uav.ops.utils.TokenUtil;
@@ -15,6 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,6 +35,9 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private CruiseMapper cruiseMapper;
 
     @Autowired
     private WebSocketServer webSocketServer;
@@ -128,7 +139,52 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public void operateDrone(String id, String operate) {
-        webSocketServer.sendMessage("无人机控制:" + operate, "app:" + id);
+    public void operateDrone(String id, String operate, String planId, String lineId, String time) throws ParseException {
+        String message = "";
+        if ("startPlanLine".equals(operate)) {
+            if (Objects.isNull(lineId) || Objects.isNull(planId) || Objects.isNull(time)) {
+                throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date now = new Date(System.currentTimeMillis());
+            Date timeDate = sdf.parse(time);
+            if (timeDate.after(beforeOneHourToNowDate(now)) && timeDate.before(afterOneHourToNowDate(now))) {
+                List<CruisePointResDTO> list = cruiseMapper.listCruisePoint(lineId, null);
+                message = "{\"event\":\"command\",\"data\":{\"command\":\"" + operate + "\",\"lindId\":\"" +
+                        lineId + "\",\"detail\":" + JSONArray.toJSONString(list) + "}}";
+            } else {
+                throw new CommonException(ErrorCode.PLAN_TIME_ERROR);
+            }
+        } else {
+            message = "{\"event\":\"command\",\"data\":{\"command\":\"" + operate + "\"}}";
+        }
+        webSocketServer.sendMessage(message, "app:" + id);
     }
+
+    /**
+     * 获取当前时间前一小时的时间
+     *
+     * @param date
+     * @return java.util.Date
+     */
+    public static Date beforeOneHourToNowDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, -1);
+        return calendar.getTime();
+    }
+
+    /**
+     * 获取当前时间后一小时的时间
+     *
+     * @param date
+     * @return java.util.Date
+     */
+    public static Date afterOneHourToNowDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
+        return calendar.getTime();
+    }
+
 }
