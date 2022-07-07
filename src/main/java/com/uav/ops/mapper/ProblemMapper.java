@@ -45,7 +45,7 @@ public interface ProblemMapper {
 
     Integer deleteProblemIdentify(ProblemIdentifyReqDTO problemIdentifyReqDTO);
 
-    Page<ProblemResDTO> listProblem(Page<ProblemResDTO> page, String name);
+    Page<ProblemResDTO> listProblem(Page<ProblemResDTO> page, String name, String startTime, String endTime, String typeId, Integer status);
 
     ProblemDetailResDTO getProblemDetail(String id);
 
@@ -63,7 +63,7 @@ public interface ProblemMapper {
 
     Integer deleteProblemRe(String problemId, List<String> identifyIds, String userId);
 
-    Page<ProblemWarningResDTO> listProblemWarning(Page<ProblemResDTO> page);
+    Page<ProblemWarningResDTO> listProblemWarning(Page<ProblemResDTO> page, String startTime, String endTime, Integer status);
 
     ProblemWarningResDTO getProblemWarningDetail(String id);
 

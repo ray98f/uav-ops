@@ -25,7 +25,9 @@ import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -61,7 +63,7 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public void addCruiseLine(CruiseLineReqDTO cruiseLineReqDTO) {
+    public Map<String, Object> addCruiseLine(CruiseLineReqDTO cruiseLineReqDTO) {
         if (Objects.isNull(cruiseLineReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -75,6 +77,9 @@ public class CruiseServiceImpl implements CruiseService {
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", cruiseLineReqDTO.getId());
+        return data;
     }
 
     @Override

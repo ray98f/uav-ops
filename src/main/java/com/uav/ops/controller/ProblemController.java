@@ -116,8 +116,12 @@ public class ProblemController {
     @GetMapping("/list")
     @ApiOperation(value = "获取问题列表")
     public PageResponse<ProblemResDTO> listProblem(@RequestParam(required = false) String name,
+                                                   @RequestParam(required = false) String startTime,
+                                                   @RequestParam(required = false) String endTime,
+                                                   @RequestParam(required = false) String typeId,
+                                                   @RequestParam(required = false) Integer status,
                                                    @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(problemService.listProblem(name, pageReqDTO));
+        return PageResponse.of(problemService.listProblem(name, startTime, endTime, typeId, status, pageReqDTO));
     }
 
     @GetMapping("/detail")
@@ -156,8 +160,11 @@ public class ProblemController {
 
     @GetMapping("/warn/list")
     @ApiOperation(value = "获取问题预警列表")
-    public PageResponse<ProblemWarningResDTO> listProblemWarning(@Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(problemService.listProblemWarning(pageReqDTO));
+    public PageResponse<ProblemWarningResDTO> listProblemWarning(@RequestParam(required = false) String startTime,
+                                                                 @RequestParam(required = false) String endTime,
+                                                                 @RequestParam(required = false) Integer status,
+                                                                 @Valid PageReqDTO pageReqDTO) {
+        return PageResponse.of(problemService.listProblemWarning(startTime, endTime, status, pageReqDTO));
     }
 
     @GetMapping("/warn/detail")

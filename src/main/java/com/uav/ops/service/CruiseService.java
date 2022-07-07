@@ -12,6 +12,7 @@ import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.dto.res.CruiseWarnResDTO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author frp
@@ -24,7 +25,7 @@ public interface CruiseService {
 
     CruiseLineResDTO getCruiseLineDetail(String id);
 
-    void addCruiseLine(CruiseLineReqDTO cruiseLineReqDTO);
+    Map<String, Object> addCruiseLine(CruiseLineReqDTO cruiseLineReqDTO);
 
     void modifyCruiseLine(CruiseLineReqDTO cruiseLineReqDTO);
 

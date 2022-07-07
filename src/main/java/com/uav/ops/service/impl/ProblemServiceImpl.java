@@ -143,9 +143,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Page<ProblemResDTO> listProblem(String name, PageReqDTO pageReqDTO) {
+    public Page<ProblemResDTO> listProblem(String name, String startTime, String endTime, String typeId, Integer status, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return problemMapper.listProblem(pageReqDTO.of(), name);
+        return problemMapper.listProblem(pageReqDTO.of(), name, startTime, endTime, typeId, status);
     }
 
     @Override
@@ -235,9 +235,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Page<ProblemWarningResDTO> listProblemWarning(PageReqDTO pageReqDTO) {
+    public Page<ProblemWarningResDTO> listProblemWarning(String startTime, String endTime, Integer status, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return problemMapper.listProblemWarning(pageReqDTO.of());
+        return problemMapper.listProblemWarning(pageReqDTO.of(), startTime, endTime, status);
     }
 
     @Override

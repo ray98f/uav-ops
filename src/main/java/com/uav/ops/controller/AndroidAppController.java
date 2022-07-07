@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author frp
@@ -72,9 +73,8 @@ public class AndroidAppController {
 
     @PostMapping("/line/add")
     @ApiOperation(value = "新增巡航路线")
-    public DataResponse<T> addCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
-        cruiseService.addCruiseLine(cruiseLineReqDTO);
-        return DataResponse.success();
+    public DataResponse<Map<String, Object>> addCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
+        return DataResponse.of(cruiseService.addCruiseLine(cruiseLineReqDTO));
     }
 
     @PostMapping("/line/modify")

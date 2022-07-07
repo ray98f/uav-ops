@@ -39,7 +39,7 @@ public interface ProblemService {
 
     void deleteProblemIdentify(ProblemIdentifyReqDTO problemIdentifyReqDTO);
 
-    Page<ProblemResDTO> listProblem(String name, PageReqDTO pageReqDTO);
+    Page<ProblemResDTO> listProblem(String name, String startTime, String endTime, String typeId, Integer status, PageReqDTO pageReqDTO);
 
     ProblemDetailResDTO getProblemDetail(String id);
 
@@ -51,7 +51,7 @@ public interface ProblemService {
 
     void bindProblem(ProblemBindReqDTO problemBindReqDTO);
 
-    Page<ProblemWarningResDTO> listProblemWarning(PageReqDTO pageReqDTO);
+    Page<ProblemWarningResDTO> listProblemWarning(String startTime, String endTime, Integer status, PageReqDTO pageReqDTO);
 
     ProblemWarningResDTO getProblemWarningDetail(String id);
 

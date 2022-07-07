@@ -41,8 +41,46 @@
     </select>
 
     <insert id="addCruiseLine">
-        insert into t_cruise_line(id, line_name, mileage, fly_height, fly_speed, estimated_time, status, remark, create_by)
-        value (#{id}, #{lineName}, #{mileage}, #{flyHeight}, #{flySpeed}, #{estimatedTime}, #{status}, #{remark}, #{userId})
+        insert into t_cruise_line(id, line_name,
+        <if test="mileage!=null">
+            mileage,
+        </if>
+        <if test="flyHeight!=null">
+            fly_height,
+        </if>
+        <if test="flySpeed!=null">
+            fly_speed,
+        </if>
+        <if test="estimatedTime!=null">
+            estimated_time,
+        </if>
+        <if test="status!=null">
+            status,
+        </if>
+        <if test="remark!=null and remark!=''">
+            remark,
+        </if>
+        create_by)
+        value (#{id}, #{lineName},
+        <if test="mileage!=null">
+            #{mileage},
+        </if>
+        <if test="flyHeight!=null">
+            #{flyHeight},
+        </if>
+        <if test="flySpeed!=null">
+            #{flySpeed},
+        </if>
+        <if test="estimatedTime!=null">
+            #{estimatedTime},
+        </if>
+        <if test="status!=null">
+            #{status},
+        </if>
+        <if test="remark!=null and remark!=''">
+            #{remark},
+        </if>
+        #{userId})
     </insert>
 
     <update id="modifyCruiseLine">
@@ -107,10 +145,34 @@
     </select>
 
     <insert id="addCruisePoint">
-        insert into t_cruise_point(id, point_name, line_id, lng, lat, point_height, point_speed,
-        sort, remark, action_type, create_by) value
-        (#{id}, #{pointName}, #{lineId}, #{lng}, #{lat}, #{pointHeight}, #{pointSpeed},
-        #{sort}, #{remark}, #{actionType}, #{userId})
+        insert into t_cruise_point(id, point_name, line_id, lng, lat,
+        <if test="pointHeight!=null">
+            point_height,
+        </if>
+        <if test="pointSpeed!=null">
+            point_speed,
+        </if>
+        <if test="sort!=null">
+            sort,
+        </if>
+        <if test="remark!=null and remark!=''">
+            remark,
+        </if>
+        action_type, create_by) value
+        (#{id}, #{pointName}, #{lineId}, #{lng}, #{lat},
+        <if test="pointHeight!=null">
+            #{pointHeight},
+        </if>
+        <if test="pointSpeed!=null">
+            #{pointSpeed},
+        </if>
+        <if test="sort!=null">
+            #{sort},
+        </if>
+        <if test="remark!=null and remark!=''">
+            #{remark},
+        </if>
+        #{actionType}, #{userId})
     </insert>
 
     <update id="modifyCruisePoint">
