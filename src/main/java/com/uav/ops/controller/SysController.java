@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -37,6 +38,7 @@ public class SysController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录")
+    @LogMaker(value = "pc后台-登录")
     public DataResponse<Map<String, Object>> login(@RequestBody LoginReqDTO loginReqDTO) throws Exception {
         return DataResponse.of(sysService.login(loginReqDTO));
     }
@@ -63,6 +65,7 @@ public class SysController {
 
     @PostMapping("/menu/modify")
     @ApiOperation(value = "菜单修改")
+    @LogMaker(value = "pc后台-菜单修改")
     public DataResponse<T> modifyMenu(@RequestBody MenuReqDTO menuReqDTO) {
         sysService.modifyMenu(menuReqDTO);
         return DataResponse.success();
@@ -70,6 +73,7 @@ public class SysController {
 
     @PostMapping("/menu/add")
     @ApiOperation(value = "菜单新增")
+    @LogMaker(value = "pc后台-菜单新增")
     public DataResponse<T> addMenu(@RequestBody MenuReqDTO menuReqDTO) {
         sysService.addMenu(menuReqDTO);
         return DataResponse.success();
@@ -77,6 +81,7 @@ public class SysController {
 
     @PostMapping("/menu/delete")
     @ApiOperation(value = "菜单删除")
+    @LogMaker(value = "pc后台-菜单删除")
     public DataResponse<T> deleteMenu(@RequestBody MenuReqDTO menuReqDTO) {
         sysService.deleteMenu(menuReqDTO);
         return DataResponse.success();
@@ -98,6 +103,7 @@ public class SysController {
 
     @PostMapping("/role/delete")
     @ApiOperation(value = "删除角色")
+    @LogMaker(value = "pc后台-删除角色")
     public DataResponse<T> deleteRole(@RequestBody RoleReqDTO roleReqDTO) {
         sysService.deleteRole(roleReqDTO);
         return DataResponse.success();
@@ -105,6 +111,7 @@ public class SysController {
 
     @PostMapping("/role/add")
     @ApiOperation(value = "新增角色")
+    @LogMaker(value = "pc后台-新增角色")
     public DataResponse<T> insertRole(@RequestBody RoleReqDTO roleReqDTO) {
         sysService.insertRole(roleReqDTO);
         return DataResponse.success();
@@ -112,6 +119,7 @@ public class SysController {
 
     @PostMapping("/role/modify")
     @ApiOperation(value = "修改角色")
+    @LogMaker(value = "pc后台-修改角色")
     public DataResponse<T> updateRole(@RequestBody RoleReqDTO roleReqDTO) {
         sysService.updateRole(roleReqDTO);
         return DataResponse.success();
@@ -132,6 +140,7 @@ public class SysController {
 
     @PostMapping("/role/user/add")
     @ApiOperation(value = "新增角色绑定人员")
+    @LogMaker(value = "pc后台-新增角色绑定人员")
     public DataResponse<T> addUserRole(@RequestBody UserRoleReqDTO userRoleReqDTO) {
         sysService.addUserRole(userRoleReqDTO);
         return DataResponse.success();
@@ -139,6 +148,7 @@ public class SysController {
 
     @PostMapping("/role/user/delete")
     @ApiOperation(value = "删除角色绑定人员")
+    @LogMaker(value = "pc后台-删除角色绑定人员")
     public DataResponse<T> deleteUserRole(@RequestBody UserRoleReqDTO userRoleReqDTO) {
         sysService.deleteUserRole(userRoleReqDTO);
         return DataResponse.success();

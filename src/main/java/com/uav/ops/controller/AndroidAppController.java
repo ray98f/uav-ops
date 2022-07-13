@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -73,12 +74,14 @@ public class AndroidAppController {
 
     @PostMapping("/line/add")
     @ApiOperation(value = "新增巡航路线")
+    @LogMaker(value = "安卓app接口-新增巡航路线")
     public DataResponse<Map<String, Object>> addCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         return DataResponse.of(cruiseService.addCruiseLine(cruiseLineReqDTO));
     }
 
     @PostMapping("/line/modify")
     @ApiOperation(value = "修改巡航路线")
+    @LogMaker(value = "安卓app接口-修改巡航路线")
     public DataResponse<T> modifyCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         cruiseService.modifyCruiseLine(cruiseLineReqDTO);
         return DataResponse.success();
@@ -86,6 +89,7 @@ public class AndroidAppController {
 
     @PostMapping("/line/delete")
     @ApiOperation(value = "删除巡航路线")
+    @LogMaker(value = "安卓app接口-删除巡航路线")
     public DataResponse<T> deleteCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         cruiseService.deleteCruiseLine(cruiseLineReqDTO);
         return DataResponse.success();
@@ -106,6 +110,7 @@ public class AndroidAppController {
 
     @PostMapping("/point/add")
     @ApiOperation(value = "新增巡航点")
+    @LogMaker(value = "安卓app接口-新增巡航点")
     public DataResponse<T> addCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.addCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -113,6 +118,7 @@ public class AndroidAppController {
 
     @PostMapping("/point/modify")
     @ApiOperation(value = "修改巡航点")
+    @LogMaker(value = "安卓app接口-修改巡航点")
     public DataResponse<T> modifyCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.modifyCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -120,6 +126,7 @@ public class AndroidAppController {
 
     @PostMapping("/point/delete")
     @ApiOperation(value = "删除巡航点")
+    @LogMaker(value = "安卓app接口-删除巡航点")
     public DataResponse<T> deleteCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.deleteCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -140,6 +147,7 @@ public class AndroidAppController {
 
     @PostMapping("/check/add")
     @ApiOperation(value = "新增问题识别记录")
+    @LogMaker(value = "安卓app接口-新增问题识别记录")
     public DataResponse<T> addProblemCheck(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.addProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
@@ -147,6 +155,7 @@ public class AndroidAppController {
 
     @PostMapping("/check/modify")
     @ApiOperation(value = "修改问题识别记录")
+    @LogMaker(value = "安卓app接口-修改问题识别记录")
     public DataResponse<T> modifyProblemCheck(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.modifyProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
@@ -154,6 +163,7 @@ public class AndroidAppController {
 
     @PostMapping("/check/delete")
     @ApiOperation(value = "删除问题识别记录")
+    @LogMaker(value = "安卓app接口-删除问题识别记录")
     public DataResponse<T> deleteProblemCheck(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.deleteProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();

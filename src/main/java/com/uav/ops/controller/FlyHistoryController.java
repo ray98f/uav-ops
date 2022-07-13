@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -52,6 +53,7 @@ public class FlyHistoryController {
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除飞行记录")
+    @LogMaker(value = "pc后台-删除飞行记录")
     public DataResponse<T> deleteFlyHistory(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
         flyHistoryService.deleteFlyHistory(flyHistoryReqDTO);
         return DataResponse.success();
@@ -67,6 +69,7 @@ public class FlyHistoryController {
 
     @PostMapping("/start")
     @ApiOperation(value = "创建飞行记录")
+    @LogMaker(value = "pc后台-创建飞行记录")
     public DataResponse<T> startFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
         flyHistoryService.startFly(flyHistoryReqDTO);
         return DataResponse.success();
@@ -74,6 +77,7 @@ public class FlyHistoryController {
 
     @PostMapping("/close")
     @ApiOperation(value = "飞行结束")
+    @LogMaker(value = "pc后台-飞行结束")
     public DataResponse<T> closeFly(@RequestBody FlyHistoryReqDTO flyHistoryReqDTO) {
         flyHistoryService.closeFly(flyHistoryReqDTO);
         return DataResponse.success();

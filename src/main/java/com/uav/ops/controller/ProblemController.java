@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -53,6 +54,7 @@ public class ProblemController {
 
     @PostMapping("/type/add")
     @ApiOperation(value = "新增问题类型")
+    @LogMaker(value = "pc后台-新增问题类型")
     public DataResponse<T> addProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
         problemService.addProblemType(problemTypeReqDTO);
         return DataResponse.success();
@@ -60,6 +62,7 @@ public class ProblemController {
 
     @PostMapping("/type/modify")
     @ApiOperation(value = "修改问题类型")
+    @LogMaker(value = "pc后台-修改问题类型")
     public DataResponse<T> modifyProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
         problemService.modifyProblemType(problemTypeReqDTO);
         return DataResponse.success();
@@ -67,6 +70,7 @@ public class ProblemController {
 
     @PostMapping("/type/delete")
     @ApiOperation(value = "删除问题类型")
+    @LogMaker(value = "pc后台-删除问题类型")
     public DataResponse<T> deleteProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
         problemService.deleteProblemType(problemTypeReqDTO);
         return DataResponse.success();
@@ -94,6 +98,7 @@ public class ProblemController {
 
     @PostMapping("/identify/add")
     @ApiOperation(value = "新增问题识别记录")
+    @LogMaker(value = "pc后台-新增问题识别记录")
     public DataResponse<T> addProblemIdentify(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.addProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
@@ -101,6 +106,7 @@ public class ProblemController {
 
     @PostMapping("/identify/modify")
     @ApiOperation(value = "修改问题识别记录")
+    @LogMaker(value = "pc后台-修改问题识别记录")
     public DataResponse<T> modifyProblemIdentify(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.modifyProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
@@ -108,6 +114,7 @@ public class ProblemController {
 
     @PostMapping("/identify/delete")
     @ApiOperation(value = "删除问题识别记录")
+    @LogMaker(value = "pc后台-删除问题识别记录")
     public DataResponse<T> deleteProblemIdentify(@RequestBody ProblemIdentifyReqDTO problemIdentifyReqDTO) {
         problemService.deleteProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
@@ -132,6 +139,7 @@ public class ProblemController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增问题")
+    @LogMaker(value = "pc后台-新增问题")
     public DataResponse<T> addProblem(@RequestBody ProblemReqDTO problemReqDTO) {
         problemService.addProblem(problemReqDTO);
         return DataResponse.success();
@@ -139,6 +147,7 @@ public class ProblemController {
 
     @PostMapping("/modify")
     @ApiOperation(value = "修改问题")
+    @LogMaker(value = "pc后台-修改问题")
     public DataResponse<T> modifyProblem(@RequestBody ProblemReqDTO problemReqDTO) {
         problemService.modifyProblem(problemReqDTO);
         return DataResponse.success();
@@ -146,6 +155,7 @@ public class ProblemController {
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除问题")
+    @LogMaker(value = "pc后台-删除问题")
     public DataResponse<T> deleteProblem(@RequestBody ProblemReqDTO problemReqDTO) {
         problemService.deleteProblem(problemReqDTO);
         return DataResponse.success();
@@ -153,6 +163,7 @@ public class ProblemController {
 
     @PostMapping("/bind")
     @ApiOperation(value = "问题 绑定/解绑 问题识别记录")
+    @LogMaker(value = "pc后台-问题 绑定/解绑 问题识别记录")
     public DataResponse<T> bindProblem(@RequestBody ProblemBindReqDTO problemBindReqDTO) {
         problemService.bindProblem(problemBindReqDTO);
         return DataResponse.success();
@@ -175,6 +186,7 @@ public class ProblemController {
 
     @PostMapping("/warn/add")
     @ApiOperation(value = "新增问题预警")
+    @LogMaker(value = "pc后台-新增问题预警")
     public DataResponse<T> addProblemWarning(@RequestBody ProblemWarningReqDTO problemWarningReqDTO) {
         problemService.addProblemWarning(problemWarningReqDTO);
         return DataResponse.success();
@@ -182,6 +194,7 @@ public class ProblemController {
 
     @PostMapping("/warn/close")
     @ApiOperation(value = "关闭问题预警")
+    @LogMaker(value = "pc后台-关闭问题预警")
     public DataResponse<T> closeProblemWarning(@RequestBody ProblemWarningReqDTO problemWarningReqDTO) {
         problemService.closeProblemWarning(problemWarningReqDTO);
         return DataResponse.success();
@@ -189,6 +202,7 @@ public class ProblemController {
 
     @PostMapping("/warn/delete")
     @ApiOperation(value = "删除问题预警")
+    @LogMaker(value = "pc后台-删除问题预警")
     public DataResponse<T> deleteProblemWarning(@RequestBody ProblemWarningReqDTO problemWarningReqDTO) {
         problemService.deleteProblemWarning(problemWarningReqDTO);
         return DataResponse.success();

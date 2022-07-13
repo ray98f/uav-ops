@@ -299,4 +299,49 @@
         </if>
         order by operation_time desc
     </select>
+
+    <insert id="addOperationLog">
+        insert into sys_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName!=null and userName!=''">
+                user_name,
+            </if>
+            <if test="operationTime!=null">
+                operation_time,
+            </if>
+            <if test="operationType!=null and operationType!=''">
+                operation_type,
+            </if>
+            <if test="useTime!=null">
+                use_time,
+            </if>
+            <if test="params!=null and params!=''">
+                params,
+            </if>
+            <if test="hostIp!=null and hostIp!=''">
+                host_ip,
+            </if>
+        </trim>
+        value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName!=null and userName!=''">
+                #{userName},
+            </if>
+            <if test="operationTime!=null">
+                #{operationTime},
+            </if>
+            <if test="operationType!=null and operationType!=''">
+                #{operationType},
+            </if>
+            <if test="useTime!=null">
+                #{useTime},
+            </if>
+            <if test="params!=null and params!=''">
+                #{params},
+            </if>
+            <if test="hostIp!=null and hostIp!=''">
+                #{hostIp},
+            </if>
+        </trim>
+    </insert>
 </mapper>

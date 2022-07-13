@@ -33,7 +33,7 @@ public class OperationLogResDTO {
     private String operationType;
 
     @ApiModelProperty(value = "用时")
-    private Double useTime;
+    private Long useTime;
 
     @ApiModelProperty(value = "参数")
     private String params;

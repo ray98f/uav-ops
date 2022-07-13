@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -57,6 +58,7 @@ public class CruiseController {
 
     @PostMapping("/line/add")
     @ApiOperation(value = "新增巡航路线")
+    @LogMaker(value = "pc后台-新增巡航路线")
     public DataResponse<T> addCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         cruiseService.addCruiseLine(cruiseLineReqDTO);
         return DataResponse.success();
@@ -64,6 +66,7 @@ public class CruiseController {
 
     @PostMapping("/line/modify")
     @ApiOperation(value = "修改巡航路线")
+    @LogMaker(value = "pc后台-修改巡航路线")
     public DataResponse<T> modifyCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         cruiseService.modifyCruiseLine(cruiseLineReqDTO);
         return DataResponse.success();
@@ -71,6 +74,7 @@ public class CruiseController {
 
     @PostMapping("/line/delete")
     @ApiOperation(value = "删除巡航路线")
+    @LogMaker(value = "pc后台-删除巡航路线")
     public DataResponse<T> deleteCruiseLine(@RequestBody CruiseLineReqDTO cruiseLineReqDTO) {
         cruiseService.deleteCruiseLine(cruiseLineReqDTO);
         return DataResponse.success();
@@ -91,6 +95,7 @@ public class CruiseController {
 
     @PostMapping("/point/add")
     @ApiOperation(value = "新增巡航点")
+    @LogMaker(value = "pc后台-新增巡航点")
     public DataResponse<T> addCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.addCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -98,6 +103,7 @@ public class CruiseController {
 
     @PostMapping("/point/modify")
     @ApiOperation(value = "修改巡航点")
+    @LogMaker(value = "pc后台-修改巡航点")
     public DataResponse<T> modifyCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.modifyCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -105,6 +111,7 @@ public class CruiseController {
 
     @PostMapping("/point/delete")
     @ApiOperation(value = "删除巡航点")
+    @LogMaker(value = "pc后台-删除巡航点")
     public DataResponse<T> deleteCruisePoint(@RequestBody CruisePointReqDTO cruisePointReqDTO) {
         cruiseService.deleteCruisePoint(cruisePointReqDTO);
         return DataResponse.success();
@@ -126,6 +133,7 @@ public class CruiseController {
 
     @PostMapping("/plan/add")
     @ApiOperation(value = "新增巡检计划")
+    @LogMaker(value = "pc后台-新增巡检计划")
     public DataResponse<T> addCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
         cruiseService.addCruisePlan(cruisePlanReqDTO);
         return DataResponse.success();
@@ -133,6 +141,7 @@ public class CruiseController {
 
     @PostMapping("/plan/modify")
     @ApiOperation(value = "修改巡检计划")
+    @LogMaker(value = "pc后台-修改巡检计划")
     public DataResponse<T> modifyCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
         cruiseService.modifyCruisePlan(cruisePlanReqDTO);
         return DataResponse.success();
@@ -140,6 +149,7 @@ public class CruiseController {
 
     @PostMapping("/plan/delete")
     @ApiOperation(value = "删除巡检计划")
+    @LogMaker(value = "pc后台-删除巡检计划")
     public DataResponse<T> deleteCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
         cruiseService.deleteCruisePlan(cruisePlanReqDTO);
         return DataResponse.success();
@@ -147,6 +157,7 @@ public class CruiseController {
 
     @GetMapping("/plan/exe")
     @ApiOperation(value = "执行巡检计划")
+    @LogMaker(value = "pc后台-执行巡检计划")
     public DataResponse<T> exeCruisePlan(@RequestParam String id) {
         cruiseService.exeCruisePlan(id);
         return DataResponse.success();
@@ -167,6 +178,7 @@ public class CruiseController {
 
     @PostMapping("/warn/add")
     @ApiOperation(value = "新增巡检预警")
+    @LogMaker(value = "pc后台-新增巡检预警")
     public DataResponse<T> addCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
         cruiseService.addCruiseWarn(cruiseWarnReqDTO);
         return DataResponse.success();
@@ -174,6 +186,7 @@ public class CruiseController {
 
     @PostMapping("/warn/modify")
     @ApiOperation(value = "处理巡检预警")
+    @LogMaker(value = "pc后台-处理巡检预警")
     public DataResponse<T> handleCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
         cruiseService.handleCruiseWarn(cruiseWarnReqDTO);
         return DataResponse.success();
@@ -181,6 +194,7 @@ public class CruiseController {
 
     @PostMapping("/warn/delete")
     @ApiOperation(value = "删除巡检预警")
+    @LogMaker(value = "pc后台-删除巡检预警")
     public DataResponse<T> deleteCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
         cruiseService.deleteCruiseWarn(cruiseWarnReqDTO);
         return DataResponse.success();

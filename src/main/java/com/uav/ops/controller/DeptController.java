@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.res.DeptTreeResDTO;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.res.UserResDTO;
@@ -32,6 +33,7 @@ public class DeptController {
 
     @GetMapping("/sync")
     @ApiOperation(value = "同步企业微信组织机构")
+    @LogMaker(value = "pc后台-同步企业微信组织机构")
     public DataResponse<T> syncDept() {
         deptService.syncDept();
         return DataResponse.success();

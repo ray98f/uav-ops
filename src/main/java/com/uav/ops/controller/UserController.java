@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -40,6 +41,7 @@ public class UserController {
      */
     @GetMapping("/sync")
     @ApiOperation(value = "同步员工")
+    @LogMaker(value = "pc后台-同步员工")
     public DataResponse<T> syncUser() {
         userService.syncUser();
         return DataResponse.success();
@@ -53,6 +55,7 @@ public class UserController {
      */
     @PostMapping("/change")
     @ApiOperation(value = "修改密码")
+    @LogMaker(value = "pc后台-修改密码")
     public DataResponse<T> changePwd(@RequestBody @Valid PasswordReqDTO passwordReqDTO) throws Exception {
         userService.changePwd(passwordReqDTO);
         return DataResponse.success();
@@ -66,6 +69,7 @@ public class UserController {
      */
     @PostMapping("/modify")
     @ApiOperation(value = "修改用户信息")
+    @LogMaker(value = "pc后台-修改用户信息")
     public DataResponse<T> edit(@RequestBody @Valid UserReqDTO userReqDTO) throws Exception {
         userService.editUser(userReqDTO);
         return DataResponse.success();
@@ -118,6 +122,7 @@ public class UserController {
 
     @PostMapping("/post/modify")
     @ApiOperation(value = "修改用户岗位")
+    @LogMaker(value = "pc后台-修改用户岗位")
     public DataResponse<T> modifyUserPost(@RequestBody PostReqDTO postReqDTO){
         userService.modifyUserPost(postReqDTO);
         return DataResponse.success();

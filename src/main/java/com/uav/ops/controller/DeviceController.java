@@ -1,5 +1,6 @@
 package com.uav.ops.controller;
 
+import com.uav.ops.annotation.LogMaker;
 import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
@@ -53,6 +54,7 @@ public class DeviceController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增设备")
+    @LogMaker(value = "pc后台-新增设备")
     public DataResponse<T> addDevice(@RequestBody DeviceReqDTO deviceReqDTO) {
         deviceService.addDevice(deviceReqDTO);
         return DataResponse.success();
@@ -60,6 +62,7 @@ public class DeviceController {
 
     @PostMapping("/modify")
     @ApiOperation(value = "修改设备")
+    @LogMaker(value = "pc后台-修改设备")
     public DataResponse<T> modifyDevice(@RequestBody DeviceReqDTO deviceReqDTO) {
         deviceService.modifyDevice(deviceReqDTO);
         return DataResponse.success();
@@ -67,6 +70,7 @@ public class DeviceController {
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除设备")
+    @LogMaker(value = "pc后台-删除设备")
     public DataResponse<T> deleteDevice(@RequestBody DeviceReqDTO deviceReqDTO) {
         deviceService.deleteDevice(deviceReqDTO);
         return DataResponse.success();
@@ -74,6 +78,7 @@ public class DeviceController {
 
     @PostMapping("/fault/add")
     @ApiOperation(value = "新增设备故障信息")
+    @LogMaker(value = "pc后台-新增设备故障信息")
     public DataResponse<T> addDeviceFault(@RequestBody DeviceResDTO.DeviceFault deviceFault) {
         deviceService.addDeviceFault(deviceFault);
         return DataResponse.success();
@@ -81,6 +86,7 @@ public class DeviceController {
 
     @GetMapping("/operate")
     @ApiOperation(value = "无人机控制")
+    @LogMaker(value = "pc后台-无人机控制")
     public DataResponse<T> operateDrone(@RequestParam @ApiParam(value = "无人机设备id") String id,
                                         @RequestParam @ApiParam(value = "无人机操作") String operate,
                                         @RequestParam(required = false) @ApiParam(value = "降落是否需要确认") Boolean isLandingConfirmationNeeded,
