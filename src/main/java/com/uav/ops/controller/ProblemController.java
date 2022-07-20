@@ -176,9 +176,10 @@ public class ProblemController {
     @ApiOperation(value = "问题整改")
     @LogMaker(value = "pc后台-问题整改")
     public DataResponse<T> rectifyProblem(@RequestParam @ApiParam(value = "问题id") String problemId,
-                                         @RequestParam(required = false) @ApiParam(value = "整改措施") String rectifyMeasure,
-                                         @RequestParam(required = false) @ApiParam(value = "整改后图片") String afterPic) {
-        problemService.rectifyProblem(problemId, rectifyMeasure, afterPic);
+                                          @RequestParam(required = false) @ApiParam(value = "整改措施") String rectifyMeasure,
+                                          @RequestParam(required = false) @ApiParam(value = "整改后图片") String afterPic,
+                                          @RequestParam(required = false) @ApiParam(value = "备注") String remark) {
+        problemService.rectifyProblem(problemId, rectifyMeasure, afterPic, remark);
         return DataResponse.success();
     }
 

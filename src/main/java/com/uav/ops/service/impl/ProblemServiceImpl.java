@@ -282,8 +282,8 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public void rectifyProblem(String problemId, String rectifyMeasure, String afterPic) {
-        Integer result = problemMapper.rectifyProblem(problemId, rectifyMeasure, afterPic, TokenUtil.getCurrentPersonNo());
+    public void rectifyProblem(String problemId, String rectifyMeasure, String afterPic, String remark) {
+        Integer result = problemMapper.rectifyProblem(problemId, rectifyMeasure, afterPic, remark, TokenUtil.getCurrentPersonNo());
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }

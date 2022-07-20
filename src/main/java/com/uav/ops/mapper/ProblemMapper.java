@@ -61,7 +61,7 @@ public interface ProblemMapper {
 
     Integer deleteProblem(ProblemReqDTO problemReqDTO);
 
-    Integer rectifyProblem(String problemId, String rectifyMeasure, String afterPic, String createBy);
+    Integer rectifyProblem(String problemId, String rectifyMeasure, String afterPic, String remark, String createBy);
 
     Integer solveProblem(String problemId, Integer status, String createBy);
 

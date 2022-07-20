@@ -52,7 +52,7 @@ public interface ProblemService {
 
     void deleteProblem(ProblemReqDTO problemReqDTO);
 
-    void rectifyProblem(String problemId, String rectifyMeasure, String afterPic);
+    void rectifyProblem(String problemId, String rectifyMeasure, String afterPic, String remark);
 
     void solveProblem(String problemId, Integer status);
 
