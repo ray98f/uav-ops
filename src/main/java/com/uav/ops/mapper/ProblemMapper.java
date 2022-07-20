@@ -19,19 +19,19 @@ import java.util.Map;
 @Repository
 public interface ProblemMapper {
 
-    Page<ProblemTypeResDTO> listProblemType(Page<ProblemTypeResDTO> page, String name);
+    List<ProblemTypeResDTO> listProblemType(String name, String parentId);
 
-    List<ProblemTypeResDTO> listAllProblemType();
+    List<ProblemTypeResDTO> listAllProblemType(String parentId, Integer type);
 
     ProblemTypeResDTO getProblemTypeDetail(String id);
 
-    Integer selectProblemTypeIsExist(ProblemTypeReqDTO cruiseTypeReqDTO);
+    Integer selectProblemTypeIsExist(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Integer addProblemType(ProblemTypeReqDTO cruiseTypeReqDTO);
+    Integer addProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Integer modifyProblemType(ProblemTypeReqDTO cruiseTypeReqDTO);
+    Integer modifyProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Integer deleteProblemType(ProblemTypeReqDTO cruiseTypeReqDTO);
+    Integer deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
     Page<ProblemIdentifyResDTO> listProblemIdentify(Page<ProblemIdentifyResDTO> page, String name);
 
@@ -45,7 +45,9 @@ public interface ProblemMapper {
 
     Integer deleteProblemIdentify(ProblemIdentifyReqDTO problemIdentifyReqDTO);
 
-    Page<ProblemResDTO> listProblem(Page<ProblemResDTO> page, String name, String startTime, String endTime, String typeId, Integer status);
+    List<ProblemResDTO> exportProblem(String name, String startTime, String endTime, String typeId, Integer status);
+
+    Page<ProblemResDTO> listProblem(Page<ProblemResDTO> page, String name, String startTime, String endTime, String typeId, Integer status, String userId);
 
     ProblemDetailResDTO getProblemDetail(String id);
 
@@ -58,6 +60,10 @@ public interface ProblemMapper {
     Integer modifyProblem(ProblemReqDTO problemReqDTO);
 
     Integer deleteProblem(ProblemReqDTO problemReqDTO);
+
+    Integer rectifyProblem(String problemId, String rectifyMeasure, String afterPic, String createBy);
+
+    Integer solveProblem(String problemId, Integer status, String createBy);
 
     Integer insertProblemRe(String problemId, List<String> identifyIds, String userId);
 
@@ -80,5 +86,9 @@ public interface ProblemMapper {
     Integer notSolveProblemNum();
 
     List<MonthlyProblemNumResDTO> typeProblemNum(String typeId);
+
+    Integer selectRectifyUserStatus(String problemId, String userId);
+
+    Integer selectCheckUserStatus(String problemId, String userId);
     
 }

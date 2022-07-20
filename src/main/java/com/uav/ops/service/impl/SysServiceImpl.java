@@ -102,7 +102,7 @@ public class SysServiceImpl implements SysService {
         if (Objects.isNull(menuReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        if (menuReqDTO.getStatus() == 1 || menuReqDTO.getIsShow() == 0) {
+        if (menuReqDTO.getStatus() == 1) {
             Integer result = sysMapper.selectIfMenuHadChild(menuReqDTO.getId());
             if (result > 0) {
                 throw new CommonException(ErrorCode.CANT_UPDATE_HAD_CHILD);
@@ -250,8 +250,16 @@ public class SysServiceImpl implements SysService {
     }
 
     @Override
-    public Page<OperationLogResDTO> listOperLog(String startTime, String endTime, Integer type, PageReqDTO pageReqDTO) {
+    public Page<OperationLogResDTO> listOperLog(String startTime, String endTime, String type, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
         return sysMapper.listOperLog(pageReqDTO.of(), startTime, endTime, type);
+    }
+
+    @Override
+    public void menu() {
+        List<MenuResDTO> list = sysMapper.selectMenu();
+        if (list != null && !list.isEmpty()) {
+            sysMapper.addButton(list);
+        }
     }
 }

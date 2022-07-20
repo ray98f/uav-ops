@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author frp
@@ -15,6 +16,12 @@ public class ProblemTypeResDTO {
 
     @ApiModelProperty(value = "类型ID")
     private String id;
+
+    @ApiModelProperty(value = "目录层级")
+    private Integer level;
+
+    @ApiModelProperty(value = "上级类型id")
+    private String parentId;
 
     @ApiModelProperty(value = "类型名称")
     private String typeName;
@@ -32,4 +39,7 @@ public class ProblemTypeResDTO {
             timezone = "GMT+8"
     )
     private Date createDate;
+
+    @ApiModelProperty(value = "子集")
+    private List<ProblemTypeResDTO> child;
 }

@@ -9,11 +9,14 @@ import com.uav.ops.enums.ErrorCode;
 import com.uav.ops.exception.CommonException;
 import com.uav.ops.mapper.ProblemMapper;
 import com.uav.ops.service.ProblemService;
+import com.uav.ops.utils.ExcelPortUtil;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,14 +31,25 @@ public class ProblemServiceImpl implements ProblemService {
     private ProblemMapper problemMapper;
 
     @Override
-    public Page<ProblemTypeResDTO> listProblemType(String name, PageReqDTO pageReqDTO) {
-        PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return problemMapper.listProblemType(pageReqDTO.of(), name);
+    public List<ProblemTypeResDTO> listProblemType(String name) {
+        List<ProblemTypeResDTO> list = problemMapper.listProblemType(name, null);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO resDTO : list) {
+                resDTO.setChild(problemMapper.listProblemType(name, resDTO.getId()));
+            }
+        }
+        return list;
     }
 
     @Override
     public List<ProblemTypeResDTO> listAllProblemType() {
-        return problemMapper.listAllProblemType();
+        List<ProblemTypeResDTO> list =  problemMapper.listAllProblemType(null, 1);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO resDTO : list) {
+                resDTO.setChild(problemMapper.listAllProblemType(resDTO.getId(), 1));
+            }
+        }
+        return list;
     }
 
     @Override
@@ -44,45 +58,45 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public void addProblemType(ProblemTypeReqDTO cruiseTypeReqDTO) {
-        if (Objects.isNull(cruiseTypeReqDTO)) {
+    public void addProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        Integer result = problemMapper.selectProblemTypeIsExist(cruiseTypeReqDTO);
+        Integer result = problemMapper.selectProblemTypeIsExist(problemTypeReqDTO);
         if (result > 0) {
             throw new CommonException(ErrorCode.DATA_EXIST);
         }
-        cruiseTypeReqDTO.setId(TokenUtil.getUuId());
-        cruiseTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
-        result = problemMapper.addProblemType(cruiseTypeReqDTO);
+        problemTypeReqDTO.setId(TokenUtil.getUuId());
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = problemMapper.addProblemType(problemTypeReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
     }
 
     @Override
-    public void modifyProblemType(ProblemTypeReqDTO cruiseTypeReqDTO) {
-        if (Objects.isNull(cruiseTypeReqDTO)) {
+    public void modifyProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        Integer result = problemMapper.selectProblemTypeIsExist(cruiseTypeReqDTO);
+        Integer result = problemMapper.selectProblemTypeIsExist(problemTypeReqDTO);
         if (result > 0) {
             throw new CommonException(ErrorCode.DATA_EXIST);
         }
-        cruiseTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
-        result = problemMapper.modifyProblemType(cruiseTypeReqDTO);
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = problemMapper.modifyProblemType(problemTypeReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
-    public void deleteProblemType(ProblemTypeReqDTO cruiseTypeReqDTO) {
-        if (Objects.isNull(cruiseTypeReqDTO.getId())) {
+    public void deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO.getId())) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        cruiseTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
-        Integer result = problemMapper.deleteProblemType(cruiseTypeReqDTO);
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = problemMapper.deleteProblemType(problemTypeReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
@@ -143,9 +157,57 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
+    public void exportProblem(String name, String startTime, String endTime, String typeId, Integer status, HttpServletResponse response) {
+        List<String> listName = Arrays.asList("序号", "日期", "检查人部门", "检查者", "问题单号", "类别", "位置", "问题描述", "问题照片",
+                "原因及跟踪处理结果", "是否闭环", "完成整改时间", "整改人部门", "整改人", "整改后照片", "备注");
+        List<ProblemResDTO> problems = problemMapper.exportProblem(name, startTime, endTime, typeId, status);
+        List<Map<String, String>> list = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int i = 1;
+        if (problems != null && !problems.isEmpty()) {
+            for (ProblemResDTO resDTO : problems) {
+                Map<String, String> map = new HashMap<>();
+                map.put("序号", String.valueOf(i));
+                map.put("日期", sdf.format(resDTO.getCreateDate()));
+                map.put("检查人部门", resDTO.getCheckDeptName());
+                map.put("检查者", resDTO.getCheckName());
+                map.put("问题单号", resDTO.getId());
+                map.put("类别", resDTO.getTypeName());
+                map.put("位置", resDTO.getAddress());
+                map.put("问题描述", resDTO.getInfo());
+                map.put("问题照片", resDTO.getImageUrl());
+                map.put("原因及跟踪处理结果", resDTO.getRectifyMeasure());
+                map.put("是否闭环", resDTO.getStatus() == 3 ? "是" : "否");
+                map.put("完成整改时间", resDTO.getRectifyTime() != null ? sdf.format(resDTO.getRectifyTime()) : "");
+                map.put("整改人部门", resDTO.getRectifyDeptName());
+                map.put("整改人", resDTO.getRectifyUserName());
+                map.put("整改后照片", resDTO.getAfterPic());
+                map.put("备注", resDTO.getRemark());
+                list.add(map);
+                i++;
+            }
+        }
+        ExcelPortUtil.excelPort("问题信息", listName, list, null, response);
+    }
+
+    @Override
     public Page<ProblemResDTO> listProblem(String name, String startTime, String endTime, String typeId, Integer status, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return problemMapper.listProblem(pageReqDTO.of(), name, startTime, endTime, typeId, status);
+        Page<ProblemResDTO> page = problemMapper.listProblem(pageReqDTO.of(), name, startTime, endTime, typeId, status, TokenUtil.getCurrentPersonNo());
+        List<ProblemResDTO> list = page.getRecords();
+        if (list != null && !list.isEmpty()) {
+            for (ProblemResDTO res : list) {
+                if (res.getStatus() == 0) {
+                    res.setUserStatus(problemMapper.selectRectifyUserStatus(res.getId(), TokenUtil.getCurrentPersonNo()) == 0 ? 1 : 0);
+                } else if (res.getStatus() == 1) {
+                    res.setUserStatus(problemMapper.selectCheckUserStatus(res.getId(), TokenUtil.getCurrentPersonNo()) == 0 ? 1 : 0);
+                } else {
+                    res.setUserStatus(1);
+                }
+            }
+        }
+        page.setRecords(list);
+        return page;
     }
 
     @Override
@@ -216,6 +278,22 @@ public class ProblemServiceImpl implements ProblemService {
         Integer result = problemMapper.deleteProblem(problemReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
+        }
+    }
+
+    @Override
+    public void rectifyProblem(String problemId, String rectifyMeasure, String afterPic) {
+        Integer result = problemMapper.rectifyProblem(problemId, rectifyMeasure, afterPic, TokenUtil.getCurrentPersonNo());
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    public void solveProblem(String problemId, Integer status) {
+        Integer result = problemMapper.solveProblem(problemId, status, TokenUtil.getCurrentPersonNo());
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
@@ -305,7 +383,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public List<TypeProblemNumResDTO> typeProblemNum() {
         List<TypeProblemNumResDTO> resList = new ArrayList<>();
-        List<ProblemTypeResDTO> list = problemMapper.listAllProblemType();
+        List<ProblemTypeResDTO> list = problemMapper.listAllProblemType(null, 2);
         if (list != null && !list.isEmpty()) {
             for (ProblemTypeResDTO problemTypeResDTO : list) {
                 TypeProblemNumResDTO resDTO = new TypeProblemNumResDTO();

@@ -7,6 +7,7 @@ import com.uav.ops.dto.res.*;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  */
 public interface ProblemService {
 
-    Page<ProblemTypeResDTO> listProblemType(String name, PageReqDTO pageReqDTO);
+    List<ProblemTypeResDTO> listProblemType(String name);
 
     List<ProblemTypeResDTO> listAllProblemType();
 
@@ -39,6 +40,8 @@ public interface ProblemService {
 
     void deleteProblemIdentify(ProblemIdentifyReqDTO problemIdentifyReqDTO);
 
+    void exportProblem(String name, String startTime, String endTime, String typeId, Integer status, HttpServletResponse response);
+
     Page<ProblemResDTO> listProblem(String name, String startTime, String endTime, String typeId, Integer status, PageReqDTO pageReqDTO);
 
     ProblemDetailResDTO getProblemDetail(String id);
@@ -48,6 +51,10 @@ public interface ProblemService {
     void modifyProblem(ProblemReqDTO problemReqDTO);
 
     void deleteProblem(ProblemReqDTO problemReqDTO);
+
+    void rectifyProblem(String problemId, String rectifyMeasure, String afterPic);
+
+    void solveProblem(String problemId, Integer status);
 
     void bindProblem(ProblemBindReqDTO problemBindReqDTO);
 

@@ -68,7 +68,11 @@ public interface SysMapper {
 
     Integer selectIfAdmin(String userId);
 
-    Page<OperationLogResDTO> listOperLog(Page<OperationLogResDTO> page, String startTime, String endTime, Integer type);
+    Page<OperationLogResDTO> listOperLog(Page<OperationLogResDTO> page, String startTime, String endTime, String type);
 
     void addOperationLog(OperationLogResDTO operationLog);
+
+    List<MenuResDTO> selectMenu();
+
+    void addButton(List<MenuResDTO> list);
 }

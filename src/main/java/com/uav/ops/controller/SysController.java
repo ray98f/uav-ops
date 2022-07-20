@@ -158,8 +158,15 @@ public class SysController {
     @ApiOperation(value = "获取操作日志列表")
     public PageResponse<OperationLogResDTO> listOperLog(@RequestParam(required = false) String startTime,
                                                         @RequestParam(required = false) String endTime,
-                                                        @RequestParam(required = false) Integer type,
+                                                        @RequestParam(required = false) String type,
                                                         @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(sysService.listOperLog(startTime, endTime, type, pageReqDTO));
+    }
+
+    @GetMapping("/menu")
+    @ApiOperation(value = "menu新增初始数据")
+    public DataResponse<T> menu() {
+        sysService.menu();
+        return DataResponse.success();
     }
 }

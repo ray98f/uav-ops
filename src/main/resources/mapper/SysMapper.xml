@@ -295,7 +295,7 @@
             and #{endTime}>=operation_time
         </if>
         <if test="type!=null">
-            and operation_type=#{type}
+            and operation_type like concat('%', #{type},'%')
         </if>
         order by operation_time desc
     </select>
@@ -343,5 +343,28 @@
                 #{hostIp},
             </if>
         </trim>
+    </insert>
+
+    <select id="selectMenu" resultType="com.uav.ops.dto.res.MenuResDTO">
+        select m.id, m.parent_id, m.parent_ids, m.menu_code, m.menu_name, m.menu_type, m.menu_sort, m.menu_path, m.status,
+        m.menu_icon, m.menu_url, m.is_show
+        from sys_menu as m
+        where m.is_delete=0 and m.menu_type=3
+        group by m.id
+        order by m.menu_sort asc
+    </select>
+
+    <insert id="addButton">
+        insert into sys_menu (id, parent_id, parent_ids, menu_code, menu_name, menu_type, menu_sort, menu_path,
+        status, menu_icon, menu_url, is_show, create_by)
+        values
+        <foreach collection="list" item="menu" index="index" separator=",">
+            (replace(uuid(),"-",""), #{menu.id}, concat(#{menu.parentIds}, ",", #{menu.id}), "add", "新增", 4, 1, "", 0,
+            "", "", 1, "zhouwenrou"),
+            (replace(uuid(),"-",""), #{menu.id}, concat(#{menu.parentIds}, ",", #{menu.id}), "edit", "修改", 4, 1, "", 0,
+            "", "", 1, "zhouwenrou"),
+            (replace(uuid(),"-",""), #{menu.id}, concat(#{menu.parentIds}, ",", #{menu.id}), "delete", "删除", 4, 1, "", 0,
+            "", "", 1, "zhouwenrou")
+        </foreach>
     </insert>
 </mapper>

@@ -16,6 +16,12 @@ public class ProblemTypeReqDTO {
     @ApiModelProperty(value = "类型ID")
     private String id;
 
+    @ApiModelProperty(value = "目录层级")
+    private Integer level;
+
+    @ApiModelProperty(value = "上级类型id")
+    private String parentId;
+
     @ApiModelProperty(value = "类型名称")
     private String typeName;
 

@@ -3,28 +3,43 @@
 <mapper namespace="com.uav.ops.mapper.ProblemMapper">
 
     <select id="listProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
-        select id, type_name, type_code, status, create_date from t_problem_type
-        where is_delete=0
+        select id, parent_id, type_name, type_code, status, create_date, level
+        from t_problem_type where is_delete=0
         <if test="name!=null and name!=''">
             and type_name like concat('%', #{name}, '%')
+        </if>
+        <if test="parentId==null">
+            and level=1
+        </if>
+        <if test="parentId!=null and parentId!=''">
+            and level=2 and parent_id=#{parentId}
         </if>
         order by create_date desc
     </select>
 
     <select id="listAllProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
-        select id, type_name, type_code, status, create_date from t_problem_type
-        where is_delete=0 and status=0
+        select id, parent_id, type_name, type_code, status, create_date, level
+        from t_problem_type where is_delete=0 and status=0
+        <if test="parentId==null and type==1">
+            and level=1
+        </if>
+        <if test="parentId!=null and parentId!='' and type==1">
+            and level=2 and parent_id=#{parentId}
+        </if>
+        <if test="type==2">
+            and level=2
+        </if>
         order by create_date desc
     </select>
 
     <select id="getProblemTypeDetail" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
-        select id, type_name, type_code, status, create_date from t_problem_type
-        where is_delete=0 and id=#{id}
+        select id, parent_id, type_name, type_code, status, create_date, level
+        from t_problem_type where is_delete=0 and id=#{id}
     </select>
 
     <select id="selectProblemTypeIsExist" resultType="java.lang.Integer">
         select count(1) from t_problem_type
-        where type_name=#{typeName} and is_delete=0
+        where type_name=#{typeName} and is_delete=0 and level=#{level} and parent_id=#{parentId}
         <if test="id!=null and id!=''">
             and id!=#{id}
         </if>
@@ -32,12 +47,12 @@
     </select>
 
     <insert id="addProblemType">
-        insert into t_problem_type(id, type_name, type_code,
+        insert into t_problem_type(id, type_name, type_code, level, parent_id,
         <if test="status!=null">
             status,
         </if>
         create_by)
-        value (#{id}, #{typeName}, #{typeCode},
+        value (#{id}, #{typeName}, #{typeCode}, #{level}, #{parentId},
         <if test="status!=null">
             #{status},
         </if>
@@ -46,6 +61,12 @@
 
     <update id="modifyProblemType">
         update t_problem_type set
+        <if test="level!=null">
+            level=#{level},
+        </if>
+        <if test="parentId!=null">
+            parent_id=#{parentId},
+        </if>
         <if test="typeName!=null">
             type_name=#{typeName},
         </if>
@@ -141,12 +162,22 @@
         delete from t_problem_re where problem_check_id=#{id};
     </update>
 
-    <select id="listProblem" resultType="com.uav.ops.dto.res.ProblemResDTO">
-        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status,
-        p.solve_time, p.solve_duration, p.create_date
+    <select id="exportProblem" resultType="com.uav.ops.dto.res.ProblemResDTO">
+        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status, p.after_pic, p.is_use, p.create_by as check_id,
+        p.solve_time, p.solve_duration, p.create_date, p.rectify_user_id, p.rectify_time, p.rectify_measure, p.remark,
+        case when p.info is null or p.info='' then pc.info else p.info end as info, ue1.name as check_name,
+        case when p.address is null or p.address='' then pc.address else p.address end as address, ue2.name as rectify_user_name,
+        case when p.image_url is null or p.image_url='' then pc.image_url else p.image_url end as image_url,
+        d1.org_name as check_dept_name, d2.org_name as rectify_dept_name
         from t_problem as p
         left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
-        where p.is_delete=0
+        left join t_problem_re as pr on pr.problem_id=p.id
+        left join t_problem_check as pc on pc.id=pr.problem_check_id and pc.is_delete=0 and pc.status=0
+        left join sys_user as ue1 on ue1.user_id=p.create_by and ue1.is_delete=0 and ue1.status=1
+        left join sys_dept as d1 on d1.id=ue1.main_dept and d1.is_delete=0
+        left join sys_user as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=1
+        left join sys_dept as d2 on d2.id=ue2.main_dept and d2.is_delete=0
+        where p.is_delete=0 and p.is_use=0
         <if test="name!=null and name!=''">
             and p.title like concat('%', #{name}, '%')
         </if>
@@ -162,15 +193,56 @@
         <if test="status!=null">
             and p.status=#{status}
         </if>
+        group by p.id
+        order by p.create_date desc
+    </select>
+
+    <select id="listProblem" resultType="com.uav.ops.dto.res.ProblemResDTO">
+        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status, p.after_pic, p.is_use, p.create_by as check_id,
+        p.solve_time, p.solve_duration, p.create_date, p.rectify_user_id, p.rectify_time, p.rectify_measure, p.remark,
+        case when p.info is null or p.info='' then pc.info else p.info end as info, ue1.real_name as check_name,
+        case when p.address is null or p.address='' then pc.address else p.address end as address, ue2.real_name as rectify_user_name,
+        case when p.image_url is null or p.image_url='' then pc.image_url else p.image_url end as image_url
+        from t_problem as p
+        left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
+        left join t_problem_re as pr on pr.problem_id=p.id
+        left join t_problem_check as pc on pc.id=pr.problem_check_id and pc.is_delete=0 and pc.status=0
+        left join sys_user_ext as ue1 on ue1.user_id=p.create_by and ue1.is_delete=0 and ue1.status=0
+        left join sys_user_ext as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=0
+        where p.is_delete=0 and p.is_use=0 or (p.is_use=1 and p.create_by=#{userId})
+        <if test="name!=null and name!=''">
+            and p.title like concat('%', #{name}, '%')
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and p.create_date>=#{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and #{endTime}>=p.create_date
+        </if>
+        <if test="typeId!=null and typeId!=''">
+            and p.type_id=#{typeId}
+        </if>
+        <if test="status!=null">
+            and p.status=#{status}
+        </if>
+        group by p.id
         order by p.create_date desc
     </select>
 
     <select id="getProblemDetail" resultType="com.uav.ops.dto.res.ProblemDetailResDTO">
-        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status,
-        p.solve_time, p.solve_duration, p.create_date
+        select p.id, p.title, p.type_id, pt.type_name, p.problem_level, p.status, p.after_pic, p.is_use, p.create_by as check_id,
+        p.solve_time, p.solve_duration, p.create_date, p.rectify_user_id, p.rectify_time, p.rectify_measure, p.remark,
+        case when p.info is null or p.info='' then pc.info else p.info end as info, ue1.real_name as check_name,
+        case when p.address is null or p.address='' then pc.address else p.address end as address, ue2.real_name as rectify_user_name,
+        case when p.image_url is null or p.image_url='' then pc.image_url else p.image_url end as image_url
         from t_problem as p
         left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
+        left join t_problem_re as pr on pr.problem_id=p.id
+        left join t_problem_check as pc on pc.id=pr.problem_check_id and pc.is_delete=0 and pc.status=0
+        left join sys_user_ext as ue1 on ue1.user_id=p.create_by and ue1.is_delete=0 and ue1.status=0
+        left join sys_user_ext as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=0
         where p.is_delete=0 and p.id=#{id}
+        group by p.id
     </select>
 
     <select id="getProblemIdentifyByProblemId" resultType="com.uav.ops.dto.res.ProblemIdentifyResDTO">
@@ -191,22 +263,34 @@
     </select>
 
     <insert id="addProblem">
-        insert into t_problem(id, title, type_id, problem_level, solve_time,
-        <if test="solveDuration!=null">
-            solve_duration,
+        insert into t_problem(id, title, type_id, problem_level,
+        <if test="info!=null and info!=''">
+            info,
         </if>
-        <if test="status!=null">
-            status,
+        <if test="address!=null and address!=''">
+            address,
         </if>
-        create_by)
-        value (#{id}, #{title}, #{typeId}, #{problemLevel}, #{solveTime},
-        <if test="solveDuration!=null">
-            #{solveDuration},
+        <if test="imageUrl!=null and imageUrl!=''">
+            image_url,
         </if>
-        <if test="status!=null">
-            #{status},
+        <if test="rectifyUserId!=null and rectifyUserId!=''">
+            rectify_user_id,
         </if>
-        #{userId})
+        is_use, create_by)
+        value (#{id}, #{title}, #{typeId}, #{problemLevel},
+        <if test="info!=null and info!=''">
+            #{info},
+        </if>
+        <if test="address!=null and address!=''">
+            #{address},
+        </if>
+        <if test="imageUrl!=null and imageUrl!=''">
+            #{imageUrl},
+        </if>
+        <if test="rectifyUserId!=null and rectifyUserId!=''">
+            #{rectifyUserId},
+        </if>
+        #{isUse}, #{userId})
     </insert>
 
     <update id="modifyProblem">
@@ -214,20 +298,26 @@
         <if test="title!=null">
             title=#{title},
         </if>
+        <if test="info!=null">
+            info=#{info},
+        </if>
+        <if test="address!=null">
+            address=#{address},
+        </if>
+        <if test="imageUrl!=null">
+            image_url=#{imageUrl},
+        </if>
         <if test="typeId!=null">
             type_id=#{typeId},
         </if>
         <if test="problemLevel!=null">
             problem_level=#{problemLevel},
         </if>
-        <if test="solveTime!=null">
-            solve_time=#{solveTime},
+        <if test="rectifyUserId!=null">
+            rectify_user_id=#{rectifyUserId},
         </if>
-        <if test="solveDuration!=null">
-            solve_duration=#{solveDuration},
-        </if>
-        <if test="status!=null">
-            status=#{status},
+        <if test="isUse!=null">
+            is_use=#{isUse},
         </if>
         update_by=#{userId}
         where id=#{id} and is_delete=0
@@ -238,6 +328,34 @@
         is_delete=1, update_by=#{userId}
         where id=#{id} and is_delete=0;
         delete from t_problem_re where problem_id=#{id};
+    </update>
+
+    <update id="rectifyProblem">
+        update t_problem set
+        rectify_time=now(),
+        <if test="rectifyMeasure!=null">
+            rectify_measure=#{rectifyMeasure},
+        </if>
+        <if test="afterPic!=null">
+            after_pic=#{afterPic},
+        </if>
+        <if test="remark!=null">
+            remark=#{remark},
+        </if>
+        update_by=#{createBy}
+        where id=#{problemId} and rectify_user_id=#{createBy};
+    </update>
+
+    <update id="solveProblem">
+        update t_problem set
+        <if test="status==0">
+            status=0, rectify_time=null, rectify_measure=null, after_pic=null, remark=null,
+        </if>
+        <if test="status==1">
+            solve_time=now(), solve_duration=TIMESTAMPDIFF(HOUR, create_date, now()), status=2,
+        </if>
+        update_by=#{createBy}
+        where id=#{problemId} and create_by=#{createBy} and status=1
     </update>
 
     <insert id="insertProblemRe">
@@ -372,5 +490,17 @@
         SELECT DATE_FORMAT(CURDATE(), '%m月') AS month, count(id) as num
         from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT(CURDATE(), '%m月')
         and type_id=#{typeId} and is_delete=0 and status!=9) as a
+    </select>
+
+    <select id="selectRectifyUserStatus" resultType="java.lang.Integer">
+        select count(1) from t_problem
+        where id=#{problemId} and is_delete=0 and rectify_user_id=#{userId} and status=0
+        limit 1
+    </select>
+
+    <select id="selectCheckUserStatus" resultType="java.lang.Integer">
+        select count(1) from t_problem
+        where id=#{problemId} and is_delete=0 and create_by=#{userId} and status=1
+        limit 1
     </select>
 </mapper>
