@@ -173,9 +173,9 @@
         left join t_problem_type as pt on pt.id=p.type_id and pt.is_delete=0 and pt.status=0
         left join t_problem_re as pr on pr.problem_id=p.id
         left join t_problem_check as pc on pc.id=pr.problem_check_id and pc.is_delete=0 and pc.status=0
-        left join sys_user as ue1 on ue1.user_id=p.create_by and ue1.is_delete=0 and ue1.status=1
+        left join sys_user as ue1 on ue1.id=p.create_by and ue1.is_delete=0 and ue1.status=1
         left join sys_dept as d1 on d1.id=ue1.main_dept and d1.is_delete=0
-        left join sys_user as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=1
+        left join sys_user as ue2 on ue2.id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=1
         left join sys_dept as d2 on d2.id=ue2.main_dept and d2.is_delete=0
         where p.is_delete=0 and p.is_use=0
         <if test="name!=null and name!=''">
@@ -342,7 +342,7 @@
         <if test="remark!=null">
             remark=#{remark},
         </if>
-        update_by=#{createBy}
+        update_by=#{createBy}, status=1
         where id=#{problemId} and rectify_user_id=#{createBy};
     </update>
 

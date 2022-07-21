@@ -2,12 +2,17 @@ package com.uav.ops.config.component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.uav.ops.config.repository.UavEsRepository;
+import com.uav.ops.dto.req.DeviceReqDTO;
 import com.uav.ops.entity.Uav;
+import com.uav.ops.service.DeviceService;
+import com.uav.ops.utils.ApplicationContextRegister;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -74,6 +79,13 @@ public class WebSocketServer {
             webSocketMap.put(this.clientId, this);
             addOnlineCount();
             log.info("[{}连接] 建立连接, 当前连接数:{}", this.clientId, webSocketMap.size());
+            if ("app".equals(type)) {
+                ApplicationContext act = ApplicationContextRegister.getApplicationContext();
+                DeviceReqDTO deviceReqDTO = new DeviceReqDTO();
+                deviceReqDTO.setId(deviceId);
+                deviceReqDTO.setIsConn(1);
+                act.getBean(DeviceService.class).modifyDevice(deviceReqDTO);
+            }
         }
     }
 
@@ -88,6 +100,13 @@ public class WebSocketServer {
             subOnlineCount();
         }
         log.info("[{}连接] 断开连接, 当前连接数:{}", this.clientId, webSocketMap.size());
+        if (this.clientId.contains("app:")) {
+            ApplicationContext act = ApplicationContextRegister.getApplicationContext();
+            DeviceReqDTO deviceReqDTO = new DeviceReqDTO();
+            deviceReqDTO.setId(this.deviceId);
+            deviceReqDTO.setIsConn(0);
+            act.getBean(DeviceService.class).modifyDevice(deviceReqDTO);
+        }
     }
 
     /**
