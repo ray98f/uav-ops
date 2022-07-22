@@ -11,6 +11,7 @@ import com.uav.ops.dto.res.CruisePlanResDTO;
 import com.uav.ops.dto.res.CruisePointResDTO;
 import com.uav.ops.dto.res.CruiseWarnResDTO;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -41,15 +42,15 @@ public interface CruiseService {
 
     void deleteCruisePoint(CruisePointReqDTO cruisePointReqDTO);
 
-    Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, PageReqDTO pageReqDTO);
+    Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, String startTime, String endTime, PageReqDTO pageReqDTO);
 
     List<CruisePlanResDTO> listDeviceCruisePlan(String deviceId);
 
     CruisePlanResDTO getCruisePlanDetail(String id);
 
-    void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
+    void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) throws ParseException;
 
-    void modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
+    void modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) throws ParseException;
 
     void deleteCruisePlan(CruisePlanReqDTO cruisePlanReqDTO);
 

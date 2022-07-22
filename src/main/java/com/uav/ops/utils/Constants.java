@@ -29,6 +29,10 @@ public class Constants {
 
     public static final String VX_GET_USER_LIST = "https://qyapi.weixin.qq.com/cgi-bin/user/list";
 
+    public static final String VX_APP_GET_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token";
+
+    public static final String VX_MESSAGE_SEND = "https://qyapi.weixin.qq.com/cgi-bin/message/send";
+
     public static final String XLS = "xls";
 
     public static final String XLSX = "xlsx";

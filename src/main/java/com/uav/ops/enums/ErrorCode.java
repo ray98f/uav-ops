@@ -188,7 +188,8 @@ public enum ErrorCode {
     CANT_UPDATE_HAD_CHILD(32000012, "cant.update.had.child"),
     PREVIEW_ERROR(31000004, "preview.error"),
     CACHE_ERROR(3222222, "cache.error"),
-    PLAN_TIME_ERROR(3222222, "plan.time.error");
+    PLAN_TIME_ERROR(3222222, "plan.time.error"),
+    VX_ERROR(3999999, "vx.error");
 
     private Integer code;
 

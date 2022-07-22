@@ -215,31 +215,60 @@
     </update>
 
     <select id="listCruisePlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
-        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
-        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
-        from t_cruise_plan
-        where is_delete=0
+        select cp.id, cp.plan_name, cp.address, cp.plan_type, cp.start_day, cp.end_day, cp.specify_day,
+        cp.specify_time, cp.cruise_type, cp.ops_type, cp.line_id, cp.device_id, cp.auto_end_flag, cp.end_action,
+        cp.create_date, cp.remind_time, ue.real_name as response_user_name, cp.response_user_id, cp.hour
+        from t_cruise_plan as cp
+        left join sys_user_ext as ue on ue.user_id=cp.response_user_id and ue.is_delete=0 and ue.status=0
+        where cp.is_delete=0
         <if test="type!=null">
-            and plan_type=#{type}
+            and cp.plan_type=#{type}
         </if>
         <if test="name!=null and name!=''">
-            and plan_name like concat('%', #{name}, '%')
+            and cp.plan_name like concat('%', #{name}, '%')
         </if>
-        order by create_date desc
+        <if test="startTime!=null and startTime!=''">
+            and cp.specify_day>=date_format(#{startTime}, '%Y-%m-%d')
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and date_format(#{endTime}, '%Y-%m-%d')>=cp.specify_day
+        </if>
+        order by cp.create_date desc
     </select>
 
+    <select id="listRemindPlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
+        select cp.id, cp.remind_time, cp.response_user_id
+        from t_cruise_plan as cp
+        where cp.is_delete=0 and cp.is_remind=0 and now()>=remind_time
+        order by cp.create_date desc
+    </select>
+
+    <update id="remindPlan">
+        update t_cruise_plan set
+        is_remind=1 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        ) and is_delete=0
+    </update>
+
     <select id="listDeviceCruisePlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
-        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
-        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
-        from t_cruise_plan where is_delete=0 and device_id=#{deviceId}
-        order by create_date desc
+        select cp.id, cp.plan_name, cp.address, cp.plan_type, cp.start_day, cp.end_day, cp.specify_day,
+        cp.specify_time, cp.cruise_type, cp.ops_type, cp.line_id, cp.device_id, cp.auto_end_flag, cp.end_action,
+        cp.create_date, cp.remind_time, ue.real_name as response_user_name, cp.response_user_id, cp.hour
+        from t_cruise_plan as cp
+        left join sys_user_ext as ue on ue.user_id=cp.response_user_id and ue.is_delete=0 and ue.status=0
+        where cp.is_delete=0 and cp.device_id=#{deviceId}
+        order by cp.create_date desc
     </select>
 
     <select id="getCruisePlanDetail" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
-        select id, plan_name, address, plan_type, start_day, end_day, specify_day,
-        specify_time, cruise_type, ops_type, line_id, device_id, auto_end_flag, end_action, create_date
-        from t_cruise_plan
-        where is_delete=0 and id=#{id}
+        select cp.id, cp.plan_name, cp.address, cp.plan_type, cp.start_day, cp.end_day, cp.specify_day,
+        cp.specify_time, cp.cruise_type, cp.ops_type, cp.line_id, cp.device_id, cp.auto_end_flag, cp.end_action,
+        cp.create_date, cp.remind_time, ue.real_name as response_user_name, cp.response_user_id, cp.hour
+        from t_cruise_plan as cp
+        left join sys_user_ext as ue on ue.user_id=cp.response_user_id and ue.is_delete=0 and ue.status=0
+        where cp.is_delete=0 and cp.id=#{id}
     </select>
 
     <select id="selectCruisePlanIsExist" resultType="java.lang.Integer">
@@ -252,7 +281,8 @@
     </select>
 
     <insert id="addCruisePlan">
-        insert into t_cruise_plan(id, plan_name, address, plan_type, start_day, end_day, specify_day, specify_time,
+        insert into t_cruise_plan(id, plan_name, address, plan_type, start_day, end_day,
+        specify_day, specify_time, response_user_id, remind_time, hour,
         <if test="cruiseType!=null">
             cruise_type,
         </if>
@@ -268,7 +298,8 @@
         </if>
         create_by)
         value
-        (#{id}, #{planName}, #{address}, #{planType}, #{startDay}, #{endDay}, #{specifyDay}, #{specifyTime},
+        (#{id}, #{planName}, #{address}, #{planType}, #{startDay}, #{endDay},
+        #{specifyDay}, #{specifyTime}, #{responseUserId}, #{remindTime}, #{hour},
         <if test="cruiseType!=null">
             #{cruiseType},
         </if>
@@ -326,6 +357,15 @@
         <if test="endAction!=null">
             end_action=#{endAction},
         </if>
+        <if test="responseUserId!=null">
+            response_user_id=#{responseUserId},
+        </if>
+        <if test="remindTime!=null">
+            remind_time=#{remindTime},
+        </if>
+        <if test="hour!=null">
+            hour=#{hour},
+        </if>
         update_by=#{userId}
         where id=#{id} and is_delete=0
     </update>
@@ -340,8 +380,8 @@
         select cw.id, cw.warning_type, cw.warning_info, cw.plan_id, cp.plan_name, cw.fault_id, df.info as fault_info,
         cw.status, cw.create_date
         from t_cruise_warning as cw
-        left join t_cruise_plan as cp on cp.id=cw.plan_id and cp.is_delete=0
-        left join t_device_fault as df on df.id=cw.fault_id and df.is_delete=0
+        left join t_cruise_plan as cp on cp.id=cw.plan_id
+        left join t_device_fault as df on df.id=cw.fault_id
         where cw.is_delete=0
         <if test="type!=null">
             and cw.warning_type=#{type}
@@ -353,8 +393,8 @@
         select cw.id, cw.warning_type, cw.warning_info, cw.plan_id, cp.plan_name, cw.fault_id, df.info as fault_info,
         cw.status, cw.create_date
         from t_cruise_warning as cw
-        left join t_cruise_plan as cp on cp.id=cw.plan_id and cp.is_delete=0
-        left join t_device_fault as df on df.id=cw.fault_id and df.is_delete=0
+        left join t_cruise_plan as cp on cp.id=cw.plan_id
+        left join t_device_fault as df on df.id=cw.fault_id
         where cw.is_delete=0 and cw.id=#{id}
     </select>
 

@@ -79,13 +79,13 @@ public interface ProblemMapper {
 
     Integer deleteProblemWarning(ProblemWarningReqDTO problemWarningReqDTO);
 
-    List<MonthlyProblemNumResDTO> monthlyProblemNum();
+    List<MonthlyProblemNumResDTO> monthlyProblemNum(String year);
 
-    Integer solveProblemNum();
+    Integer solveProblemNum(String month, String typeId);
 
-    Integer notSolveProblemNum();
+    Integer notSolveProblemNum(String month, String typeId);
 
-    List<MonthlyProblemNumResDTO> typeProblemNum(String typeId);
+    List<MonthlyProblemNumResDTO> typeProblemNum(String typeId, String year);
 
     Integer selectRectifyUserStatus(String problemId, String userId);
 

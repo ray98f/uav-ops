@@ -77,4 +77,18 @@ public class CruisePlanReqDTO {
 
     @ApiModelProperty(value = "创建人id")
     private String userId;
+
+    @ApiModelProperty(value = "责任人")
+    private String responseUserId;
+
+    @ApiModelProperty(value = "提前提醒小时数")
+    private Integer hour;
+
+    @ApiModelProperty(value = "提醒时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    private Date remindTime;
 }

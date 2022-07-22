@@ -25,10 +25,9 @@ import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author frp
@@ -166,9 +165,9 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, PageReqDTO pageReqDTO) {
+    public Page<CruisePlanResDTO> listCruisePlan(Integer type, String name, String startTime, String endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return cruiseMapper.listCruisePlan(pageReqDTO.of(), type, name);
+        return cruiseMapper.listCruisePlan(pageReqDTO.of(), type, name, startTime, endTime);
     }
 
     @Override
@@ -187,7 +186,7 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) {
+    public void addCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) throws ParseException {
         if (Objects.isNull(cruisePlanReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -197,6 +196,11 @@ public class CruiseServiceImpl implements CruiseService {
         }
         cruisePlanReqDTO.setId(TokenUtil.getUuId());
         cruisePlanReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf1.format(cruisePlanReqDTO.getSpecifyDay()) + " " + sdf2.format(cruisePlanReqDTO.getSpecifyTime());
+        cruisePlanReqDTO.setRemindTime(getBeforeTimeByHour(sdf3.parse(time), cruisePlanReqDTO.getHour()));
         result = cruiseMapper.addCruisePlan(cruisePlanReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
@@ -204,7 +208,7 @@ public class CruiseServiceImpl implements CruiseService {
     }
 
     @Override
-    public void modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) {
+    public void modifyCruisePlan(CruisePlanReqDTO cruisePlanReqDTO) throws ParseException {
         if (Objects.isNull(cruisePlanReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -213,6 +217,11 @@ public class CruiseServiceImpl implements CruiseService {
             throw new CommonException(ErrorCode.DATA_EXIST);
         }
         cruisePlanReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf1.format(cruisePlanReqDTO.getSpecifyDay()) + " " + sdf2.format(cruisePlanReqDTO.getSpecifyTime());
+        cruisePlanReqDTO.setRemindTime(getBeforeTimeByHour(sdf3.parse(time), cruisePlanReqDTO.getHour()));
         result = cruiseMapper.modifyCruisePlan(cruisePlanReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
@@ -294,5 +303,12 @@ public class CruiseServiceImpl implements CruiseService {
         if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
+    }
+
+    public static Date getBeforeTimeByHour(Date date, Integer hour) {
+        Calendar rightNow = Calendar.getInstance();
+        rightNow.setTime(date);
+        rightNow.add(Calendar.HOUR, -hour);
+        return rightNow.getTime();
     }
 }

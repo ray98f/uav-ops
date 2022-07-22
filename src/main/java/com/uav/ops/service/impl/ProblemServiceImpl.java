@@ -361,15 +361,15 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<MonthlyProblemNumResDTO> monthlyProblemNum() {
-        return problemMapper.monthlyProblemNum();
+    public List<MonthlyProblemNumResDTO> monthlyProblemNum(String year) {
+        return problemMapper.monthlyProblemNum(year);
     }
 
     @Override
-    public Map<String, Object> problemProportion() {
+    public Map<String, Object> problemProportion(String month, String typeId) {
         Map<String, Object> data = new HashMap<>();
-        Integer solve = problemMapper.solveProblemNum();
-        Integer notSolve = problemMapper.notSolveProblemNum();
+        Integer solve = problemMapper.solveProblemNum(month, typeId);
+        Integer notSolve = problemMapper.notSolveProblemNum(month, typeId);
         if (solve == 0 && notSolve == 0) {
             data.put("solveNum", 0);
             data.put("notSolveNum", 0);
@@ -381,7 +381,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<TypeProblemNumResDTO> typeProblemNum() {
+    public List<TypeProblemNumResDTO> typeProblemNum(String year) {
         List<TypeProblemNumResDTO> resList = new ArrayList<>();
         List<ProblemTypeResDTO> list = problemMapper.listAllProblemType(null, 2);
         if (list != null && !list.isEmpty()) {
@@ -389,7 +389,7 @@ public class ProblemServiceImpl implements ProblemService {
                 TypeProblemNumResDTO resDTO = new TypeProblemNumResDTO();
                 resDTO.setTypeId(problemTypeResDTO.getId());
                 resDTO.setTypeName(problemTypeResDTO.getTypeName());
-                resDTO.setMonthlyProblemNum(problemMapper.typeProblemNum(problemTypeResDTO.getId()));
+                resDTO.setMonthlyProblemNum(problemMapper.typeProblemNum(problemTypeResDTO.getId(), year));
                 resList.add(resDTO);
             }
         }

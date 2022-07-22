@@ -48,7 +48,11 @@ public interface CruiseMapper {
 
     Integer deleteCruisePoint(CruisePointReqDTO cruisePointReqDTO);
 
-    Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, Integer type, String name);
+    Page<CruisePlanResDTO> listCruisePlan(Page<CruisePlanResDTO> page, Integer type, String name, String startTime, String endTime);
+
+    List<CruisePlanResDTO> listRemindPlan();
+
+    void remindPlan(List<String> list);
 
     List<CruisePlanResDTO> listDeviceCruisePlan(String deviceId);
 

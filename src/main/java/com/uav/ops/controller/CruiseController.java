@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -121,8 +122,10 @@ public class CruiseController {
     @ApiOperation(value = "获取巡检计划列表")
     public PageResponse<CruisePlanResDTO> listCruisePlan(@RequestParam(required = false) Integer type,
                                                          @RequestParam(required = false) String name,
+                                                         @RequestParam(required = false) String startTime,
+                                                         @RequestParam(required = false) String endTime,
                                                          @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(cruiseService.listCruisePlan(type, name, pageReqDTO));
+        return PageResponse.of(cruiseService.listCruisePlan(type, name, startTime, endTime, pageReqDTO));
     }
 
     @GetMapping("/plan/detail")
@@ -134,7 +137,7 @@ public class CruiseController {
     @PostMapping("/plan/add")
     @ApiOperation(value = "新增巡检计划")
     @LogMaker(value = "pc后台-新增巡检计划")
-    public DataResponse<T> addCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
+    public DataResponse<T> addCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) throws ParseException {
         cruiseService.addCruisePlan(cruisePlanReqDTO);
         return DataResponse.success();
     }
@@ -142,7 +145,7 @@ public class CruiseController {
     @PostMapping("/plan/modify")
     @ApiOperation(value = "修改巡检计划")
     @LogMaker(value = "pc后台-修改巡检计划")
-    public DataResponse<T> modifyCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) {
+    public DataResponse<T> modifyCruisePlan(@RequestBody CruisePlanReqDTO cruisePlanReqDTO) throws ParseException {
         cruiseService.modifyCruisePlan(cruisePlanReqDTO);
         return DataResponse.success();
     }

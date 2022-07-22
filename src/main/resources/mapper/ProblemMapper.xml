@@ -18,18 +18,24 @@
     </select>
 
     <select id="listAllProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
-        select id, parent_id, type_name, type_code, status, create_date, level
-        from t_problem_type where is_delete=0 and status=0
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
         <if test="parentId==null and type==1">
-            and level=1
+            , pt1.type_name
+        </if>
+        <if test="(parentId!=null and parentId!='' and type==1) or type==2">
+            , concat((select pt2.type_name from t_problem_type as pt2 where pt2.id=pt1.parent_id), '-', pt1.type_name) as type_name
+        </if>
+        from t_problem_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        <if test="parentId==null and type==1">
+            and pt1.level=1
         </if>
         <if test="parentId!=null and parentId!='' and type==1">
-            and level=2 and parent_id=#{parentId}
+            and pt1.level=2 and pt1.parent_id=#{parentId}
         </if>
         <if test="type==2">
-            and level=2
+            and pt1.level=2
         </if>
-        order by create_date desc
+        order by pt1.create_date desc
     </select>
 
     <select id="getProblemTypeDetail" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
@@ -440,56 +446,114 @@
 
     <select id="monthlyProblemNum" resultType="com.uav.ops.dto.res.MonthlyProblemNumResDTO">
         select a.* from (
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') AS month, count(id) as num
+        SELECT "1月" AS month, count(id) as num
         from t_problem
-        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') and is_delete=0 and status!=9
+        where DATE_FORMAT(create_date, '%m月')="01月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') AS month, count(id) as num
+        SELECT "2月" AS month, count(id) as num
         from t_problem
-        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') and is_delete=0 and status!=9
+        where DATE_FORMAT(create_date, '%m月')="02月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') AS month, count(id) as num
+        SELECT "3月" AS month, count(id) as num
         from t_problem
-        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') and is_delete=0 and status!=9
+        where DATE_FORMAT(create_date, '%m月')="03月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') AS month, count(id) as num
+        SELECT "4月" AS month, count(id) as num
         from t_problem
-        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') and is_delete=0 and status!=9
+        where DATE_FORMAT(create_date, '%m月')="04月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT(CURDATE(), '%m月') AS month, count(id) as num
+        SELECT "5月" AS month, count(id) as num
         from t_problem
-        where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT(CURDATE(), '%m月') and is_delete=0 and status!=9) as a
+        where DATE_FORMAT(create_date, '%m月')="05月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "6月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="06月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "7月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="07月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "8月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="08月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "9月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="09月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "10月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="10月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "11月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="11月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0
+        UNION
+        SELECT "12月" AS month, count(id) as num
+        from t_problem
+        where DATE_FORMAT(create_date, '%m月')="12月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=0) as a
     </select>
 
     <select id="solveProblemNum" resultType="java.lang.Integer">
-        select count(id) from t_problem where status=1 and is_delete=0
+        select count(id) from t_problem where status=2 and is_delete=0
+        and type_id=#{typeId} and date_format(create_date, '%Y-%m')=#{month}
     </select>
 
     <select id="notSolveProblemNum" resultType="java.lang.Integer">
-        select count(id) from t_problem where status=0 and is_delete=0
+        select count(id) from t_problem where status!=2 and is_delete=0
+        and type_id=#{typeId} and date_format(create_date, '%Y-%m')=#{month}
     </select>
 
     <select id="typeProblemNum" resultType="com.uav.ops.dto.res.MonthlyProblemNumResDTO">
         select a.* from (
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月') AS month, count(id) as num
-        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m月')
-        and type_id=#{typeId} and is_delete=0 and status!=9
+        SELECT "1月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="01月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月') AS month, count(id) as num
-        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m月')
-        and type_id=#{typeId} and is_delete=0 and status!=9
+        SELECT "2月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="02月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月') AS month, count(id) as num
-        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m月')
-        and type_id=#{typeId} and is_delete=0 and status!=9
+        SELECT "3月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="03月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月') AS month, count(id) as num
-        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m月')
-        and type_id=#{typeId} and is_delete=0 and status!=9
+        SELECT "4月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="04月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
         UNION
-        SELECT DATE_FORMAT(CURDATE(), '%m月') AS month, count(id) as num
-        from t_problem where DATE_FORMAT(create_date, '%m月')=DATE_FORMAT(CURDATE(), '%m月')
-        and type_id=#{typeId} and is_delete=0 and status!=9) as a
+        SELECT "5月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="05月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "6月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="06月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "7月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="07月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "8月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="08月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "9月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="09月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "10月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="10月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "11月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="11月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0
+        UNION
+        SELECT "12月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(create_date, '%m月')="12月" and DATE_FORMAT(create_date, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=0) as a
     </select>
 
     <select id="selectRectifyUserStatus" resultType="java.lang.Integer">

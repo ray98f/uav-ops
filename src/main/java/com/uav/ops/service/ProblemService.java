@@ -68,10 +68,10 @@ public interface ProblemService {
 
     void deleteProblemWarning(ProblemWarningReqDTO problemWarningReqDTO);
 
-    List<MonthlyProblemNumResDTO> monthlyProblemNum();
+    List<MonthlyProblemNumResDTO> monthlyProblemNum(String year);
 
-    Map<String, Object>  problemProportion();
+    Map<String, Object>  problemProportion(String month, String typeId);
 
-    List<TypeProblemNumResDTO> typeProblemNum();
+    List<TypeProblemNumResDTO> typeProblemNum(String year);
 
 }

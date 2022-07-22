@@ -241,19 +241,20 @@ public class ProblemController {
 
     @GetMapping("/statistics/month")
     @ApiOperation(value = "统计-每月新增问题数")
-    public DataResponse<List<MonthlyProblemNumResDTO>> monthlyProblemNum() {
-        return DataResponse.of(problemService.monthlyProblemNum());
+    public DataResponse<List<MonthlyProblemNumResDTO>> monthlyProblemNum(@RequestParam String year) {
+        return DataResponse.of(problemService.monthlyProblemNum(year));
     }
 
     @GetMapping("/statistics/proportion")
     @ApiOperation(value = "统计-问题占比")
-    public DataResponse<Map<String, Object>> problemProportion() {
-        return DataResponse.of(problemService.problemProportion());
+    public DataResponse<Map<String, Object>> problemProportion(@RequestParam String month,
+                                                               @RequestParam String typeId) {
+        return DataResponse.of(problemService.problemProportion(month, typeId));
     }
 
     @GetMapping("/statistics/type")
     @ApiOperation(value = "统计-各类新增问题数")
-    public DataResponse<List<TypeProblemNumResDTO>> typeProblemNum() {
-        return DataResponse.of(problemService.typeProblemNum());
+    public DataResponse<List<TypeProblemNumResDTO>> typeProblemNum(@RequestParam String year) {
+        return DataResponse.of(problemService.typeProblemNum(year));
     }
 }
