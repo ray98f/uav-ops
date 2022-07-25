@@ -41,4 +41,13 @@ public class DeviceReqDTO {
 
     @ApiModelProperty(value = "操作用户id")
     private String userId;
+
+    @ApiModelProperty(value = "是否保养 0 否 1 是")
+    private Integer isMaintain;
+
+    @ApiModelProperty(value = "飞行时间 累加")
+    private Long flyTime;
+
+    @ApiModelProperty(value = "保养时间")
+    private Long maintainTime;
 }

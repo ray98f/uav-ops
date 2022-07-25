@@ -38,7 +38,6 @@ public class SysController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录")
-    @LogMaker(value = "pc后台-登录")
     public DataResponse<Map<String, Object>> login(@RequestBody LoginReqDTO loginReqDTO) throws Exception {
         return DataResponse.of(sysService.login(loginReqDTO));
     }

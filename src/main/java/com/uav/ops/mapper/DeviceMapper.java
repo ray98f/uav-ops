@@ -24,7 +24,11 @@ public interface DeviceMapper {
 
     List<DeviceResDTO> listAllUav(Integer status);
 
+    List<DeviceResDTO> listMaintainDevice();
+
     DeviceResDTO getDeviceDetail(String id);
+
+    void addDeviceWarning(List<DeviceResDTO> list);
 
     List<DeviceResDTO.DeviceFault> selectDeviceFault(String id);
 

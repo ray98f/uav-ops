@@ -19,10 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,7 @@ public class SysServiceImpl implements SysService {
 
     @Override
     public Map<String, Object> login(LoginReqDTO loginReqDTO) throws Exception {
+        Long beginTime = System.currentTimeMillis();
         if (Objects.isNull(loginReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -55,6 +60,7 @@ public class SysServiceImpl implements SysService {
         Map<String, Object> data = new HashMap<>(16);
         data.put("userInfo", resDTO);
         data.put(TOKEN, TokenUtil.createSimpleToken(resDTO));
+        saveLog("pc后台-登录", resDTO.getUserName(), beginTime);
         return data;
     }
 
@@ -261,5 +267,18 @@ public class SysServiceImpl implements SysService {
         if (list != null && !list.isEmpty()) {
             sysMapper.addButton(list);
         }
+    }
+
+    public void saveLog(String msg, String userName, Long beginTime) {
+        OperationLogResDTO operationLog = new OperationLogResDTO();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
+        operationLog.setHostIp(IpUtils.getIpAddr(request));
+        operationLog.setOperationType(msg);
+        operationLog.setParams(msg + "成功");
+        operationLog.setUserName(userName);
+        operationLog.setOperationTime(new Timestamp(System.currentTimeMillis()));
+        operationLog.setUseTime(System.currentTimeMillis() - beginTime);
+        sysMapper.addOperationLog(operationLog);
     }
 }

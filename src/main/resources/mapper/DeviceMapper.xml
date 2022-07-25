@@ -3,7 +3,8 @@
 <mapper namespace="com.uav.ops.mapper.DeviceMapper">
 
     <select id="listDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
+        remark, create_date, is_maintain, fly_time, maintain_time
         from t_device where is_delete=0
         <if test="name!=null and name!=''">
             and device_name like concat('%', #{name}, '%')
@@ -12,13 +13,15 @@
     </select>
 
     <select id="listAllDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
+        remark, create_date, is_maintain, fly_time, maintain_time
         from t_device where is_delete=0 and status=0
         order by create_date desc
     </select>
 
     <select id="listAllUav" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
+        remark, create_date, is_maintain, fly_time, maintain_time
         from t_device where is_delete=0 and type=1
         <if test="status!=null">
             and status=#{status}
@@ -26,10 +29,27 @@
         order by create_date desc
     </select>
 
+    <select id="listMaintainDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
+        remark, create_date, is_maintain, fly_time, maintain_time
+        from t_device where is_delete=0 and status=0 and 30>=maintain_time-fly_time and maintain_time!=0
+        order by create_date desc
+    </select>
+
     <select id="getDeviceDetail" resultType="com.uav.ops.dto.res.DeviceResDTO">
-        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live, remark, create_date
+        select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
+        remark, create_date, is_maintain, fly_time, maintain_time
         from t_device where is_delete=0 and id=#{id}
     </select>
+
+    <insert id="addDeviceWarning">
+        <foreach collection="list" index="index" item="device" separator=";">
+            insert into t_device_warning (id, warning_info, device_id, create_by)
+            select (REPLACE(UUID(), '-', ''), concat(#{device.deviceName}, '无人机已到需要保养时长，请前往保养'), #{device.id}, #{device.userId}
+            from dual
+            WHERE not exists (SELECT id FROM t_device_warning WHERE device_id=#{device.id} and status=0)
+        </foreach>
+    </insert>
 
     <select id="selectDeviceFault" resultType="com.uav.ops.dto.res.DeviceResDTO$DeviceFault">
         select id, device_id, info from t_device_fault where device_id=#{id} and is_delete=0
@@ -57,6 +77,15 @@
         <if test="isLive!=null">
             is_live,
         </if>
+        <if test="isMaintain!=null">
+            is_maintain,
+        </if>
+        <if test="flyTime!=null">
+            fly_time,
+        </if>
+        <if test="maintainTime!=null">
+            maintain_time,
+        </if>
         remark, create_by)
         value (#{id}, #{deviceName}, #{type}, #{deviceCode}, #{pushUrl}, #{pullUrl}, #{status},
         <if test="isConn!=null">
@@ -64,6 +93,15 @@
         </if>
         <if test="isLive!=null">
             #{isLive},
+        </if>
+        <if test="isMaintain!=null">
+            #{isMaintain},
+        </if>
+        <if test="flyTime!=null">
+            #{flyTime},
+        </if>
+        <if test="maintainTime!=null">
+            #{maintainTime},
         </if>
         #{remark}, #{userId})
     </insert>
@@ -96,6 +134,15 @@
         </if>
         <if test="remark!=null">
             remark=#{remark},
+        </if>
+        <if test="isMaintain!=null">
+            is_maintain=#{isMaintain},
+        </if>
+        <if test="flyTime!=null">
+            fly_time=#{flyTime},
+        </if>
+        <if test="maintainTime!=null">
+            maintain_time=#{maintainTime},
         </if>
         update_by=#{userId}
         where id=#{id} and is_delete=0
