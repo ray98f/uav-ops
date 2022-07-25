@@ -237,8 +237,9 @@
     </select>
 
     <select id="listRemindPlan" resultType="com.uav.ops.dto.res.CruisePlanResDTO">
-        select cp.id, cp.remind_time, cp.response_user_id
+        select cp.id, cp.remind_time, cp.response_user_id, u.mobile, cp.plan_name, cp.hour
         from t_cruise_plan as cp
+        left join sys_user as u on u.id=cp.response_user_id and u.is_delete=0 and u.status=1
         where cp.is_delete=0 and cp.is_remind=0 and now()>=remind_time
         order by cp.create_date desc
     </select>

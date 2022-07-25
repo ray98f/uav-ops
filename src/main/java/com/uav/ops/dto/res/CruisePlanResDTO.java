@@ -106,5 +106,8 @@ public class CruisePlanResDTO {
     )
     private Date remindTime;
 
+    @ApiModelProperty(value = "手机号")
+    private String mobile;
+
 
 }
