@@ -6,6 +6,7 @@ import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
 import com.uav.ops.dto.req.CruiseLineReqDTO;
 import com.uav.ops.dto.req.CruisePointReqDTO;
+import com.uav.ops.dto.req.DeviceReqDTO;
 import com.uav.ops.dto.req.ProblemIdentifyReqDTO;
 import com.uav.ops.dto.res.*;
 import com.uav.ops.service.CruiseService;
@@ -46,6 +47,20 @@ public class AndroidAppController {
     @ApiOperation(value = "获取无人机列表")
     public DataResponse<List<DeviceResDTO>> listAllUav(@RequestParam(required = false) Integer status) {
         return DataResponse.of(deviceService.listAllUav(status));
+    }
+
+    @GetMapping("/uav/detail")
+    @ApiOperation(value = "获取无人机设备详情")
+    public DataResponse<DeviceResDTO> getDeviceDetail(@RequestParam String id) {
+        return DataResponse.of(deviceService.getDeviceDetail(id));
+    }
+
+    @PostMapping("/uav/modify")
+    @ApiOperation(value = "修改无人机设备")
+    @LogMaker(value = "安卓app接口-修改无人机设备")
+    public DataResponse<T> modifyDevice(@RequestBody DeviceReqDTO deviceReqDTO) {
+        deviceService.modifyDevice(deviceReqDTO);
+        return DataResponse.success();
     }
 
     @GetMapping("/plan/list")
