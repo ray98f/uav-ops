@@ -81,6 +81,8 @@ public interface ProblemMapper {
 
     List<MonthlyProblemNumResDTO> monthlyProblemNum(String year);
 
+    Integer problemNum(String month, String typeId);
+
     Integer solveProblemNum(String month, String typeId);
 
     Integer notSolveProblemNum(String month, String typeId);

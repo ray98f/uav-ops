@@ -245,6 +245,12 @@ public class ProblemController {
         return DataResponse.of(problemService.monthlyProblemNum(year));
     }
 
+    @GetMapping("/statistics/typeProportion")
+    @ApiOperation(value = "统计-类型问题占比")
+    public DataResponse<Map<String, Object>> problemTypeProportion(@RequestParam String month) {
+        return DataResponse.of(problemService.problemTypeProportion(month));
+    }
+
     @GetMapping("/statistics/proportion")
     @ApiOperation(value = "统计-问题占比")
     public DataResponse<Map<String, Object>> problemProportion(@RequestParam String month,

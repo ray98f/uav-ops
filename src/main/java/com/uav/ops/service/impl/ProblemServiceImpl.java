@@ -366,6 +366,19 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
+    public Map<String, Object> problemTypeProportion(String month) {
+        Map<String, Object> data = new HashMap<>();
+        List<ProblemTypeResDTO> list =  problemMapper.listAllProblemType(null, 1);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO resDTO : list) {
+                Integer num = problemMapper.problemNum(month, resDTO.getId());
+                data.put(resDTO.getTypeName(), num != null ? num : 0);
+            }
+        }
+        return data;
+    }
+
+    @Override
     public Map<String, Object> problemProportion(String month, String typeId) {
         Map<String, Object> data = new HashMap<>();
         Integer solve = problemMapper.solveProblemNum(month, typeId);

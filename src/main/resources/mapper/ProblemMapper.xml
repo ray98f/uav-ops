@@ -495,6 +495,11 @@
         where DATE_FORMAT(create_date, '%m月')="12月" and DATE_FORMAT(create_date, '%Y')=#{year} and is_delete=0 and is_use=1) as a
     </select>
 
+    <select id="problemNum" resultType="java.lang.Integer">
+        select count(id) from t_problem where is_delete=0
+        and type_id=#{typeId} and date_format(create_date, '%Y-%m')=#{month}
+    </select>
+
     <select id="solveProblemNum" resultType="java.lang.Integer">
         select count(id) from t_problem where status=2 and is_delete=0
         and type_id=#{typeId} and date_format(create_date, '%Y-%m')=#{month}

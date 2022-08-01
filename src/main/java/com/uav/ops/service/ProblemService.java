@@ -70,6 +70,8 @@ public interface ProblemService {
 
     List<MonthlyProblemNumResDTO> monthlyProblemNum(String year);
 
+    Map<String, Object> problemTypeProportion(String month);
+
     Map<String, Object>  problemProportion(String month, String typeId);
 
     List<TypeProblemNumResDTO> typeProblemNum(String year);
