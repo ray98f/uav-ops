@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author frp
@@ -201,5 +202,12 @@ public class CruiseController {
     public DataResponse<T> deleteCruiseWarn(@RequestBody CruiseWarnReqDTO cruiseWarnReqDTO) {
         cruiseService.deleteCruiseWarn(cruiseWarnReqDTO);
         return DataResponse.success();
+    }
+
+    @GetMapping("/line/kmz")
+    @ApiOperation(value = "生成航线kmz文件")
+    @LogMaker(value = "pc后台-生成航线kmz文件")
+    public DataResponse<Map<String, Object>> createLineKmz(@RequestParam String lineId) {
+        return DataResponse.of(cruiseService.createLineKmz(lineId));
     }
 }

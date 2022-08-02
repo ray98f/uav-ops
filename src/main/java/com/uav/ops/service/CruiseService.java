@@ -66,4 +66,6 @@ public interface CruiseService {
 
     void deleteCruiseWarn(CruiseWarnReqDTO cruiseWarnReqDTO);
 
+    Map<String, Object> createLineKmz(String lineId);
+
 }

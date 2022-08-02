@@ -72,7 +72,7 @@ logging:
     path: ./log
 
 excluded:
-  pages: /uav/ops/sys/login,/uav/ops/sys/menu,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/start,/uav/ops/fly/history/close
+  pages: /uav/ops/cruise/line/kmz,/uav/ops/sys/login,/uav/ops/sys/menu,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/start,/uav/ops/fly/history/close
 
 vx-business:
   corpid: ww56aa612b390c11d2
@@ -114,3 +114,7 @@ aliyun:
   accessKeySecret: 9x0XLMV45km8wXkOMMQDu6e56UTeK5
   verifyCode: SMS_246185357
   signName: 中铁通轨道运营有限公司
+
+root:
+  url: http://192.168.30.58:9600/uav/ops/
+  path: /src/main/resources/templates/

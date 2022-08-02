@@ -189,7 +189,9 @@ public enum ErrorCode {
     PREVIEW_ERROR(31000004, "preview.error"),
     CACHE_ERROR(3222222, "cache.error"),
     PLAN_TIME_ERROR(3222222, "plan.time.error"),
-    VX_ERROR(3999999, "vx.error");
+    VX_ERROR(3999999, "vx.error"),
+    LINE_FILE_CREATE_ERROR(500000, "line.file.create.error"),
+    FILE_COMPRESSION_ERROR(500000, "file.compression.error");
 
     private Integer code;
 

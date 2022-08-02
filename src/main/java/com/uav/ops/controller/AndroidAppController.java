@@ -183,4 +183,11 @@ public class AndroidAppController {
         problemService.deleteProblemIdentify(problemIdentifyReqDTO);
         return DataResponse.success();
     }
+
+    @GetMapping("/line/kmz")
+    @ApiOperation(value = "生成航线kmz文件")
+    @LogMaker(value = "安卓app接口-生成航线kmz文件")
+    public DataResponse<Map<String, Object>> createLineKmz(@RequestParam String lineId) {
+        return DataResponse.of(cruiseService.createLineKmz(lineId));
+    }
 }

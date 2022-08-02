@@ -19,12 +19,16 @@ import com.uav.ops.mapper.CruiseMapper;
 import com.uav.ops.mapper.DeviceMapper;
 import com.uav.ops.service.CruiseService;
 import com.uav.ops.service.DeviceService;
+import com.uav.ops.utils.KmlUtils;
 import com.uav.ops.utils.TokenUtil;
+import com.uav.ops.utils.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,6 +39,12 @@ import java.util.*;
 @Service
 @Slf4j
 public class CruiseServiceImpl implements CruiseService {
+
+    @Value("${root.url}")
+    private String urlRoot;
+
+    @Value("${root.path}")
+    private String pathRoot;
 
     @Autowired
     private CruiseMapper cruiseMapper;
@@ -242,7 +252,7 @@ public class CruiseServiceImpl implements CruiseService {
 
     @Override
     public void exeCruisePlan(String id) {
-        // todo 执行巡检计划
+        // 执行巡检计划
         CruisePlanResDTO res = cruiseMapper.getCruisePlanDetail(id);
         if (!Objects.isNull(res)) {
             webSocketServer.sendMessage("执行巡检计划:" + JSON.toJSONString(res), "app:" + res.getDeviceId());
@@ -310,5 +320,25 @@ public class CruiseServiceImpl implements CruiseService {
         rightNow.setTime(date);
         rightNow.add(Calendar.HOUR, -hour);
         return rightNow.getTime();
+    }
+
+    @Override
+    public Map<String, Object> createLineKmz(String lineId) {
+        Map<String, Object> data = new HashMap<>(16);
+        CruiseLineResDTO line = cruiseMapper.getCruiseLineDetail(lineId);
+        List<CruisePointResDTO> points = cruiseMapper.listCruisePoint(lineId, null);
+        if (Objects.isNull(line) || Objects.isNull(points) || points.isEmpty()) {
+            throw new CommonException(ErrorCode.RESOURCE_NOT_EXIST);
+        }
+        KmlUtils.setLineWpml(line, points);
+        KmlUtils.setLineKml(line, points);
+        String path = System.getProperty("user.dir") + pathRoot + line.getId();
+        try {
+            ZipUtils.zip(path + ".kmz", path);
+        } catch (Exception e) {
+            throw new CommonException(ErrorCode.FILE_COMPRESSION_ERROR);
+        }
+        data.put("url", urlRoot + lineId + ".kmz");
+        return data;
     }
 }

@@ -69,6 +69,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/static/**")
                 .addResourceLocations("classpath:/META-INF/resources/")
                 .addResourceLocations("classpath:/template/**");
+        registry.addResourceHandler("/templates/**")
+                .addResourceLocations("file:/opt/uav-ops/templates/");
         configResource.getResources().forEach(r -> {
             String[] paths = r.getPathPatterns().split(REGEX);
             String[] resources = r.getResourceLocations().split(REGEX);

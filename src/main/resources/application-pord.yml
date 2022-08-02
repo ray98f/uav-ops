@@ -1,6 +1,8 @@
 spring:
+  mvc:
+    static-path-pattern: /templates/**
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/,file:/opt/uav-ops/templates
   jackson:
     time-zone: Asia/Shanghai
     serialization:
@@ -71,7 +73,7 @@ logging:
     path: ./log
 
 excluded:
-  pages: /uav/ops/sys/login,/uav/ops/web/test,/uav/ops/web/sendMassMessage
+  pages: /uav/ops/cruise/line/kmz,/uav/ops/sys/login,/uav/ops/sys/menu,/uav/ops/web/test,/uav/ops/web/sendMassMessage,/uav/ops/fly/history/start,/uav/ops/fly/history/close
 
 vx-business:
   corpid: ww56aa612b390c11d2
@@ -113,3 +115,7 @@ aliyun:
   accessKeySecret: 9x0XLMV45km8wXkOMMQDu6e56UTeK5
   verifyCode: SMS_246185357
   signName: 中铁通轨道运营有限公司
+
+root:
+  url: https://security.zttgs.com:3443/uav/ops/templates/
+  path: /templates/
