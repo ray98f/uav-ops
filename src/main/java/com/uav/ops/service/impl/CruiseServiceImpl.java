@@ -40,6 +40,8 @@ import java.util.*;
 @Slf4j
 public class CruiseServiceImpl implements CruiseService {
 
+    private final static String DIR_NAME = "/wpmz";
+
     @Value("${root.url}")
     private String urlRoot;
 
@@ -334,7 +336,7 @@ public class CruiseServiceImpl implements CruiseService {
         KmlUtils.setLineKml(line, points);
         String path = System.getProperty("user.dir") + pathRoot + line.getId();
         try {
-            ZipUtils.zip(path + ".kmz", path);
+            ZipUtils.zip(path + ".kmz", path + DIR_NAME);
         } catch (Exception e) {
             throw new CommonException(ErrorCode.FILE_COMPRESSION_ERROR);
         }

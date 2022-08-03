@@ -22,6 +22,8 @@ import java.util.zip.ZipOutputStream;
 @Component
 public class KmlUtils {
 
+	private final static String DIR_NAME = "/wpmz";
+
 	private static String pathRoot;
 
 	@Value("${root.path}")
@@ -89,7 +91,7 @@ public class KmlUtils {
 			}
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("utf-8");
-			String path = System.getProperty("user.dir") + pathRoot + line.getId();
+			String path = System.getProperty("user.dir") + pathRoot + line.getId() + DIR_NAME;
 			File file = new File(path);
 			if (!file.isDirectory()) {
 				file.mkdirs();
@@ -173,7 +175,7 @@ public class KmlUtils {
 			}
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("utf-8");
-			String path = System.getProperty("user.dir") + pathRoot + line.getId();
+			String path = System.getProperty("user.dir") + pathRoot + line.getId() + DIR_NAME;
 			File file = new File(path);
 			if (!file.isDirectory()) {
 				file.mkdirs();
