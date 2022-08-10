@@ -3,8 +3,10 @@ package com.uav.ops.config.component;
 import com.alibaba.fastjson.JSONObject;
 import com.uav.ops.config.repository.UavEsRepository;
 import com.uav.ops.dto.req.DeviceReqDTO;
+import com.uav.ops.dto.req.FlyHistoryReqDTO;
 import com.uav.ops.entity.Uav;
 import com.uav.ops.service.DeviceService;
+import com.uav.ops.service.FlyHistoryService;
 import com.uav.ops.utils.ApplicationContextRegister;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,11 @@ public class WebSocketServer {
                 deviceReqDTO.setId(deviceId);
                 deviceReqDTO.setIsConn(1);
                 act.getBean(DeviceService.class).modifyDevice(deviceReqDTO);
+                FlyHistoryReqDTO flyHistoryReqDTO = new FlyHistoryReqDTO();
+                flyHistoryReqDTO.setId(TokenUtil.getUuId());
+                flyHistoryReqDTO.setDeviceId(deviceId);
+                flyHistoryReqDTO.setFlyType(1);
+                act.getBean(FlyHistoryService.class).startFly(flyHistoryReqDTO);
             }
         }
     }
@@ -106,6 +113,7 @@ public class WebSocketServer {
             deviceReqDTO.setId(this.deviceId);
             deviceReqDTO.setIsConn(0);
             act.getBean(DeviceService.class).modifyDevice(deviceReqDTO);
+            act.getBean(FlyHistoryService.class).closeFlyByWebSocket();
         }
     }
 
@@ -119,6 +127,10 @@ public class WebSocketServer {
     public void onError(Session session, Throwable error) {
         log.info("[{}连接] 错误原因:{}", this.clientId, error.getMessage());
         error.printStackTrace();
+        if (this.clientId.contains("app:")) {
+            ApplicationContext act = ApplicationContextRegister.getApplicationContext();
+            act.getBean(FlyHistoryService.class).closeFlyByWebSocket();
+        }
     }
 
     /**

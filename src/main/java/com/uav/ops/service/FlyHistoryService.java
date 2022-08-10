@@ -26,10 +26,12 @@ public interface FlyHistoryService {
 
     void deleteFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
-    List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException;
+    List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId, String event) throws ParseException;
 
     void startFly(FlyHistoryReqDTO flyHistoryReqDTO);
 
     void closeFly(FlyHistoryReqDTO flyHistoryReqDTO);
+
+    void closeFlyByWebSocket();
 
 }

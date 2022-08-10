@@ -63,8 +63,9 @@ public class FlyHistoryController {
     @ApiOperation(value = "获取飞行记录飞行数据列表")
     public DataResponse<List<FlyHistoryDataResDTO>> listFlyHistoryDataList(@RequestParam String startTime,
                                                                            @RequestParam String endTime,
-                                                                           @RequestParam String deviceId) throws ParseException {
-        return DataResponse.of(flyHistoryService.listFlyHistoryDataList(startTime, endTime, deviceId));
+                                                                           @RequestParam String deviceId,
+                                                                           @RequestParam String event) throws ParseException {
+        return DataResponse.of(flyHistoryService.listFlyHistoryDataList(startTime, endTime, deviceId, event));
     }
 
     @PostMapping("/start")

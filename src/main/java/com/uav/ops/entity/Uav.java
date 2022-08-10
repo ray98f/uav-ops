@@ -24,6 +24,9 @@ public class Uav {
     @Id
     private String id;
 
+    @ApiModelProperty(value = "数据类型")
+    private String event;
+
     @ApiModelProperty(value = "无人机id")
     private String deviceId;
 

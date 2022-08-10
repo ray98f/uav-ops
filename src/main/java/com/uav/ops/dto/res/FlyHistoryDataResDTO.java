@@ -23,52 +23,47 @@ public class FlyHistoryDataResDTO {
 
     private BatteryState batteryState;
 
-    private FlightControllerState flightControllerState;
+    private LocationState locationState;
+
+    private SpeedState speedState;
+
+    private HeightState heightState;
 
     @Data
     public static class BatteryState {
 
-        @ApiModelProperty(value = "电流")
-        private Double current;
+        private Double batteryStatus1;
 
-        @ApiModelProperty(value = "电压")
-        private Double voltage;
+        private Double batteryStatus2;
 
-        @ApiModelProperty(value = "电压等级")
-        private Double cellVoltageLevel;
+        private Double percentageRemaining1;
 
-        @ApiModelProperty(value = "剩余电量")
-        private Double chargeRemaining;
+        private Double percentageRemaining2;
 
-        @ApiModelProperty(value = "剩余电量百分比")
-        private Double chargeRemainingInPercent;
+        private Double voltageLevel1;
+
+        private Double voltageLevel2;
     }
 
     @Data
-    public static class FlightControllerState {
+    public static class LocationState {
 
-        @ApiModelProperty(value = "经度")
         private Double lng;
 
-        @ApiModelProperty(value = "纬度")
         private Double lat;
 
-        @ApiModelProperty(value = "X方向速度, 左右速度")
-        private Double velocityX;
+        private String address;
+    }
 
-        @ApiModelProperty(value = "y方向速度, 前后速度")
-        private Double velocityY;
+    @Data
+    public static class SpeedState {
 
-        @ApiModelProperty(value = "Z方向速度, 垂直速度")
-        private Double velocityZ;
+        private Double speed;
+    }
 
-        @ApiModelProperty(value = "无人机高度")
-        private Double altitude;
+    @Data
+    public static class HeightState {
 
-        @ApiModelProperty(value = "降落是否需要确认")
-        private Boolean isLandingConfirmationNeeded;
-
-        @ApiModelProperty(value = "飞行模式")
-        private String flightModeString;
+        private Double height;
     }
 }

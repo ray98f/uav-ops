@@ -32,5 +32,7 @@ public interface FlyHistoryMapper {
 
     Integer closeFlyHistory(FlyHistoryReqDTO flyHistoryReqDTO);
 
+    FlyHistoryReqDTO selectLatestFlyHistory();
+
 
 }

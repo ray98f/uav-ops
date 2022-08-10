@@ -163,6 +163,11 @@ public class DeviceServiceImpl implements DeviceService {
         webSocketServer.sendMessage(message, "app:" + id);
     }
 
+    @Override
+    public void insertFlyHistory(String deviceId, Date time) {
+
+    }
+
     /**
      * 获取当前时间前一小时的时间
      *

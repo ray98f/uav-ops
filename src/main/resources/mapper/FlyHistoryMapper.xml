@@ -28,22 +28,22 @@
     </select>
 
     <insert id="addFlyHistory">
-        insert into t_fly_history(
-        id,
+        insert into t_fly_history
+        (id,
         device_id,
         fly_type,
-        fly_start,
-        takeoff_time,
-        is_delete
-        )
-        value (
-        #{id},
+        <if test="flyStart!=null and flyStart!=''">
+            fly_start,
+        </if>
+        takeoff_time, is_delete)
+        value
+        (#{id},
         #{deviceId},
         #{flyType},
-        #{flyStart},
-        #{takeoffTime},
-        0
-        )
+        <if test="flyStart!=null and flyStart!=''">
+            #{flyStart},
+        </if>
+        now(), 0)
     </insert>
 
     <update id="deleteFlyHistory">
@@ -54,11 +54,13 @@
 
     <update id="closeFlyHistory">
         update t_fly_history set
-        <if test="flyEnd !=null and flyEnd != ''">
-            fly_end = #{flyEnd},
+        <if test="flyEnd!=null and flyEnd!= ''">
+            fly_end=#{flyEnd},
         </if>
-        fly_time = #{flyTime},
-        land_time = #{landTime}
+        <if test="flyTime!=null">
+            fly_time=#{flyTime},
+        </if>
+        land_time=#{landTime}
         where id=#{id}
     </update>
 
@@ -78,4 +80,12 @@
             )
         </foreach>
     </insert>
+
+    <select id="selectLatestFlyHistory" resultType="com.uav.ops.dto.req.FlyHistoryReqDTO">
+        select id, takeoff_time
+        from t_fly_history
+        where land_time is null and is_delete=0
+        order by create_date desc
+        limit 1
+    </select>
 </mapper>

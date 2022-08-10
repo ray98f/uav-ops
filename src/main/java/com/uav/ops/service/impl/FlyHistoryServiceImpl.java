@@ -37,10 +37,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author frp
@@ -92,16 +90,25 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     }
 
     @Override
-    public List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId) throws ParseException {
-        // todo es搜索时间段内无人机飞行数据
+    public List<FlyHistoryDataResDTO> listFlyHistoryDataList(String startTime, String endTime, String deviceId, String event) throws ParseException {
+        // es搜索时间段内无人机飞行数据
         List<FlyHistoryDataResDTO> list = new ArrayList<>();
-        Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId));
+        Iterable<Uav> items = repository.search(getFlyHistoryDataBoolQueryBuilder(startTime, endTime, deviceId, event));
         for (Uav item : items) {
-            FlyHistoryDataResDTO res = JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.class);
+            FlyHistoryDataResDTO res = new FlyHistoryDataResDTO();
+            if ("BatteryState".equals(event)) {
+                res.setBatteryState(JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.BatteryState.class));
+            } else if ("SpeedState".equals(event) || "UpdateSpeedState".equals(event)) {
+                res.setSpeedState(JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.SpeedState.class));
+            } else if ("LocationState".equals(event)) {
+                res.setLocationState(JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.LocationState.class));
+            } else if ("HeightState".equals(event)) {
+                res.setHeightState(JSONObject.parseObject(item.getInfo(), FlyHistoryDataResDTO.HeightState.class));
+            }
             res.setTime(new Date(item.getCreateTime()));
             list.add(res);
         }
-        return list;
+        return list.stream().sorted(Comparator.comparing(FlyHistoryDataResDTO::getTime)).collect(Collectors.toList());
     }
 
     @Override
@@ -113,7 +120,6 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
         if (res != null && res.getId() != null) {
             throw new CommonException(ErrorCode.DATA_EXIST);
         }
-        flyHistoryReqDTO.setTakeoffTime(new Date());
         Integer result = flyHistoryMapper.addFlyHistory(flyHistoryReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
@@ -123,48 +129,77 @@ public class FlyHistoryServiceImpl implements FlyHistoryService {
     @Override
     @Transactional
     public void closeFly(FlyHistoryReqDTO flyHistoryReqDTO) {
-        String flyId = flyHistoryReqDTO.getId();
         File file = new File(srsPath);
         File targetFile = new File(minioPath);
         File[] fileList = file.listFiles();
-
         List<TFlyVideo> videoList = new ArrayList<>();
-        if(fileList != null && fileList.length > 0){
-            for(File f:fileList){
-                if(f.isFile() && VIDEO_EXT.equals(FilenameUtils.getExtension(f.getName()))){
-                    try{
-                        FileUtils.moveFileToDirectory(f,
-                                targetFile,false);
-
+        if (fileList != null && fileList.length > 0) {
+            for (File f : fileList) {
+                if (f.isFile() && VIDEO_EXT.equals(FilenameUtils.getExtension(f.getName()))) {
+                    try {
+                        FileUtils.moveFileToDirectory(f, targetFile, false);
                         TFlyVideo flyVideo = new TFlyVideo();
                         flyVideo.setId(TokenUtil.getUuId());
                         flyVideo.setFlyHistoryId(flyHistoryReqDTO.getId());
-
                         flyVideo.setVideoUrl(imgPath + VIDEO_PATH + FilenameUtils.getName(f.getName()));
-                        //flyHistoryReqDTO.setFlyVideo(minioPath + FilenameUtils.getName(f.getName()));
-
                         videoList.add(flyVideo);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new CommonException(ErrorCode.UPDATE_ERROR);
                     }
                 }
             }
-            if(videoList.size() > 0){
+            if (videoList.size() > 0) {
                 flyHistoryMapper.addFlyVideo(videoList);
             }
-
-            flyHistoryReqDTO.setLandTime(new Date()); //TODO
+            flyHistoryReqDTO.setLandTime(new Date());
             flyHistoryMapper.closeFlyHistory(flyHistoryReqDTO);
         }
-
     }
 
-    public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId) throws ParseException {
+    @Override
+    public void closeFlyByWebSocket() {
+        FlyHistoryReqDTO flyHistoryReqDTO = flyHistoryMapper.selectLatestFlyHistory();
+        if (Objects.isNull(flyHistoryReqDTO)) {
+            return;
+        }
+        File file = new File(srsPath);
+        File targetFile = new File(minioPath);
+        File[] fileList = file.listFiles();
+        List<TFlyVideo> videoList = new ArrayList<>();
+        if (fileList != null && fileList.length > 0) {
+            for (File f : fileList) {
+                if (f.isFile() && VIDEO_EXT.equals(FilenameUtils.getExtension(f.getName()))) {
+                    try {
+                        FileUtils.moveFileToDirectory(f, targetFile, false);
+                        TFlyVideo flyVideo = new TFlyVideo();
+                        flyVideo.setId(TokenUtil.getUuId());
+                        flyVideo.setFlyHistoryId(flyHistoryReqDTO.getId());
+                        flyVideo.setVideoUrl(imgPath + VIDEO_PATH + FilenameUtils.getName(f.getName()));
+                        videoList.add(flyVideo);
+                    } catch (Exception e) {
+                        throw new CommonException(ErrorCode.UPDATE_ERROR);
+                    }
+                }
+            }
+            if (videoList.size() > 0) {
+                flyHistoryMapper.addFlyVideo(videoList);
+            }
+            flyHistoryReqDTO.setLandTime(new Date(System.currentTimeMillis()));
+            if (flyHistoryReqDTO.getTakeoffTime() != null) {
+                flyHistoryReqDTO.setFlyTime((flyHistoryReqDTO.getLandTime().getTime() - flyHistoryReqDTO.getTakeoffTime().getTime()) / 1000);
+            }
+            flyHistoryMapper.closeFlyHistory(flyHistoryReqDTO);
+        }
+    }
+
+    public static BoolQueryBuilder getFlyHistoryDataBoolQueryBuilder(String startTime, String endTime, String deviceId, String event) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
         queryBuilders.must(QueryBuilders.existsQuery("deviceId"));
         queryBuilders.must(QueryBuilders.existsQuery("createTime"));
+        queryBuilders.must(QueryBuilders.existsQuery("event"));
         queryBuilders.must(QueryBuilders.matchQuery("deviceId", deviceId));
+        queryBuilders.must(QueryBuilders.matchQuery("event", event));
         queryBuilders.must(QueryBuilders.rangeQuery("createTime")
                 .from(sdf.parse(startTime).getTime())
                 .to(sdf.parse(endTime).getTime())

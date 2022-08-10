@@ -9,6 +9,7 @@ import com.uav.ops.dto.res.UserResDTO;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,4 +35,5 @@ public interface DeviceService {
 
     void operateDrone(String id, String operate, Boolean isLandingConfirmationNeeded, String planId, String lineId, String time) throws ParseException;
 
+    void insertFlyHistory(String deviceId, Date time);
 }

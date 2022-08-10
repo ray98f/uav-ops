@@ -57,7 +57,7 @@ public class FlyHistoryReqDTO {
     private Integer mileage;
 
     @ApiModelProperty(value = "飞行时间 s")
-    private Integer flyTime;
+    private Long flyTime;
 
     @ApiModelProperty(value = "视频地址")
     private String flyVideo;
