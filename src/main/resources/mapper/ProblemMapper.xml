@@ -563,13 +563,13 @@
 
     <select id="selectRectifyUserStatus" resultType="java.lang.Integer">
         select count(1) from t_problem
-        where id=#{problemId} and is_delete=0 and rectify_user_id=#{userId} and status=0
+        where id=#{problemId} and is_delete=0 and rectify_user_id=#{userId} and status=0 and is_use=1
         limit 1
     </select>
 
     <select id="selectCheckUserStatus" resultType="java.lang.Integer">
         select count(1) from t_problem
-        where id=#{problemId} and is_delete=0 and create_by=#{userId} and status=1
+        where id=#{problemId} and is_delete=0 and create_by=#{userId} and status=1 and is_use=1
         limit 1
     </select>
 </mapper>
