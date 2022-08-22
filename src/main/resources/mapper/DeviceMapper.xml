@@ -32,7 +32,7 @@
     <select id="listMaintainDevice" resultType="com.uav.ops.dto.res.DeviceResDTO">
         select id, device_name, type, device_code, push_url, pull_url, status, is_conn, is_live,
         remark, create_date, is_maintain, fly_time, maintain_time
-        from t_device where is_delete=0 and status=0 and 30>=maintain_time-fly_time and maintain_time!=0
+        from t_device where is_delete=0 and status=0 and 30>=maintain_time-fly_time and maintain_time!=0 and is_maintain=1
         order by create_date desc
     </select>
 
@@ -47,7 +47,10 @@
             insert into t_device_warning (id, warning_info, device_id, create_by)
             select (REPLACE(UUID(), '-', ''), concat(#{device.deviceName}, '无人机已到需要保养时长，请前往保养'), #{device.id}, #{device.userId}
             from dual
-            WHERE not exists (SELECT id FROM t_device_warning WHERE device_id=#{device.id} and status=0)
+            WHERE not exists (SELECT id FROM t_device_warning WHERE device_id=#{device.id} and status=0);
+            update t_device set
+            is_maintain=1
+            where id=#{device.id} and is_delete=0 and status=0
         </foreach>
     </insert>
 
