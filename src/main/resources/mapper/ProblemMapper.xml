@@ -58,7 +58,7 @@
         from t_problem_type as pt1 where pt1.is_delete=0 and pt1.status=0
         and pt1.level=2
         <if test="list!=null and list.size()>0">
-            AND pt1.id in (
+            AND pt1.parent_id in (
             <foreach collection="list" index="index" item="typeId" separator=",">
                 #{typeId}
             </foreach>
@@ -588,6 +588,57 @@
         SELECT "12月" AS month, count(id) as num
         from t_problem where DATE_FORMAT(create_date, '%m月')="12月" and DATE_FORMAT(create_date, '%Y')=#{year}
         and type_id=#{typeId} and is_delete=0 and is_use=1) as a
+    </select>
+
+    <select id="typeResolvedNum" resultType="com.uav.ops.dto.res.MonthlyProblemNumResDTO">
+        select a.* from (
+        SELECT "1月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="01月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "2月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="02月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "3月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="03月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "4月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="04月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "5月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="05月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "6月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="06月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "7月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="07月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "8月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="08月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "9月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="09月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "10月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="10月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "11月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="11月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2
+        UNION
+        SELECT "12月" AS month, count(id) as num
+        from t_problem where DATE_FORMAT(solve_time, '%m月')="12月" and DATE_FORMAT(solve_time, '%Y')=#{year}
+        and type_id=#{typeId} and is_delete=0 and is_use=1 and status =2) as a
     </select>
 
     <select id="selectRectifyUserStatus" resultType="java.lang.Integer">

@@ -263,4 +263,10 @@ public class ProblemController {
     public DataResponse<List<TypeProblemNumResDTO>> typeProblemNum(@RequestParam String year) {
         return DataResponse.of(problemService.typeProblemNum(year));
     }
+
+    @GetMapping("/statistics/ resolved")
+    @ApiOperation(value = "统计-各类问题解决数")
+    public DataResponse<List<TypeProblemNumResDTO>> resolvedNum(@RequestParam String year) {
+        return DataResponse.of(problemService.resolvedNum(year));
+    }
 }

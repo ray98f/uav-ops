@@ -76,4 +76,6 @@ public interface ProblemService {
 
     List<TypeProblemNumResDTO> typeProblemNum(String year);
 
+    List<TypeProblemNumResDTO> resolvedNum(String year);
+
 }

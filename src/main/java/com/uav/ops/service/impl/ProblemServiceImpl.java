@@ -374,11 +374,7 @@ public class ProblemServiceImpl implements ProblemService {
             list =  problemMapper.listAllProblemType(null, 1);
         }else{
             List<String> typeList = Arrays.asList(typeIds.split(","));
-            try{
-                list =  problemMapper.listTypeById(typeList);
-            }catch (Exception e){
-                log.info(e.getMessage());
-            }
+            list =  problemMapper.listTypeById(typeList);
 
         }
         if (list != null && !list.isEmpty()) {
@@ -408,6 +404,22 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public List<TypeProblemNumResDTO> typeProblemNum(String year) {
+        List<TypeProblemNumResDTO> resList = new ArrayList<>();
+        List<ProblemTypeResDTO> list = problemMapper.listAllProblemType(null, 2);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO problemTypeResDTO : list) {
+                TypeProblemNumResDTO resDTO = new TypeProblemNumResDTO();
+                resDTO.setTypeId(problemTypeResDTO.getId());
+                resDTO.setTypeName(problemTypeResDTO.getTypeName());
+                resDTO.setMonthlyProblemNum(problemMapper.typeProblemNum(problemTypeResDTO.getId(), year));
+                resList.add(resDTO);
+            }
+        }
+        return resList;
+    }
+
+    @Override
+    public List<TypeProblemNumResDTO> resolvedNum(String year) {
         List<TypeProblemNumResDTO> resList = new ArrayList<>();
         List<ProblemTypeResDTO> list = problemMapper.listAllProblemType(null, 2);
         if (list != null && !list.isEmpty()) {
