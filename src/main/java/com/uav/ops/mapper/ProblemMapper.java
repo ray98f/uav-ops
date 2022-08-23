@@ -23,6 +23,8 @@ public interface ProblemMapper {
 
     List<ProblemTypeResDTO> listAllProblemType(String parentId, Integer type);
 
+    List<ProblemTypeResDTO>  listTypeById(List<String> list);
+
     ProblemTypeResDTO getProblemTypeDetail(String id);
 
     Integer selectProblemTypeIsExist(ProblemTypeReqDTO problemTypeReqDTO);

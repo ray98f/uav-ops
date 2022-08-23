@@ -12,6 +12,7 @@ import com.uav.ops.service.ProblemService;
 import com.uav.ops.utils.ExcelPortUtil;
 import com.uav.ops.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -366,9 +367,20 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Map<String, Object> problemTypeProportion(String month) {
+    public Map<String, Object> problemTypeProportion(String month,String typeIds) {
         Map<String, Object> data = new HashMap<>();
-        List<ProblemTypeResDTO> list =  problemMapper.listAllProblemType(null, 1);
+        List<ProblemTypeResDTO> list = new ArrayList<>();
+        if(StringUtils.isEmpty(typeIds)){
+            list =  problemMapper.listAllProblemType(null, 1);
+        }else{
+            List<String> typeList = Arrays.asList(typeIds.split(","));
+            try{
+                list =  problemMapper.listTypeById(typeList);
+            }catch (Exception e){
+                log.info(e.getMessage());
+            }
+
+        }
         if (list != null && !list.isEmpty()) {
             for (ProblemTypeResDTO resDTO : list) {
                 Integer num = problemMapper.problemNum(month, resDTO.getId());
@@ -376,6 +388,7 @@ public class ProblemServiceImpl implements ProblemService {
             }
         }
         return data;
+
     }
 
     @Override

@@ -38,6 +38,35 @@
         order by pt1.create_date desc
     </select>
 
+    <select id="listTypeById" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select * from
+        (
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
+        , pt1.type_name
+        from t_problem_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        and pt1.level=1
+        <if test="list!=null and list.size()>0">
+            AND pt1.id in (
+            <foreach collection="list" index="index" item="typeId" separator=",">
+                #{typeId}
+            </foreach>
+            )
+        </if>
+        union
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
+        , concat((select pt2.type_name from t_problem_type as pt2 where pt2.id=pt1.parent_id), '-', pt1.type_name) as type_name
+        from t_problem_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        and pt1.level=2
+        <if test="list!=null and list.size()>0">
+            AND pt1.id in (
+            <foreach collection="list" index="index" item="typeId" separator=",">
+                #{typeId}
+            </foreach>
+            )
+        </if>
+        ) as pt3
+    </select>
+
     <select id="getProblemTypeDetail" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
         select id, parent_id, type_name, type_code, status, create_date, level
         from t_problem_type where is_delete=0 and id=#{id}
