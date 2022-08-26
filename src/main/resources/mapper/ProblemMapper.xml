@@ -14,7 +14,7 @@
         <if test="parentId!=null and parentId!=''">
             and level=2 and parent_id=#{parentId}
         </if>
-        order by create_date desc
+        order by type_code desc
     </select>
 
     <select id="listAllProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
@@ -35,7 +35,14 @@
         <if test="type==2">
             and pt1.level=2
         </if>
-        order by pt1.create_date desc
+        order by pt1.type_code desc
+    </select>
+
+    <select id="listNoChildProblemType"  resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level, pt1.type_name
+        from t_problem_type as pt1 where pt1.is_delete=0 and pt1.status=0 and pt1.level=1
+        and (select count(1) from t_problem_type where parent_id=pt1.id and is_delete=0 and status=0 and level=2 limit 1)=0
+        order by pt1.type_code desc
     </select>
 
     <select id="listTypeById" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
@@ -244,7 +251,7 @@
         left join t_problem_check as pc on pc.id=pr.problem_check_id and pc.is_delete=0 and pc.status=0
         left join sys_user_ext as ue1 on ue1.user_id=p.create_by and ue1.is_delete=0 and ue1.status=0
         left join sys_user_ext as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=0
-        where p.is_delete=0 and p.is_use=1 or (p.is_use=0 and p.create_by=#{userId})
+        where p.is_delete=0 and (p.is_use=1 or (p.is_use=0 and p.create_by=#{userId}))
         <if test="name!=null and name!=''">
             and p.title like concat('%', #{name}, '%')
         </if>

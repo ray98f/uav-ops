@@ -406,7 +406,8 @@ public class ProblemServiceImpl implements ProblemService {
     public List<TypeProblemNumResDTO> typeProblemNum(String year) {
         List<TypeProblemNumResDTO> resList = new ArrayList<>();
         List<ProblemTypeResDTO> list = problemMapper.listAllProblemType(null, 2);
-        if (list != null && !list.isEmpty()) {
+        list.addAll(problemMapper.listNoChildProblemType());
+        if (!list.isEmpty()) {
             for (ProblemTypeResDTO problemTypeResDTO : list) {
                 TypeProblemNumResDTO resDTO = new TypeProblemNumResDTO();
                 resDTO.setTypeId(problemTypeResDTO.getId());
