@@ -533,7 +533,7 @@
 
     <select id="problemNum" resultType="java.lang.Integer">
         select count(id) from t_problem where is_delete=0
-        and type_id=#{typeId} and date_format(create_date, '%Y-%m')=#{month}
+        and type_id=#{typeId} and create_date>=#{startTime} and #{endTime}>=create_date
     </select>
 
     <select id="solveProblemNum" resultType="java.lang.Integer">

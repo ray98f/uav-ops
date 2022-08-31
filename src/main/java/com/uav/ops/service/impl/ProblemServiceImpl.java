@@ -367,9 +367,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Map<String, Object> problemTypeProportion(String month,String typeIds) {
+    public Map<String, Object> problemTypeProportion(String startTime, String endTime, String typeIds) {
         Map<String, Object> data = new HashMap<>();
-        List<ProblemTypeResDTO> list = new ArrayList<>();
+        List<ProblemTypeResDTO> list;
         if(StringUtils.isEmpty(typeIds)){
             list =  problemMapper.listAllProblemType(null, 1);
         }else{
@@ -379,7 +379,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
         if (list != null && !list.isEmpty()) {
             for (ProblemTypeResDTO resDTO : list) {
-                Integer num = problemMapper.problemNum(month, resDTO.getId());
+                Integer num = problemMapper.problemNum(startTime, endTime, resDTO.getId());
                 data.put(resDTO.getTypeName(), num != null ? num : 0);
             }
         }
