@@ -43,9 +43,9 @@ public class DeviceServiceImpl implements DeviceService {
     private WebSocketServer webSocketServer;
 
     @Override
-    public Page<DeviceResDTO> listDevice(String name, PageReqDTO pageReqDTO) {
+    public Page<DeviceResDTO> listDevice(String name, String deviceCode,PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        Page<DeviceResDTO> page = deviceMapper.listDevice(pageReqDTO.of(), name);
+        Page<DeviceResDTO> page = deviceMapper.listDevice(pageReqDTO.of(), name,deviceCode);
         List<DeviceResDTO> list = page.getRecords();
         if (list != null && !list.isEmpty()) {
             for (DeviceResDTO resDTO : list) {

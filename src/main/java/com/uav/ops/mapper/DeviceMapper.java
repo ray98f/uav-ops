@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public interface DeviceMapper {
 
-    Page<DeviceResDTO> listDevice(Page<DeviceResDTO> page, String name);
+    Page<DeviceResDTO> listDevice(Page<DeviceResDTO> page, String name,String deviceCode);
 
     List<DeviceResDTO> listAllDevice();
 

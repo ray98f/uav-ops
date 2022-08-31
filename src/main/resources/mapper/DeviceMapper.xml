@@ -9,6 +9,9 @@
         <if test="name!=null and name!=''">
             and device_name like concat('%', #{name}, '%')
         </if>
+        <if test="deviceCode!=null and deviceCode!=''">
+            and device_code = #{deviceCode}
+        </if>
         order by create_date desc
     </select>
 

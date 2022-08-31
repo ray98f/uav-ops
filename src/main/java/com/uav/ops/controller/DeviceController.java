@@ -35,9 +35,9 @@ public class DeviceController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取设备列表")
-    public PageResponse<DeviceResDTO> listDevice(@RequestParam(required = false) String name,
+    public PageResponse<DeviceResDTO> listDevice(@RequestParam(required = false) String name,@RequestParam(required = false) String deviceCode,
                                                  @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(deviceService.listDevice(name, pageReqDTO));
+        return PageResponse.of(deviceService.listDevice(name, deviceCode,pageReqDTO));
     }
 
     @GetMapping("/listAll")

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface DeviceService {
 
-    Page<DeviceResDTO> listDevice(String name, PageReqDTO pageReqDTO);
+    Page<DeviceResDTO> listDevice(String name, String deviceCode,PageReqDTO pageReqDTO);
 
     List<DeviceResDTO> listAllDevice();
 
