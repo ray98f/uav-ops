@@ -25,7 +25,6 @@ public class ExcelPortUtil {
             if (list.size() == 0) {
                 throw new BackingStoreException("数据为空");
             }
-            // 声明一个工作簿
             XSSFWorkbook wb = new XSSFWorkbook();
             // 创建sheet页
             XSSFSheet sheet = wb.createSheet(sheetName);
@@ -55,6 +54,7 @@ public class ExcelPortUtil {
 
             // 全局加线样式
             XSSFCellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setWrapText(true);
             cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
             cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
             cellStyle.setBorderTop(BorderStyle.THIN);//上边框
@@ -81,11 +81,13 @@ public class ExcelPortUtil {
             for (Map<String, String> map : list) {
                 XSSFRow r = sheet.createRow(ind++);
                 for (Map.Entry<String, Integer> m : headMap.entrySet()) {
-                    String name = m.getKey(); // 列名
-                    String value = map.get(name); // value 不一定存在
+                    String name = m.getKey();
+                    String value = map.get(name);
                     XSSFCell cell2 = r.createCell(m.getValue());
                     if (value != null) {
                         cell2.setCellValue(value);
+                    } else {
+                        cell2.setCellValue("");
                     }
                     cell2.setCellStyle(cellStyle);
                 }
@@ -163,7 +165,6 @@ public class ExcelPortUtil {
                     ind++;
                 }
             }
-//            response.reset();
             response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-Disposition",
                     "attchement;filename=" + new String((sheetName + ".xls").getBytes(StandardCharsets.UTF_8), "ISO8859-1"));

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uav.ops.mapper.DangerMapper">
+
+    <select id="listDanger" resultType="com.uav.ops.dto.res.DangerResDTO">
+        select distinct d.id, d.no, d.region_id,
+        (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
+        d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
+        d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
+        d.device_id, d1.device_name, d.num, d.unit, d.status
+        from t_danger as d
+        left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
+        left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
+        left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_device as d1 on d1.id=d.device_id and d1.is_delete=0
+        <if test="userId!=null and userId!=''">
+            left join t_danger_user as du on du.danger_id=d.id
+        </if>
+        where d.is_delete=0
+        <if test="userId!=null and userId!=''">
+            and du.user_id=#{userId}
+        </if>
+        <if test="regionId!=null and regionId!=''">
+            and d.region_id=#{regionId}
+        </if>
+        <if test="searchKey!=null and searchKey!=''">
+            and (d.no like concat('%', #{searchKey}, '%') or
+            d.content like concat('%', #{searchKey}, '%') or
+            d.num like concat('%', #{searchKey}, '%') or
+            d.unit like concat('%', #{searchKey}, '%') or
+            d.address like concat('%', #{searchKey}, '%') or
+            ue.real_name like concat('%', #{searchKey}, '%') or
+            d1.device_name like concat('%', #{searchKey}, '%'))
+        </if>
+        group by d.id
+        order by d.create_date desc
+    </select>
+
+    <select id="getDangerRectify" resultType="com.uav.ops.dto.res.DangerRectifyResDTO">
+        select dr.id, dr.danger_id, dr.rectify_user_id, dr.rectify_time, dr.rectify_measure, dr.after_pic,
+        dr.is_eliminate, ue1.real_name as rectify_user_name
+        from t_danger_rectify as dr
+        left join sys_user_ext as ue1 on ue1.user_id=dr.rectify_user_id and ue1.status=0 and ue1.is_delete=0
+        where dr.danger_id=#{id} and dr.is_delete=0
+        group by dr.danger_id
+    </select>
+
+    <select id="getDangerDetail" resultType="com.uav.ops.dto.res.DangerResDTO">
+        select distinct d.id, d.no, d.region_id,
+        (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
+        d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
+        d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
+        d.device_id, d1.device_name, d.num, d.unit, d.status
+        from t_danger as d
+        left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
+        left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
+        left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_device as d1 on d1.id=d.device_id and d1.is_delete=0
+        where d.is_delete=0 and d.id=#{id}
+        order by d.create_date desc
+    </select>
+
+    <update id="modifyDanger">
+        update t_danger set
+        <if test="regionId!=null">
+            region_id=#{regionId},
+        </if>
+        <if test="address!=null">
+            address=#{address},
+        </if>
+        <if test="content!=null">
+            content=#{content},
+        </if>
+        <if test="beforePic!=null">
+            before_pic=#{beforePic},
+        </if>
+        <if test="deviceId!=null">
+            device_id=#{deviceId},
+        </if>
+        <if test="rectifyTerm!=null">
+            rectify_term=#{rectifyTerm},
+        </if>
+        <if test="checkUserId!=null">
+            check_user_id=#{checkUserId},
+        </if>
+        <if test="checkTime!=null">
+            check_time=#{checkTime},
+        </if>
+        <if test="num!=null">
+            num=#{num},
+        </if>
+        <if test="unit!=null">
+            unit=#{unit},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+        update_by=#{createBy}, update_date=now()
+        where id=#{id} and is_delete=0
+    </update>
+
+    <insert id="addDanger">
+        INSERT INTO t_danger (id, no, region_id, address, content,
+        before_pic, rectify_term, check_user_id, check_time,
+        <if test="deviceId!=null and deviceId!=''">
+            device_id,
+        </if>
+        <if test="num!=null">
+            num,
+        </if>
+        <if test="unit!=null and unit!=''">
+            unit,
+        </if>
+        create_by, status)
+        value (#{id}, #{no}, #{regionId}, #{address}, #{content}, #{beforePic}, #{rectifyTerm},
+        <if test="checkUserId!=null and checkUserId!=''">
+            #{checkUserId},
+        </if>
+        #{checkTime},
+        <if test="deviceId!=null and deviceId!=''">
+            #{deviceId},
+        </if>
+        <if test="num!=null">
+            #{num},
+        </if>
+        <if test="unit!=null and unit!=''">
+            #{unit},
+        </if>
+        #{createBy}, #{status})
+    </insert>
+
+    <update id="deleteDanger">
+        update t_danger set
+        is_delete=1, update_by=#{createBy}, update_date=now()
+        where id=#{id} and is_delete=0;
+        update t_danger_rectify set
+        is_delete=1, update_by=#{createBy}, update_date=now()
+        where danger_id=#{id} and is_delete=0;
+    </update>
+
+    <select id="getVisibleUser" resultType="com.uav.ops.dto.res.UserResDTO">
+        select distinct u.*
+        from t_danger_user as du
+        left join sys_user as u on u.id=du.user_id and u.is_delete=0
+        where du.danger_id=#{id}
+        group by u.id
+    </select>
+
+    <delete id="bindVisibleUser">
+        delete from t_danger_user where danger_id=#{dangerId};
+        insert into t_danger_user(id, user_id, danger_id)
+        values
+        <foreach collection="userIds" index="index" item="userId" separator=",">
+            (replace(uuid(),"-",""), #{userId}, #{dangerId})
+        </foreach>
+    </delete>
+
+    <update id="rectifyDanger">
+        update t_danger set
+        status=1, update_by=#{createBy}, update_date=now()
+        where id=#{dangerId} and is_delete=0;
+        insert into t_danger_rectify(id, danger_id, rectify_user_id, rectify_time,
+        <if test="rectifyMeasure!=null and rectifyMeasure!=''">
+            rectify_measure,
+        </if>
+        <if test="afterPic!=null and afterPic!=''">
+            after_pic,
+        </if>
+        <if test="isEliminate!=null">
+            is_eliminate,
+        </if>
+        create_by)
+        value
+        (replace(uuid(),"-",""), #{dangerId}, #{createBy}, now(),
+        <if test="rectifyMeasure!=null and rectifyMeasure!=''">
+            #{rectifyMeasure},
+        </if>
+        <if test="afterPic!=null and afterPic!=''">
+            #{afterPic},
+        </if>
+        <if test="isEliminate!=null">
+            #{isEliminate},
+        </if>
+        #{createBy})
+    </update>
+
+    <select id="exportDanger" resultType="com.uav.ops.dto.res.DangerResDTO">
+        select distinct d.id, d.no, d.region_id,
+        (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
+        d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
+        d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
+        d.device_id, d1.device_name, d.num, d.unit, d.status
+        from t_danger as d
+        left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
+        left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
+        left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_device as d1 on d1.id=d.device_id and d1.is_delete=0
+        <if test="userId!=null and userId!=''">
+            left join t_danger_user as du on du.danger_id=d.id
+        </if>
+        where d.is_delete=0
+        <if test="userId!=null and userId!=''">
+            and du.user_id=#{userId}
+        </if>
+        <if test="regionId!=null and regionId!=''">
+            and d.region_id=#{regionId}
+        </if>
+        <if test="searchKey!=null and searchKey!=''">
+            and (d.no like concat('%', #{searchKey}, '%') or
+            d.content like concat('%', #{searchKey}, '%') or
+            d.num like concat('%', #{searchKey}, '%') or
+            d.unit like concat('%', #{searchKey}, '%') or
+            d.address like concat('%', #{searchKey}, '%') or
+            ue.real_name like concat('%', #{searchKey}, '%') or
+            d1.device_name like concat('%', #{searchKey}, '%'))
+        </if>
+        group by d.id
+        order by d.create_date desc
+    </select>
+</mapper>
