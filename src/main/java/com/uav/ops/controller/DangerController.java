@@ -91,7 +91,7 @@ public class DangerController {
                                          @RequestParam(required = false) @ApiParam(value = "是否消项 0 否 1 是") Integer isEliminate,
                                          @RequestParam(required = false) @ApiParam(value = "整改措施") String rectifyMeasure,
                                          @RequestParam(required = false) @ApiParam(value = "整改后图片") String afterPic) {
-        dangerService.rectifyDanger(dangerId, rectifyMeasure, afterPic);
+        dangerService.rectifyDanger(dangerId, isEliminate, rectifyMeasure, afterPic);
         return DataResponse.success();
     }
 

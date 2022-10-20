@@ -92,9 +92,6 @@
         <if test="unit!=null">
             unit=#{unit},
         </if>
-        <if test="status!=null">
-            status=#{status},
-        </if>
         update_by=#{createBy}, update_date=now()
         where id=#{id} and is_delete=0
     </update>
@@ -111,7 +108,7 @@
         <if test="unit!=null and unit!=''">
             unit,
         </if>
-        create_by, status)
+        create_by)
         value (#{id}, #{no}, #{regionId}, #{address}, #{content}, #{beforePic}, #{rectifyTerm},
         <if test="checkUserId!=null and checkUserId!=''">
             #{checkUserId},
@@ -126,7 +123,7 @@
         <if test="unit!=null and unit!=''">
             #{unit},
         </if>
-        #{createBy}, #{status})
+        #{createBy})
     </insert>
 
     <update id="deleteDanger">
@@ -147,11 +144,11 @@
     </select>
 
     <delete id="bindVisibleUser">
-        delete from t_danger_user where danger_id=#{dangerId};
+        delete from t_danger_user where danger_id=#{id};
         insert into t_danger_user(id, user_id, danger_id)
         values
         <foreach collection="userIds" index="index" item="userId" separator=",">
-            (replace(uuid(),"-",""), #{userId}, #{dangerId})
+            (replace(uuid(),"-",""), #{userId}, #{id})
         </foreach>
     </delete>
 
@@ -198,7 +195,7 @@
         <if test="userId!=null and userId!=''">
             left join t_danger_user as du on du.danger_id=d.id
         </if>
-        where d.is_delete=0
+        where d.is_delete=0 and d.status=1
         <if test="userId!=null and userId!=''">
             and du.user_id=#{userId}
         </if>

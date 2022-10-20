@@ -30,7 +30,7 @@ public interface DangerService {
 
     void bindVisibleUser(DangerReqDTO dangerReqDTO);
 
-    void rectifyDanger(String dangerId, String rectifyMeasure, String afterPic);
+    void rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic);
 
     void exportDanger(String regionId, String searchKey, HttpServletResponse response);
 }

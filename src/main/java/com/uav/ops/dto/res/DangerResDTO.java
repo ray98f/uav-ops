@@ -43,9 +43,9 @@ public class DangerResDTO {
     private List<File> beforePicFile;
 
     @ApiModelProperty(value = "整改期限")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(
-            pattern = "yyyy-MM-dd HH:mm:ss",
+            pattern = "yyyy-MM-dd",
             timezone = "GMT+8"
     )
     private Date rectifyTerm;

@@ -198,8 +198,8 @@ public class DangerServiceImpl implements DangerService {
     }
 
     @Override
-    public void rectifyDanger(String dangerId, String rectifyMeasure, String afterPic) {
-        Integer result = dangerMapper.rectifyDanger(dangerId, rectifyMeasure, afterPic, TokenUtil.getCurrentPersonNo());
+    public void rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic) {
+        Integer result = dangerMapper.rectifyDanger(dangerId, isEliminate, rectifyMeasure, afterPic, TokenUtil.getCurrentPersonNo());
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
@@ -252,8 +252,8 @@ public class DangerServiceImpl implements DangerService {
                 map.put("检查日期", sdf.format(resDTO.getCheckTime()));
                 map.put("检查人", resDTO.getCheckUserName());
                 map.put("照片编号", resDTO.getBeforePic());
-                map.put("销号日期", sdf.format(resDTO.getDangerRectify().getRectifyUserName()));
-                map.put("销号人", resDTO.getDangerRectify().getRectifyMeasure());
+                map.put("销号日期", sdf.format(resDTO.getDangerRectify().getRectifyTime()));
+                map.put("销号人", resDTO.getDangerRectify().getRectifyUserName());
                 map.put("备注", resDTO.getDangerRectify().getRectifyMeasure());
                 list.add(map);
             }

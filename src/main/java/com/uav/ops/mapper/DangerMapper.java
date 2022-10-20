@@ -31,7 +31,7 @@ public interface DangerMapper {
 
     void bindVisibleUser(DangerReqDTO dangerReqDTO);
 
-    Integer rectifyDanger(String dangerId, String rectifyMeasure, String afterPic, String createBy);
+    Integer rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic, String createBy);
 
     List<DangerResDTO> exportDanger(String regionId, String searchKey, String userId);
 }
