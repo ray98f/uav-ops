@@ -21,6 +21,9 @@ public class DangerResDTO {
     @ApiModelProperty(value = "编号")
     private String no;
 
+    @ApiModelProperty(value = "线路")
+    private String line;
+
     @ApiModelProperty(value = "区域类型id")
     private String regionTypeId;
 
@@ -64,11 +67,8 @@ public class DangerResDTO {
     )
     private Date checkTime;
 
-    @ApiModelProperty(value = "设备id")
-    private String deviceId;
-
     @ApiModelProperty(value = "设备名称")
-    private String deviceName;
+    private String device;
 
     @ApiModelProperty(value = "数量")
     private Integer num;

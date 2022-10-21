@@ -21,6 +21,9 @@ public class DangerReqDTO {
     @ApiModelProperty(value = "编号")
     private String no;
 
+    @ApiModelProperty(value = "线路")
+    private String line;
+
     @ApiModelProperty(value = "隐患区域")
     private String regionId;
 
@@ -31,7 +34,7 @@ public class DangerReqDTO {
     private String content;
 
     @ApiModelProperty(value = "设备id")
-    private String deviceId;
+    private String device;
 
     @ApiModelProperty(value = "整改前图片")
     private String beforePic;

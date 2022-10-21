@@ -49,20 +49,8 @@ public class DangerServiceImpl implements DangerService {
     @Autowired
     private SysMapper sysMapper;
 
-    @Resource
-    private DeptService deptService;
-
     @Autowired
     private FileMapper fileMapper;
-
-    @Autowired
-    private DeptMapper deptMapper;
-
-    @Autowired
-    private MsgService msgService;
-
-    @Value("${vx-business.jumppage}")
-    private String jumppage;
 
     @Value("${pro.name}")
     private String proName;
@@ -235,7 +223,7 @@ public class DangerServiceImpl implements DangerService {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Map<String, String> map = new HashMap<>();
                 map.put("编号", resDTO.getNo());
-                map.put("线路", "S1");
+                map.put("线路", resDTO.getLine());
                 if ("1".equals(resDTO.getRegionTypeId())) {
                     map.put("区间", resDTO.getRegionName());
                     map.put("车站", "");
@@ -244,7 +232,7 @@ public class DangerServiceImpl implements DangerService {
                     map.put("车站", resDTO.getRegionName());
                 }
                 map.put("具体位置(桥隧需注明上下行及里程)", resDTO.getAddress());
-                map.put("设备名称", resDTO.getDeviceName());
+                map.put("设备名称", resDTO.getDevice());
                 map.put("问题描述", resDTO.getContent());
                 map.put("单位", resDTO.getUnit());
                 map.put("数量", String.valueOf(resDTO.getNum()));
