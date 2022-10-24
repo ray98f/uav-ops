@@ -72,13 +72,13 @@ public class DangerController {
     }
 
     @GetMapping("/visible/user/get")
-    @ApiOperation(value = "获取隐患可见范围")
+    @ApiOperation(value = "获取隐患不可见范围")
     public DataResponse<List<UserResDTO>> getVisibleUser(@RequestParam @ApiParam(value = "隐患id") String id) {
         return DataResponse.of(dangerService.getVisibleUser(id));
     }
 
     @PostMapping("/visible/user/bind")
-    @ApiOperation(value = "设置隐患可见范围")
+    @ApiOperation(value = "设置隐患不可见范围")
     public DataResponse<T> bindVisibleUser(@RequestBody DangerReqDTO dangerReqDTO) {
         dangerService.bindVisibleUser(dangerReqDTO);
         return DataResponse.success();

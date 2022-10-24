@@ -73,4 +73,7 @@ public class DangerReqDTO {
     @ApiModelProperty(value = "可见人列表")
     private List<String> userIds;
 
+    @ApiModelProperty(value = "隐患id")
+    private List<String> ids;
+
 }

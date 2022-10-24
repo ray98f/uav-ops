@@ -12,12 +12,9 @@
         left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
         left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
         left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
-        <if test="userId!=null and userId!=''">
-            left join t_danger_user as du on du.danger_id=d.id
-        </if>
         where d.is_delete=0
         <if test="userId!=null and userId!=''">
-            and du.user_id=#{userId}
+            and d.id not in (select du.danger_id from t_danger_user as du on du.user_id=#{userId})
         </if>
         <if test="regionId!=null and regionId!=''">
             and d.region_id=#{regionId}
@@ -154,11 +151,13 @@
     </select>
 
     <delete id="bindVisibleUser">
-        delete from t_danger_user where danger_id=#{id};
-        insert into t_danger_user(id, user_id, danger_id)
-        values
-        <foreach collection="userIds" index="index" item="userId" separator=",">
-            (replace(uuid(),"-",""), #{userId}, #{id})
+        <foreach collection="ids" index="index" item="id" separator="">
+            delete from t_danger_user where danger_id=#{id};
+            insert into t_danger_user(id, user_id, danger_id)
+            values
+            <foreach collection="userIds" index="index" item="userId" separator=",">
+                (replace(uuid(),"-",""), #{userId}, #{id})
+            </foreach>
         </foreach>
     </delete>
 
@@ -201,12 +200,9 @@
         left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
         left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
         left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
-        <if test="userId!=null and userId!=''">
-            left join t_danger_user as du on du.danger_id=d.id
-        </if>
         where d.is_delete=0 and d.status=1
         <if test="userId!=null and userId!=''">
-            and du.user_id=#{userId}
+            and d.id not in (select du.danger_id from t_danger_user as du on du.user_id=#{userId})
         </if>
         <if test="regionId!=null and regionId!=''">
             and d.region_id=#{regionId}
