@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface DangerService {
 
-    Page<DangerResDTO> listDanger(String regionId, String searchKey, PageReqDTO pageReqDTO);
+    Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, PageReqDTO pageReqDTO);
 
     DangerResDTO getDangerDetail(String id);
 
@@ -32,5 +32,5 @@ public interface DangerService {
 
     void rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic);
 
-    void exportDanger(String regionId, String searchKey, HttpServletResponse response);
+    void exportDanger(String regionId, String searchKey, Integer status, HttpServletResponse response);
 }

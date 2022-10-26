@@ -37,8 +37,9 @@ public class DangerController {
     @ApiOperation(value = "获取隐患列表")
     public PageResponse<DangerResDTO> listDanger(@RequestParam(required = false) @ApiParam(value = "区域id") String regionId,
                                                  @RequestParam(required = false) @ApiParam(value = "关键字") String searchKey,
+                                                 @RequestParam(required = false) @ApiParam(value = "状态") Integer status,
                                                  @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(dangerService.listDanger(regionId, searchKey, pageReqDTO));
+        return PageResponse.of(dangerService.listDanger(regionId, searchKey, status, pageReqDTO));
     }
 
     @GetMapping("/detail")
@@ -100,8 +101,9 @@ public class DangerController {
     @LogMaker(value = "问题检查问题排查管理导出")
     public void exportDanger(@RequestParam(required = false) @ApiParam(value = "区域id") String regionId,
                              @RequestParam(required = false) @ApiParam(value = "关键字") String searchKey,
+                             @RequestParam(required = false) @ApiParam(value = "状态") Integer status,
                              HttpServletResponse response) {
-        dangerService.exportDanger(regionId, searchKey, response);
+        dangerService.exportDanger(regionId, searchKey, status, response);
     }
 
 }

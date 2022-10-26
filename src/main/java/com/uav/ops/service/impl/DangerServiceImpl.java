@@ -62,13 +62,13 @@ public class DangerServiceImpl implements DangerService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public Page<DangerResDTO> listDanger(String regionId, String searchKey, PageReqDTO pageReqDTO) {
+    public Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
         Page<DangerResDTO> page;
         if (sysMapper.selectIfAdmin(TokenUtil.getCurrentPersonNo()) == 1) {
-            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, null);
+            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, null);
         } else {
-            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, TokenUtil.getCurrentPersonNo());
+            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, TokenUtil.getCurrentPersonNo());
         }
         List<DangerResDTO> list = page.getRecords();
         if (list != null && !list.isEmpty()) {
@@ -194,14 +194,14 @@ public class DangerServiceImpl implements DangerService {
     }
 
     @Override
-    public void exportDanger(String regionId, String searchKey, HttpServletResponse response) {
+    public void exportDanger(String regionId, String searchKey, Integer status, HttpServletResponse response) {
         List<String> listName = Arrays.asList("编号", "线路", "区间", "车站", "具体位置(桥隧需注明上下行及里程)", "设备名称",
                 "问题描述", "单位", "数量", "计划处理日期", "检查日期", "检查人", "照片编号", "销号日期", "销号人", "备注");
         List<DangerResDTO> exportDanger;
         if (sysMapper.selectIfAdmin(TokenUtil.getCurrentPersonNo()) == 1) {
-            exportDanger = dangerMapper.exportDanger(regionId, searchKey, null);
+            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, null);
         } else {
-            exportDanger = dangerMapper.exportDanger(regionId, searchKey, TokenUtil.getCurrentPersonNo());
+            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, TokenUtil.getCurrentPersonNo());
         }
         if (exportDanger != null && !exportDanger.isEmpty()) {
             for (DangerResDTO resDTO : exportDanger) {
@@ -227,22 +227,31 @@ public class DangerServiceImpl implements DangerService {
                 if ("1".equals(resDTO.getRegionTypeId())) {
                     map.put("区间", resDTO.getRegionName());
                     map.put("车站", "");
-                } else {
+                } else if ("2".equals(resDTO.getRegionTypeId())) {
                     map.put("区间", "");
                     map.put("车站", resDTO.getRegionName());
+                } else {
+                    map.put("区间", "");
+                    map.put("车站", "");
                 }
                 map.put("具体位置(桥隧需注明上下行及里程)", resDTO.getAddress());
                 map.put("设备名称", resDTO.getDevice());
                 map.put("问题描述", resDTO.getContent());
                 map.put("单位", resDTO.getUnit());
-                map.put("数量", String.valueOf(resDTO.getNum()));
-                map.put("计划处理日期", sdf.format(resDTO.getRectifyTerm()));
-                map.put("检查日期", sdf.format(resDTO.getCheckTime()));
+                map.put("数量", resDTO.getNum() == null ? "" : String.valueOf(resDTO.getNum()));
+                map.put("计划处理日期", resDTO.getRectifyTerm() == null ? "" : sdf.format(resDTO.getRectifyTerm()));
+                map.put("检查日期", resDTO.getCheckTime() == null ? "" : sdf.format(resDTO.getCheckTime()));
                 map.put("检查人", resDTO.getCheckUserName());
                 map.put("照片编号", resDTO.getBeforePic());
-                map.put("销号日期", sdf.format(resDTO.getDangerRectify().getRectifyTime()));
-                map.put("销号人", resDTO.getDangerRectify().getRectifyUserName());
-                map.put("备注", resDTO.getDangerRectify().getRectifyMeasure());
+                if (resDTO.getDangerRectify() != null) {
+                    map.put("销号日期", resDTO.getDangerRectify().getRectifyTime() == null ? "" : sdf.format(resDTO.getDangerRectify().getRectifyTime()));
+                    map.put("销号人", resDTO.getDangerRectify().getRectifyUserName());
+                    map.put("备注", resDTO.getDangerRectify().getRectifyMeasure());
+                } else {
+                    map.put("销号日期", "");
+                    map.put("销号人", "");
+                    map.put("备注", "");
+                }
                 list.add(map);
             }
         }

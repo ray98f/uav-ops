@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface DangerMapper {
 
-    Page<DangerResDTO> listDanger(Page<DangerResDTO> page, String regionId, String searchKey, String userId);
+    Page<DangerResDTO> listDanger(Page<DangerResDTO> page, String regionId, String searchKey, Integer status, String userId);
 
     DangerRectifyResDTO getDangerRectify(String dangerId);
 
@@ -33,5 +33,5 @@ public interface DangerMapper {
 
     Integer rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic, String createBy);
 
-    List<DangerResDTO> exportDanger(String regionId, String searchKey, String userId);
+    List<DangerResDTO> exportDanger(String regionId, String searchKey, Integer status, String userId);
 }
