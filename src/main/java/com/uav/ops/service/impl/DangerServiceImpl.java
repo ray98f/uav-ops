@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.req.DangerReqDTO;
+import com.uav.ops.dto.req.ProblemTypeReqDTO;
 import com.uav.ops.dto.req.VxSendTextMsgReqDTO;
 import com.uav.ops.dto.res.*;
 import com.uav.ops.enums.ErrorCode;
@@ -60,6 +61,78 @@ public class DangerServiceImpl implements DangerService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Override
+    public List<ProblemTypeResDTO> listProblemType(String name) {
+        List<ProblemTypeResDTO> list = dangerMapper.listProblemType(name, null);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO resDTO : list) {
+                resDTO.setChild(dangerMapper.listProblemType(name, resDTO.getId()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ProblemTypeResDTO> listAllProblemType() {
+        List<ProblemTypeResDTO> list =  dangerMapper.listAllProblemType(null, 1);
+        if (list != null && !list.isEmpty()) {
+            for (ProblemTypeResDTO resDTO : list) {
+                resDTO.setChild(dangerMapper.listAllProblemType(resDTO.getId(), 1));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public ProblemTypeResDTO getProblemTypeDetail(String id) {
+        return dangerMapper.getProblemTypeDetail(id);
+    }
+
+    @Override
+    public void addProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        Integer result = dangerMapper.selectProblemTypeIsExist(problemTypeReqDTO);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.DATA_EXIST);
+        }
+        problemTypeReqDTO.setId(TokenUtil.getUuId());
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = dangerMapper.addProblemType(problemTypeReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
+    }
+
+    @Override
+    public void modifyProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        Integer result = dangerMapper.selectProblemTypeIsExist(problemTypeReqDTO);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.DATA_EXIST);
+        }
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        result = dangerMapper.modifyProblemType(problemTypeReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    public void deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO) {
+        if (Objects.isNull(problemTypeReqDTO.getId())) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        problemTypeReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
+        Integer result = dangerMapper.deleteProblemType(problemTypeReqDTO);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.DELETE_ERROR);
+        }
+    }
 
     @Override
     public Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, PageReqDTO pageReqDTO) {

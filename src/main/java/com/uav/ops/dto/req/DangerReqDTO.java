@@ -18,6 +18,9 @@ public class DangerReqDTO {
     @ApiModelProperty(value = "id")
     private String id;
 
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
+
     @ApiModelProperty(value = "编号")
     private String no;
 

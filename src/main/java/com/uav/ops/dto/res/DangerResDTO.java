@@ -18,6 +18,12 @@ public class DangerResDTO {
     @ApiModelProperty(value = "id")
     private String id;
 
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
+
+    @ApiModelProperty(value = "类型名称")
+    private String typeName;
+
     @ApiModelProperty(value = "编号")
     private String no;
 

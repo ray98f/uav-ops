@@ -2,8 +2,134 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.uav.ops.mapper.DangerMapper">
 
+    <select id="listProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select id, parent_id, type_name, type_code, status, create_date, level
+        from t_danger_type where is_delete=0
+        <if test="name!=null and name!=''">
+            and type_name like concat('%', #{name}, '%')
+        </if>
+        <if test="parentId==null">
+            and level=1
+        </if>
+        <if test="parentId!=null and parentId!=''">
+            and level=2 and parent_id=#{parentId}
+        </if>
+        order by type_code desc
+    </select>
+
+    <select id="listAllProblemType" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
+        <if test="parentId==null and type==1">
+            , pt1.type_name
+        </if>
+        <if test="(parentId!=null and parentId!='' and type==1) or type==2">
+            , concat((select pt2.type_name from t_danger_type as pt2 where pt2.id=pt1.parent_id), '-', pt1.type_name) as type_name
+        </if>
+        from t_danger_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        <if test="parentId==null and type==1">
+            and pt1.level=1
+        </if>
+        <if test="parentId!=null and parentId!='' and type==1">
+            and pt1.level=2 and pt1.parent_id=#{parentId}
+        </if>
+        <if test="type==2">
+            and pt1.level=2
+        </if>
+        order by pt1.type_code desc
+    </select>
+
+    <select id="listNoChildProblemType"  resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level, pt1.type_name
+        from t_danger_type as pt1 where pt1.is_delete=0 and pt1.status=0 and pt1.level=1
+        and (select count(1) from t_danger_type where parent_id=pt1.id and is_delete=0 and status=0 and level=2 limit 1)=0
+        order by pt1.type_code desc
+    </select>
+
+    <select id="listTypeById" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select * from
+        (
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
+        , pt1.type_name
+        from t_danger_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        and pt1.level=1
+        <if test="list!=null and list.size()>0">
+            AND pt1.id in (
+            <foreach collection="list" index="index" item="typeId" separator=",">
+                #{typeId}
+            </foreach>
+            )
+        </if>
+        union
+        select pt1.id, pt1.parent_id, pt1.type_code, pt1.status, pt1.create_date, pt1.level
+        , concat((select pt2.type_name from t_danger_type as pt2 where pt2.id=pt1.parent_id), '-', pt1.type_name) as type_name
+        from t_danger_type as pt1 where pt1.is_delete=0 and pt1.status=0
+        and pt1.level=2
+        <if test="list!=null and list.size()>0">
+            AND pt1.parent_id in (
+            <foreach collection="list" index="index" item="typeId" separator=",">
+                #{typeId}
+            </foreach>
+            )
+        </if>
+        ) as pt3
+    </select>
+
+    <select id="getProblemTypeDetail" resultType="com.uav.ops.dto.res.ProblemTypeResDTO">
+        select id, parent_id, type_name, type_code, status, create_date, level
+        from t_danger_type where is_delete=0 and id=#{id}
+    </select>
+
+    <select id="selectProblemTypeIsExist" resultType="java.lang.Integer">
+        select count(1) from t_danger_type
+        where type_name=#{typeName} and is_delete=0 and level=#{level} and parent_id=#{parentId}
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="addProblemType">
+        insert into t_danger_type(id, type_name, type_code, level, parent_id,
+        <if test="status!=null">
+            status,
+        </if>
+        create_by)
+        value (#{id}, #{typeName}, #{typeCode}, #{level}, #{parentId},
+        <if test="status!=null">
+            #{status},
+        </if>
+        #{userId})
+    </insert>
+
+    <update id="modifyProblemType">
+        update t_danger_type set
+        <if test="level!=null">
+            level=#{level},
+        </if>
+        <if test="parentId!=null">
+            parent_id=#{parentId},
+        </if>
+        <if test="typeName!=null">
+            type_name=#{typeName},
+        </if>
+        <if test="typeCode!=null">
+            type_code=#{typeCode},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+        update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
+    <update id="deleteProblemType">
+        update t_danger_type set
+        is_delete=1, update_by=#{userId}
+        where id=#{id} and is_delete=0
+    </update>
+
     <select id="listDanger" resultType="com.uav.ops.dto.res.DangerResDTO">
-        select distinct d.id, d.no, d.region_id, d.line,
+        select distinct d.id, d.no, d.region_id, d.line, d.type_id, dt.type_name,
         (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
         d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
         d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
@@ -12,6 +138,7 @@
         left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
         left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
         left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_danger_type as dt on dt.id=d.type_id and dt.is_delete=0
         where d.is_delete=0
         <if test="userId!=null and userId!=''">
             and d.id not in (select du.danger_id from t_danger_user as du on du.user_id=#{userId})
@@ -46,7 +173,7 @@
     </select>
 
     <select id="getDangerDetail" resultType="com.uav.ops.dto.res.DangerResDTO">
-        select distinct d.id, d.no, d.region_id, d.line,
+        select distinct d.id, d.no, d.region_id, d.line, d.type_id, dt.type_name,
         (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
         d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
         d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
@@ -55,12 +182,16 @@
         left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
         left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
         left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_danger_type as dt on dt.id=d.type_id and dt.is_delete=0
         where d.is_delete=0 and d.id=#{id}
         order by d.create_date desc
     </select>
 
     <update id="modifyDanger">
         update t_danger set
+        <if test="typeId!=null">
+            type_id=#{typeId},
+        </if>
         <if test="line!=null">
             line=#{line},
         </if>
@@ -99,7 +230,11 @@
     </update>
 
     <insert id="addDanger">
-        INSERT INTO t_danger (id, no,
+        INSERT INTO t_danger (id,
+        <if test="typeId!=null and typeId!=''">
+            type_id,
+        </if>
+        no,
         <if test="line!=null and line!=''">
             line,
         </if>
@@ -115,7 +250,11 @@
             unit,
         </if>
         create_by)
-        value (#{id}, #{no},
+        value (#{id},
+        <if test="typeId!=null and typeId!=''">
+            #{typeId},
+        </if>
+        #{no},
         <if test="line!=null and line!=''">
             #{line},
         </if>
@@ -194,7 +333,7 @@
     </update>
 
     <select id="exportDanger" resultType="com.uav.ops.dto.res.DangerResDTO">
-        select distinct d.id, d.no, d.region_id, d.line,
+        select distinct d.id, d.no, d.region_id, d.line, d.type_id, dt.type_name,
         (case when r2.name is null then r.name else concat(r2.name,'-',r.name) end) as region_name,
         d.address, d.content, d.before_pic, d.rectify_term, r.type_id as region_type_id,
         d.check_user_id, ue.real_name as check_user_name, d.check_time, d.create_date,
@@ -203,6 +342,7 @@
         left join sys_user_ext as ue on d.check_user_id=ue.user_id and ue.status=0 and ue.is_delete=0
         left join t_region as r on r.id=d.region_id and r.is_delete=0 and r.status=0
         left join t_region as r2 on r2.id=r.parent_id and r2.is_delete=0 and r2.status=0
+        left join t_danger_type as dt on dt.id=d.type_id and dt.is_delete=0
         where d.is_delete=0
         <if test="userId!=null and userId!=''">
             and d.id not in (select du.danger_id from t_danger_user as du on du.user_id=#{userId})

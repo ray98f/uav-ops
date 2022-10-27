@@ -5,6 +5,7 @@ import com.uav.ops.dto.DataResponse;
 import com.uav.ops.dto.PageReqDTO;
 import com.uav.ops.dto.PageResponse;
 import com.uav.ops.dto.req.DangerReqDTO;
+import com.uav.ops.dto.req.ProblemTypeReqDTO;
 import com.uav.ops.dto.res.*;
 import com.uav.ops.service.DangerService;
 import io.swagger.annotations.Api;
@@ -32,6 +33,48 @@ public class DangerController {
 
     @Resource
     private DangerService dangerService;
+
+    @GetMapping("/type/list")
+    @ApiOperation(value = "获取问题类型列表")
+    public DataResponse<List<ProblemTypeResDTO>> listProblemType(@RequestParam(required = false) String name) {
+        return DataResponse.of(dangerService.listProblemType(name));
+    }
+
+    @GetMapping("/type/listAll")
+    @ApiOperation(value = "获取全部问题类型列表")
+    public DataResponse<List<ProblemTypeResDTO>> listAllProblemType() {
+        return DataResponse.of(dangerService.listAllProblemType());
+    }
+
+    @GetMapping("/type/detail")
+    @ApiOperation(value = "获取问题类型详情")
+    public DataResponse<ProblemTypeResDTO> getProblemTypeDetail(@RequestParam String id) {
+        return DataResponse.of(dangerService.getProblemTypeDetail(id));
+    }
+
+    @PostMapping("/type/add")
+    @ApiOperation(value = "新增问题类型")
+    @LogMaker(value = "pc后台-新增问题类型")
+    public DataResponse<T> addProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
+        dangerService.addProblemType(problemTypeReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/type/modify")
+    @ApiOperation(value = "修改问题类型")
+    @LogMaker(value = "pc后台-修改问题类型")
+    public DataResponse<T> modifyProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
+        dangerService.modifyProblemType(problemTypeReqDTO);
+        return DataResponse.success();
+    }
+
+    @PostMapping("/type/delete")
+    @ApiOperation(value = "删除问题类型")
+    @LogMaker(value = "pc后台-删除问题类型")
+    public DataResponse<T> deleteProblemType(@RequestBody ProblemTypeReqDTO problemTypeReqDTO) {
+        dangerService.deleteProblemType(problemTypeReqDTO);
+        return DataResponse.success();
+    }
 
     @GetMapping("/list")
     @ApiOperation(value = "获取隐患列表")
