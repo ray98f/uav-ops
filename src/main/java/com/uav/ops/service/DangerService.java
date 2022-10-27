@@ -29,7 +29,7 @@ public interface DangerService {
 
     void deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, PageReqDTO pageReqDTO);
+    Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, String startTime, String endTime, PageReqDTO pageReqDTO);
 
     DangerResDTO getDangerDetail(String id);
 
@@ -45,5 +45,5 @@ public interface DangerService {
 
     void rectifyDanger(String dangerId, Integer isEliminate, String rectifyMeasure, String afterPic);
 
-    void exportDanger(String regionId, String searchKey, Integer status, HttpServletResponse response);
+    void exportDanger(String regionId, String searchKey, Integer status, String startTime, String endTime, HttpServletResponse response);
 }

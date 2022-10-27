@@ -253,7 +253,7 @@
         left join sys_user_ext as ue2 on ue2.user_id=p.rectify_user_id and ue2.is_delete=0 and ue2.status=0
         where p.is_delete=0 and (p.is_use=1 or (p.is_use=0 and p.create_by=#{userId}))
         <if test="name!=null and name!=''">
-            and p.title like concat('%', #{name}, '%')
+            and (p.title like concat('%', #{name}, '%') or pr.info like concat('%', #{name}, '%'))
         </if>
         <if test="startTime!=null and startTime!=''">
             and p.create_date>=#{startTime}

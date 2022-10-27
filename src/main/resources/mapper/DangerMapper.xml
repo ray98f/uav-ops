@@ -159,6 +159,12 @@
             d.device like concat('%', #{searchKey}, '%') or
             d.line like concat('%', #{searchKey}, '%'))
         </if>
+        <if test="startTime!=null and startTime!=''">
+            and d.create_date>=#{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and #{endTime}>=d.create_date
+        </if>
         group by d.id
         order by d.create_date desc
     </select>
@@ -362,6 +368,12 @@
             ue.real_name like concat('%', #{searchKey}, '%') or
             d.device like concat('%', #{searchKey}, '%') or
             d.line like concat('%', #{searchKey}, '%'))
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and d.create_date>=#{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and #{endTime}>=d.create_date
         </if>
         group by d.id
         order by d.create_date desc

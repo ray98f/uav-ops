@@ -135,13 +135,13 @@ public class DangerServiceImpl implements DangerService {
     }
 
     @Override
-    public Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, PageReqDTO pageReqDTO) {
+    public Page<DangerResDTO> listDanger(String regionId, String searchKey, Integer status, String startTime, String endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
         Page<DangerResDTO> page;
         if (sysMapper.selectIfAdmin(TokenUtil.getCurrentPersonNo()) == 1) {
-            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, null);
+            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, startTime, endTime, null);
         } else {
-            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, TokenUtil.getCurrentPersonNo());
+            page = dangerMapper.listDanger(pageReqDTO.of(), regionId, searchKey, status, startTime, endTime, TokenUtil.getCurrentPersonNo());
         }
         List<DangerResDTO> list = page.getRecords();
         if (list != null && !list.isEmpty()) {
@@ -267,14 +267,14 @@ public class DangerServiceImpl implements DangerService {
     }
 
     @Override
-    public void exportDanger(String regionId, String searchKey, Integer status, HttpServletResponse response) {
+    public void exportDanger(String regionId, String searchKey, Integer status, String startTime, String endTime, HttpServletResponse response) {
         List<String> listName = Arrays.asList("编号", "线路", "区间", "车站", "具体位置(桥隧需注明上下行及里程)", "设备名称",
                 "问题描述", "单位", "数量", "计划处理日期", "检查日期", "检查人", "照片编号", "销号日期", "销号人", "备注");
         List<DangerResDTO> exportDanger;
         if (sysMapper.selectIfAdmin(TokenUtil.getCurrentPersonNo()) == 1) {
-            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, null);
+            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, startTime, endTime, null);
         } else {
-            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, TokenUtil.getCurrentPersonNo());
+            exportDanger = dangerMapper.exportDanger(regionId, searchKey, status, startTime, endTime, TokenUtil.getCurrentPersonNo());
         }
         if (exportDanger != null && !exportDanger.isEmpty()) {
             for (DangerResDTO resDTO : exportDanger) {

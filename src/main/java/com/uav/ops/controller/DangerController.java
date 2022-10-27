@@ -81,8 +81,10 @@ public class DangerController {
     public PageResponse<DangerResDTO> listDanger(@RequestParam(required = false) @ApiParam(value = "区域id") String regionId,
                                                  @RequestParam(required = false) @ApiParam(value = "关键字") String searchKey,
                                                  @RequestParam(required = false) @ApiParam(value = "状态") Integer status,
+                                                 @RequestParam(required = false) @ApiParam(value = "开始时间") String startTime,
+                                                 @RequestParam(required = false) @ApiParam(value = "结束时间") String endTime,
                                                  @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(dangerService.listDanger(regionId, searchKey, status, pageReqDTO));
+        return PageResponse.of(dangerService.listDanger(regionId, searchKey, status, startTime, endTime, pageReqDTO));
     }
 
     @GetMapping("/detail")
@@ -145,8 +147,10 @@ public class DangerController {
     public void exportDanger(@RequestParam(required = false) @ApiParam(value = "区域id") String regionId,
                              @RequestParam(required = false) @ApiParam(value = "关键字") String searchKey,
                              @RequestParam(required = false) @ApiParam(value = "状态") Integer status,
+                             @RequestParam(required = false) @ApiParam(value = "开始时间") String startTime,
+                             @RequestParam(required = false) @ApiParam(value = "结束时间") String endTime,
                              HttpServletResponse response) {
-        dangerService.exportDanger(regionId, searchKey, status, response);
+        dangerService.exportDanger(regionId, searchKey, status, startTime, endTime, response);
     }
 
 }

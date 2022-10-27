@@ -22,13 +22,13 @@ public class SyncTask {
     @Resource
     private DeptService deptService;
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     @Async
     public void syncOrg() {
         deptService.syncDept();
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     @Async
     public void syncUser() {
         userService.syncUser();
