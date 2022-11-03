@@ -37,7 +37,7 @@ public interface ProblemMapper {
 
     Integer deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Page<ProblemIdentifyResDTO> listProblemIdentify(Page<ProblemIdentifyResDTO> page, String name);
+    Page<ProblemIdentifyResDTO> listProblemIdentify(Page<ProblemIdentifyResDTO> page, String name, Integer isChecked, Integer status, String startTime, String endTime);
 
     Page<ProblemIdentifyResDTO> listNotBindProblemIdentify(Page<ProblemIdentifyResDTO> page, String name);
 

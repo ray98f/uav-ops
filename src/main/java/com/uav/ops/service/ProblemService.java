@@ -28,7 +28,7 @@ public interface ProblemService {
 
     void deleteProblemType(ProblemTypeReqDTO problemTypeReqDTO);
 
-    Page<ProblemIdentifyResDTO> listProblemIdentify(String name, PageReqDTO pageReqDTO);
+    Page<ProblemIdentifyResDTO> listProblemIdentify(String name, Integer isChecked, Integer status, String startTime, String endTime, PageReqDTO pageReqDTO);
 
     Page<ProblemIdentifyResDTO> listNotBindProblemIdentify(String name, PageReqDTO pageReqDTO);
 

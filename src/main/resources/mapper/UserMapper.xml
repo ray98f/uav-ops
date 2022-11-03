@@ -94,6 +94,9 @@
         left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
         left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
         where u.is_delete=0
+        <if test="status==null">
+            and u.status=1
+        </if>
         <if test="status!=null">
             and u.status=#{status}
         </if>
@@ -119,6 +122,9 @@
         left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
         left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
         where u.is_delete=0
+        <if test="status==null">
+            and u.status=1
+        </if>
         <if test="status!=null">
             and u.status=#{status}
         </if>

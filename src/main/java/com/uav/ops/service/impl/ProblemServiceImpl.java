@@ -104,9 +104,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Page<ProblemIdentifyResDTO> listProblemIdentify(String name, PageReqDTO pageReqDTO) {
+    public Page<ProblemIdentifyResDTO> listProblemIdentify(String name, Integer isChecked, Integer status, String startTime, String endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPageNo(), pageReqDTO.getPageSize());
-        return problemMapper.listProblemIdentify(pageReqDTO.of(), name);
+        return problemMapper.listProblemIdentify(pageReqDTO.of(), name, isChecked, status, startTime, endTime);
     }
 
     @Override
@@ -225,13 +225,13 @@ public class ProblemServiceImpl implements ProblemService {
         if (Objects.isNull(problemReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        Integer result = problemMapper.selectProblemIsExist(problemReqDTO);
-        if (result > 0) {
-            throw new CommonException(ErrorCode.DATA_EXIST);
-        }
+//        Integer result = problemMapper.selectProblemIsExist(problemReqDTO);
+//        if (result > 0) {
+//            throw new CommonException(ErrorCode.DATA_EXIST);
+//        }
         problemReqDTO.setId(TokenUtil.getUuId());
         problemReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
-        result = problemMapper.addProblem(problemReqDTO);
+        Integer result = problemMapper.addProblem(problemReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
@@ -251,12 +251,12 @@ public class ProblemServiceImpl implements ProblemService {
         if (Objects.isNull(problemReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        Integer result = problemMapper.selectProblemIsExist(problemReqDTO);
-        if (result > 0) {
-            throw new CommonException(ErrorCode.DATA_EXIST);
-        }
+//        Integer result = problemMapper.selectProblemIsExist(problemReqDTO);
+//        if (result > 0) {
+//            throw new CommonException(ErrorCode.DATA_EXIST);
+//        }
         problemReqDTO.setUserId(TokenUtil.getCurrentPersonNo());
-        result = problemMapper.modifyProblem(problemReqDTO);
+        Integer result = problemMapper.modifyProblem(problemReqDTO);
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }

@@ -150,8 +150,12 @@ public class AndroidAppController {
     @GetMapping("/check/list")
     @ApiOperation(value = "获取问题识别记录列表")
     public PageResponse<ProblemIdentifyResDTO> listProblemCheck(@RequestParam(required = false) String name,
+                                                                @RequestParam(required = false) Integer isChecked,
+                                                                @RequestParam(required = false) Integer status,
+                                                                @RequestParam(required = false) String startTime,
+                                                                @RequestParam(required = false) String endTime,
                                                                 @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(problemService.listProblemIdentify(name, pageReqDTO));
+        return PageResponse.of(problemService.listProblemIdentify(name, isChecked, status, startTime, endTime, pageReqDTO));
     }
 
     @GetMapping("/check/detail")
