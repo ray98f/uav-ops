@@ -251,12 +251,12 @@
     <select id="listUserRole" resultType="com.uav.ops.dto.res.UserResDTO">
         select u.*, ue.user_name, ue.password, ue.user_no, ue.age, ue.status as user_status, ue.real_name,
         d.org_name as dept_name, GROUP_CONCAT(ur.role_id) as user_roles from sys_user_role as ur
-        left join sys_user as u on u.id=ur.user_id and u.is_delete=0 and u.status=1
+        left join sys_user as u on u.id=ur.user_id and u.is_delete=0
         left join sys_user_post as up on up.user_id=u.id
         left join sys_post as p on p.id=up.post_id and p.is_delete=0 and p.status=0
         left join sys_user_ext as ue on ue.user_id=u.id and ue.is_delete=0
         left join sys_dept as d on d.id=u.main_dept and d.is_delete=0
-        where ur.role_id=#{roleId}
+        where ur.role_id=#{roleId} and u.status=1
         group by u.id
     </select>
 
