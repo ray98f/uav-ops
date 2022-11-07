@@ -28,7 +28,7 @@ public interface RegionService {
 
     RegionResDTO getRegionDetail(String id);
 
-    List<RegionResDTO> listAllRegion();
+    List<RegionResDTO> listAllRegion(String typeId);
 
     RegionResDTO vxGetRegionBody(String id);
 

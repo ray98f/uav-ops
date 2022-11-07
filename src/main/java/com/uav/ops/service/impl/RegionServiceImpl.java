@@ -116,9 +116,9 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public List<RegionResDTO> listAllRegion() {
-        List<RegionResDTO> root = regionMapper.listAllRegionRoot();
-        List<RegionResDTO> body = regionMapper.listAllRegionBody();
+    public List<RegionResDTO> listAllRegion(String typeId) {
+        List<RegionResDTO> root = regionMapper.listAllRegionRoot(typeId);
+        List<RegionResDTO> body = regionMapper.listAllRegionBody(typeId);
         RegionTreeToolUtils res = new RegionTreeToolUtils(root, body);
         return res.getTree();
     }

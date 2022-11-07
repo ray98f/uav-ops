@@ -38,9 +38,9 @@ public interface RegionMapper {
 
     List<RegionResDTO> listRegionBody();
 
-    List<RegionResDTO> listAllRegionRoot();
+    List<RegionResDTO> listAllRegionRoot(String typeId);
 
-    List<RegionResDTO> listAllRegionBody();
+    List<RegionResDTO> listAllRegionBody(String typeId);
 
     RegionResDTO getRegionDetail(String id);
 

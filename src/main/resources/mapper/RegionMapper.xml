@@ -115,6 +115,9 @@
         left join t_region_type as rt on rt.id=r.type_id and rt.is_delete=0
         left join sys_risk_level as rl on rl.id=r.level
         where r.is_delete=0 and r.status=0 and r.parent_id=0
+        <if test="typeId!=null and typeId!=''">
+            and r.type_id=#{typeId}
+        </if>
         order by r.code asc
     </select>
 
@@ -126,6 +129,9 @@
         left join t_region_type as rt on rt.id=r.type_id and rt.is_delete=0
         left join sys_risk_level as rl on rl.id=r.level
         where r.is_delete=0 and r.status=0 and r.parent_id!=0
+        <if test="typeId!=null and typeId!=''">
+            and r.type_id=#{typeId}
+        </if>
         order by r.code asc
     </select>
 

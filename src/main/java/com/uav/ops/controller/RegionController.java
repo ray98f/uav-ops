@@ -83,8 +83,8 @@ public class RegionController {
 
     @GetMapping("/listAll")
     @ApiOperation(value = "获取所有区域列表")
-    public DataResponse<List<RegionResDTO>> listAllRegion() {
-        return DataResponse.of(regionService.listAllRegion());
+    public DataResponse<List<RegionResDTO>> listAllRegion(@RequestParam(required = false) String typeId) {
+        return DataResponse.of(regionService.listAllRegion(typeId));
     }
 
     @GetMapping("/vx/getBody")
